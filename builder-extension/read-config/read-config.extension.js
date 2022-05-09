@@ -2,8 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ReadConfigExtension = void 0;
 const lodash_1 = require("lodash");
-const rxjs_1 = require("rxjs");
-const operators_1 = require("rxjs/operators");
+const import_rxjs_1 = require("@fm/import-rxjs");
+const import_rxjs_2 = require("@fm/import-rxjs");
 const token_1 = require("../../token");
 const utility_1 = require("../../utility");
 const basic_extension_1 = require("../basic/basic.extension");
@@ -11,12 +11,12 @@ const calculator_constant_1 = require("../constant/calculator.constant");
 class ReadConfigExtension extends basic_extension_1.BasicExtension {
     extension() {
         this.definePropertys(this.builder, { id: this.props.id, getExecuteHandler: this.createGetExecuteHandler() });
-        return this.getConfigJson(this.props).pipe((0, operators_1.tap)((jsonConfig) => this.props.config = jsonConfig));
+        return this.getConfigJson(this.props).pipe((0, import_rxjs_2.tap)((jsonConfig) => this.props.config = jsonConfig));
     }
     extendsConfig(jsonConfig) {
         const { extends: extendsConfig } = jsonConfig;
         const extendsProps = (0, lodash_1.isString)(extendsConfig) ? { jsonName: extendsConfig } : extendsConfig;
-        return !extendsProps || extendsProps.isLoaded ? (0, rxjs_1.of)(jsonConfig) : this.getConfigJson(extendsProps).pipe((0, operators_1.tap)((extendsConfig) => {
+        return !extendsProps || extendsProps.isLoaded ? (0, import_rxjs_1.of)(jsonConfig) : this.getConfigJson(extendsProps).pipe((0, import_rxjs_2.tap)((extendsConfig) => {
             extendsConfig.isLoaded = true;
             jsonConfig.extends = extendsConfig;
         }));
@@ -24,18 +24,18 @@ class ReadConfigExtension extends basic_extension_1.BasicExtension {
     preloaded(jsonConfig) {
         const builderFields = jsonConfig.fields.filter(this.eligiblePreloaded.bind(this));
         if (jsonConfig.isPreloaded || !builderFields.length) {
-            return (0, rxjs_1.of)(jsonConfig);
+            return (0, import_rxjs_1.of)(jsonConfig);
         }
         return (0, utility_1.toForkJoin)(builderFields.map(this.preloadedBuildField.bind(this)));
     }
     preloadedBuildField(jsonField) {
-        return this.getConfigJson(jsonField).pipe((0, operators_1.tap)((jsonConfig) => {
+        return this.getConfigJson(jsonField).pipe((0, import_rxjs_2.tap)((jsonConfig) => {
             jsonConfig.isPreloaded = true;
             jsonField.config = (0, lodash_1.cloneDeep)(jsonConfig);
         }));
     }
     getConfigJson(props) {
-        return this.getConfigObservable(props).pipe((0, utility_1.observableTap)((jsonConfig) => this.extendsConfig(jsonConfig)), (0, operators_1.tap)((jsonConfig) => this.checkFieldRepeat(jsonConfig)), (0, utility_1.observableTap)((jsonConfig) => this.preloaded(jsonConfig)));
+        return this.getConfigObservable(props).pipe((0, utility_1.observableTap)((jsonConfig) => this.extendsConfig(jsonConfig)), (0, import_rxjs_2.tap)((jsonConfig) => this.checkFieldRepeat(jsonConfig)), (0, utility_1.observableTap)((jsonConfig) => this.preloaded(jsonConfig)));
     }
     getConfigObservable(props) {
         const { id, jsonName = ``, jsonNameAction = ``, configAction = '', config } = props;
@@ -46,13 +46,13 @@ class ReadConfigExtension extends basic_extension_1.BasicExtension {
             throw new Error(`Builder configuration is incorrect: ${id}`);
         }
         if (isJsonName) {
-            const getJsonName = jsonNameAction ? this.createLoadConfigAction(jsonNameAction, props) : (0, rxjs_1.of)(jsonName);
+            const getJsonName = jsonNameAction ? this.createLoadConfigAction(jsonNameAction, props) : (0, import_rxjs_1.of)(jsonName);
             configOb = getJsonName.pipe((0, utility_1.observableMap)((configName) => this.ls.getProvider(token_1.GET_JSON_CONFIG, configName)));
         }
         else {
-            configOb = configAction ? this.createLoadConfigAction(configAction, props) : (0, rxjs_1.of)(config);
+            configOb = configAction ? this.createLoadConfigAction(configAction, props) : (0, import_rxjs_1.of)(config);
         }
-        return configOb.pipe((0, operators_1.map)((_config = []) => Object.assign({ fields: [] }, Array.isArray(_config) ? { fields: _config } : _config, id ? { id } : {})));
+        return configOb.pipe((0, import_rxjs_2.map)((_config = []) => Object.assign({ fields: [] }, Array.isArray(_config) ? { fields: _config } : _config, id ? { id } : {})));
     }
     createLoadConfigAction(actionName, props) {
         const loadAction = { ...this.serializeAction(actionName), type: calculator_constant_1.LOAD_CONFIG_ACTION, runObservable: true };

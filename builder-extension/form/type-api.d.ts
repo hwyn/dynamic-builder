@@ -1,4 +1,4 @@
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject } from '@fm/import-rxjs';
 import { BuilderModel } from '../../builder/builder-model';
 import { BuilderFieldExtensions } from '../type-api';
 declare type updateOn = 'change' | 'blur' | 'submit';
