@@ -1,10 +1,14 @@
-import { cloneDeep, isFunction, isString, merge } from 'lodash';
-import { transformObj, withGetOrSet, withValue } from '../../utility';
-import { createActions, getEventType } from '../action/create-actions';
-export const serializeAction = (action) => {
-    return (isString(action) ? { name: action } : isFunction(action) ? { handler: action } : action);
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.BasicExtension = exports.serializeAction = void 0;
+const lodash_1 = require("lodash");
+const utility_1 = require("../../utility");
+const create_actions_1 = require("../action/create-actions");
+const serializeAction = (action) => {
+    return ((0, lodash_1.isString)(action) ? { name: action } : (0, lodash_1.isFunction)(action) ? { handler: action } : action);
 };
-export class BasicExtension {
+exports.serializeAction = serializeAction;
+class BasicExtension {
     builder;
     props;
     cache;
@@ -23,10 +27,10 @@ export class BasicExtension {
     beforeDestory() { }
     destory() { }
     init() {
-        return transformObj(this.extension(), this);
+        return (0, utility_1.transformObj)(this.extension(), this);
     }
     afterInit() {
-        return transformObj(this.afterExtension(), () => transformObj(this.beforeDestory(), () => this.destory()));
+        return (0, utility_1.transformObj)(this.afterExtension(), () => (0, utility_1.transformObj)(this.beforeDestory(), () => this.destory()));
     }
     eachFields(jsonFields, callBack) {
         jsonFields.forEach((jsonField) => callBack([jsonField, this.getBuilderFieldById(jsonField.id)]));
@@ -38,10 +42,10 @@ export class BasicExtension {
         });
     }
     serializeCalculatorConfig(jsonCalculator, actionType, defaultDependents) {
-        const needSerialize = isString(jsonCalculator) || isFunction(jsonCalculator);
-        const calculatorConfig = needSerialize ? { action: this.serializeAction(jsonCalculator) } : cloneDeep(jsonCalculator);
+        const needSerialize = (0, lodash_1.isString)(jsonCalculator) || (0, lodash_1.isFunction)(jsonCalculator);
+        const calculatorConfig = needSerialize ? { action: this.serializeAction(jsonCalculator) } : (0, lodash_1.cloneDeep)(jsonCalculator);
         const { action, dependents = defaultDependents } = calculatorConfig;
-        calculatorConfig.action = merge({ type: actionType }, this.serializeAction(action));
+        calculatorConfig.action = (0, lodash_1.merge)({ type: actionType }, this.serializeAction(action));
         calculatorConfig.dependents = dependents;
         return calculatorConfig;
     }
@@ -66,25 +70,25 @@ export class BasicExtension {
         return Array.isArray(obj) ? obj : [obj];
     }
     defineProperty(object, prototypeName, value) {
-        Object.defineProperty(object, prototypeName, withValue(value));
+        Object.defineProperty(object, prototypeName, (0, utility_1.withValue)(value));
     }
     definePropertys(object, prototype) {
         Object.keys(prototype).forEach((key) => this.defineProperty(object, key, prototype[key]));
     }
     definePropertyGet(object, prototypeName, get) {
-        Object.defineProperty(object, prototypeName, withGetOrSet(get));
+        Object.defineProperty(object, prototypeName, (0, utility_1.withGetOrSet)(get));
     }
     unDefineProperty(object, prototypeNames) {
         prototypeNames.forEach((prototypeName) => this.defineProperty(object, prototypeName, null));
     }
     serializeAction(action) {
-        return serializeAction(action);
+        return (0, exports.serializeAction)(action);
     }
     createActions(actions, props, options) {
-        return createActions(actions, props, options);
+        return (0, create_actions_1.createActions)(actions, props, options);
     }
     getEventType(type) {
-        return getEventType(type);
+        return (0, create_actions_1.getEventType)(type);
     }
     getJsonFieldById(fieldId) {
         return this.jsonFields.find(({ id }) => fieldId === id);
@@ -93,3 +97,4 @@ export class BasicExtension {
         return this.builder.getFieldById(fieldId);
     }
 }
+exports.BasicExtension = BasicExtension;

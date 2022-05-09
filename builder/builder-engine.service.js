@@ -1,20 +1,23 @@
-import { __decorate, __metadata, __param } from "tslib";
-import { Inject, Injectable } from '@fm/di';
-import { flatMap } from 'lodash';
-import { UI_ELEMENT } from '../token';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.BuilderEngine = void 0;
+const tslib_1 = require("tslib");
+const di_1 = require("@fm/di");
+const lodash_1 = require("lodash");
+const token_1 = require("../token");
 let BuilderEngine = class BuilderEngine {
     uiElement;
     constructor(uiComponents) {
-        this.uiElement = flatMap(uiComponents);
+        this.uiElement = (0, lodash_1.flatMap)(uiComponents);
     }
     getUiComponent(name) {
         const [{ component } = { component: null }] = this.uiElement.filter((ui) => ui.name === name);
         return component;
     }
 };
-BuilderEngine = __decorate([
-    Injectable(),
-    __param(0, Inject(UI_ELEMENT)),
-    __metadata("design:paramtypes", [Array])
+BuilderEngine = tslib_1.__decorate([
+    (0, di_1.Injectable)(),
+    tslib_1.__param(0, (0, di_1.Inject)(token_1.UI_ELEMENT)),
+    tslib_1.__metadata("design:paramtypes", [Array])
 ], BuilderEngine);
-export { BuilderEngine };
+exports.BuilderEngine = BuilderEngine;

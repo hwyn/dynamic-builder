@@ -1,5 +1,8 @@
-import { ACTION_INTERCEPT } from '../../token';
-export class BaseAction {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.BaseAction = void 0;
+const token_1 = require("../../token");
+class BaseAction {
     ls;
     context;
     constructor(ls, context = {}) {
@@ -10,7 +13,7 @@ export class BaseAction {
         return this.context.builderField;
     }
     get actionIntercept() {
-        return this.ls.getProvider(ACTION_INTERCEPT);
+        return this.ls.getProvider(token_1.ACTION_INTERCEPT);
     }
     get builder() {
         return this.context.builder;
@@ -28,3 +31,4 @@ export class BaseAction {
         return this.context.actionEvent;
     }
 }
+exports.BaseAction = BaseAction;
