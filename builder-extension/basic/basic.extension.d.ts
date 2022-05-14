@@ -1,5 +1,5 @@
 import { LocatorStorage } from '@fm/di';
-import { Observable } from '@fm/import-rxjs';
+import { Observable } from 'rxjs';
 import { BuilderProps, CacheObj } from '../../builder';
 import { Action, ActionInterceptProps, BaseAction } from '../action';
 import { CreateOptions } from '../action/create-actions';
