@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "devDependencies": {
+  "dependencies": {
     "@fm/import-rxjs": "git+https://github.com/hwyn/import-rxjs.git"
   },
   "scripts": {
