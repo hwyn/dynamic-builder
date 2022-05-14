@@ -1,4 +1,4 @@
-import { Observable } from 'rxjs';
+import { Observable } from '@fm/import-rxjs';
 import { BuilderProps } from '../../builder';
 import { BasicExtension } from '../basic/basic.extension';
 import { BuilderModelExtensions, OriginCalculators } from '../type-api';

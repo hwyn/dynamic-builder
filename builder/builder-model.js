@@ -1,7 +1,10 @@
-import { flatMap, isEmpty, uniq } from 'lodash';
-import { init } from './builder-utils';
-import { Visibility } from './consts';
-export class BuilderModel {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.BuilderModel = void 0;
+const lodash_1 = require("lodash");
+const builder_utils_1 = require("./builder-utils");
+const consts_1 = require("./consts");
+class BuilderModel {
     ls;
     id;
     parent = null;
@@ -10,7 +13,7 @@ export class BuilderModel {
     Element;
     constructor(ls) {
         this.ls = ls;
-        init.call(this);
+        builder_utils_1.init.call(this);
     }
     getFieldByTypes(type) {
         const { fields = [] } = this.$$cache;
@@ -27,9 +30,9 @@ export class BuilderModel {
         return hasSelf ? this.parent?.getFieldById(id) : fields.find(({ id: fieldId }) => fieldId === id);
     }
     getAllFieldById(id) {
-        const fields = flatMap(this.children.map((child) => child.getAllFieldById(id)));
+        const fields = (0, lodash_1.flatMap)(this.children.map((child) => child.getAllFieldById(id)));
         fields.push(this.getFieldById(id));
-        return uniq(fields.filter((field) => !isEmpty(field)));
+        return (0, lodash_1.uniq)(fields.filter((field) => !(0, lodash_1.isEmpty)(field)));
     }
     detectChanges() {
         if (!this.$$cache.destoryed) {
@@ -47,6 +50,7 @@ export class BuilderModel {
         return fields.filter(({ visibility }) => this.showField(visibility));
     }
     showField(visibility) {
-        return visibility === undefined || visibility !== Visibility.none;
+        return visibility === undefined || visibility !== consts_1.Visibility.none;
     }
 }
+exports.BuilderModel = BuilderModel;

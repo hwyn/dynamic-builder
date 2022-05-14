@@ -1,5 +1,5 @@
 import { LocatorStorage, Type } from '@fm/di';
-import { Observable } from 'rxjs';
+import { Observable } from '@fm/import-rxjs';
 import { BasicExtension, serializeAction } from './basic/basic.extension';
 import { ControlOptions } from './form/type-api';
 import { Grid } from './type-api';

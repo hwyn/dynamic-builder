@@ -1,15 +1,18 @@
-import { isEmpty } from 'lodash';
-import { Observable, Subject } from 'rxjs';
-import { BuilderModel } from '../../builder/builder-model';
-import { observableMap, toForkJoin, transformObservable } from '../../utility';
-import { BasicExtension } from '../basic/basic.extension';
-import { CURRENT, DESTORY, INSTANCE, LOAD_ACTION, MOUNTED } from '../constant/calculator.constant';
-export class InstanceExtension extends BasicExtension {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.InstanceExtension = void 0;
+const import_rxjs_1 = require("@fm/import-rxjs");
+const lodash_1 = require("lodash");
+const builder_model_1 = require("../../builder/builder-model");
+const utility_1 = require("../../utility");
+const basic_extension_1 = require("../basic/basic.extension");
+const calculator_constant_1 = require("../constant/calculator.constant");
+class InstanceExtension extends basic_extension_1.BasicExtension {
     buildFieldList = [];
     static createInstance() {
         return {
             current: null,
-            destory: new Subject(),
+            destory: new import_rxjs_1.Subject(),
             onMounted: () => void (0),
             onDestory: () => void (0),
             detectChanges: () => undefined,
@@ -20,16 +23,16 @@ export class InstanceExtension extends BasicExtension {
         const handler = this.eachFields.bind(this, this.jsonFields, this.createInstanceLife.bind(this));
         this.pushCalculators(this.json, [{
                 action: this.bindCalculatorAction(handler),
-                dependents: { type: LOAD_ACTION, fieldId: this.builder.id }
+                dependents: { type: calculator_constant_1.LOAD_ACTION, fieldId: this.builder.id }
             }]);
     }
     createInstanceLife([, builderField]) {
         const { instance, events = {} } = builderField;
         this.definePropertys(instance, {
-            [this.getEventType(MOUNTED)]: events.onMounted,
-            [this.getEventType(DESTORY)]: this.proxyDestory(instance, events.onDestory)
+            [this.getEventType(calculator_constant_1.MOUNTED)]: events.onMounted,
+            [this.getEventType(calculator_constant_1.DESTORY)]: this.proxyDestory(instance, events.onDestory)
         });
-        Object.defineProperty(instance, CURRENT, this.getCurrentProperty(builderField));
+        Object.defineProperty(instance, calculator_constant_1.CURRENT, this.getCurrentProperty(builderField));
         delete events.onMounted;
         delete events.onDestory;
     }
@@ -42,19 +45,19 @@ export class InstanceExtension extends BasicExtension {
             if (hasMounted) {
                 instance.onMounted(id);
             }
-            if (current instanceof BuilderModel && !current.id) {
+            if (current instanceof builder_model_1.BuilderModel && !current.id) {
                 console.error(`Builder needs to set the ID property: ${id}`);
             }
         };
         return { get, set };
     }
     addInstance([jsonField, builderField]) {
-        this.pushAction(jsonField, [{ type: DESTORY, runObservable: true }, { type: MOUNTED }]);
-        this.defineProperty(builderField, INSTANCE, InstanceExtension.createInstance());
+        this.pushAction(jsonField, [{ type: calculator_constant_1.DESTORY, runObservable: true }, { type: calculator_constant_1.MOUNTED }]);
+        this.defineProperty(builderField, calculator_constant_1.INSTANCE, InstanceExtension.createInstance());
     }
     proxyDestory(instance, onDestory) {
         const destoryHandler = (actionEvent) => {
-            const currentIsBuildModel = instance.current instanceof BuilderModel;
+            const currentIsBuildModel = instance.current instanceof builder_model_1.BuilderModel;
             instance.current && (instance.current = null);
             instance.detectChanges = () => undefined;
             !currentIsBuildModel && instance.destory.next(actionEvent);
@@ -62,22 +65,23 @@ export class InstanceExtension extends BasicExtension {
         return (...args) => onDestory(...args).subscribe(destoryHandler);
     }
     beforeDestory() {
-        if (!isEmpty(this.buildFieldList)) {
-            return toForkJoin(this.buildFieldList.map(({ id, instance }) => new Observable((subscribe) => {
+        if (!(0, lodash_1.isEmpty)(this.buildFieldList)) {
+            return (0, utility_1.toForkJoin)(this.buildFieldList.map(({ id, instance }) => new import_rxjs_1.Observable((subscribe) => {
                 instance.destory.subscribe(() => {
                     subscribe.next(id);
                     subscribe.complete();
                 });
-            }))).pipe(observableMap(() => transformObservable(super.beforeDestory())));
+            }))).pipe((0, utility_1.observableMap)(() => (0, utility_1.transformObservable)(super.beforeDestory())));
         }
     }
     destory() {
         this.buildFieldList.forEach((buildField) => {
             const { instance } = buildField;
             instance.destory.unsubscribe();
-            this.unDefineProperty(instance, ['detectChanges', this.getEventType(DESTORY), this.getEventType(MOUNTED), CURRENT]);
-            this.defineProperty(buildField, INSTANCE, null);
+            this.unDefineProperty(instance, ['detectChanges', this.getEventType(calculator_constant_1.DESTORY), this.getEventType(calculator_constant_1.MOUNTED), calculator_constant_1.CURRENT]);
+            this.defineProperty(buildField, calculator_constant_1.INSTANCE, null);
         });
         return super.destory();
     }
 }
+exports.InstanceExtension = InstanceExtension;

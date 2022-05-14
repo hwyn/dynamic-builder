@@ -1,4 +1,7 @@
-export var Visibility;
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Visibility = void 0;
+var Visibility;
 (function (Visibility) {
     Visibility["none"] = "none";
     Visibility["hidden"] = "hidden";
@@ -6,4 +9,4 @@ export var Visibility;
     Visibility["readonly"] = "readonly";
     Visibility["disabled"] = "disabled";
     Visibility["required"] = "required";
-})(Visibility || (Visibility = {}));
+})(Visibility = exports.Visibility || (exports.Visibility = {}));

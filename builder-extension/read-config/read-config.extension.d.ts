@@ -1,4 +1,4 @@
-import { Observable } from 'rxjs';
+import { Observable } from '@fm/import-rxjs';
 import { BasicExtension } from "../basic/basic.extension";
 export declare class ReadConfigExtension extends BasicExtension {
     protected extension(): void | Observable<any>;
