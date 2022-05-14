@@ -1,23 +1,20 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.CheckVisibilityExtension = void 0;
-const lodash_1 = require("lodash");
-const basic_extension_1 = require("../basic/basic.extension");
-const calculator_constant_1 = require("../constant/calculator.constant");
-class CheckVisibilityExtension extends basic_extension_1.BasicExtension {
-    visibilityTypeName = calculator_constant_1.CHECK_VISIBILITY;
+import { isEmpty, isUndefined } from 'lodash';
+import { BasicExtension } from '../basic/basic.extension';
+import { CHANGE, CHECK_VISIBILITY, LOAD, LOAD_ACTION } from '../constant/calculator.constant';
+export class CheckVisibilityExtension extends BasicExtension {
+    visibilityTypeName = CHECK_VISIBILITY;
     builderFields;
-    defaultDependents = [calculator_constant_1.LOAD, calculator_constant_1.CHANGE].map((type) => ({ type, fieldId: this.builder.id }));
+    defaultDependents = [LOAD, CHANGE].map((type) => ({ type, fieldId: this.builder.id }));
     extension() {
         const visibliityList = this.jsonFields.filter(this.checkNeedOrDefaultVisibility.bind(this));
-        if (!(0, lodash_1.isEmpty)(visibliityList)) {
+        if (!isEmpty(visibliityList)) {
             this.builderFields = this.mapFields(visibliityList, this.addFieldCalculators.bind(this));
             this.pushCalculators(this.json, [{
                     action: this.bindCalculatorAction(this.checkVisibility.bind(this, {})),
                     dependents: this.defaultDependents
                 }, {
                     action: this.bindCalculatorAction(this.removeOnEvent.bind(this)),
-                    dependents: { type: calculator_constant_1.LOAD_ACTION, fieldId: this.builder.id }
+                    dependents: { type: LOAD_ACTION, fieldId: this.builder.id }
                 }]);
         }
     }
@@ -66,7 +63,7 @@ class CheckVisibilityExtension extends basic_extension_1.BasicExtension {
     }
     checkNeedOrDefaultVisibility(jsonField) {
         const { visibility, checkVisibility } = jsonField;
-        const isCheck = !(0, lodash_1.isUndefined)(checkVisibility || visibility) || this.getParentVisibility();
+        const isCheck = !isUndefined(checkVisibility || visibility) || this.getParentVisibility();
         if (isCheck && !checkVisibility) {
             jsonField.checkVisibility = () => visibility || this.getParentVisibility();
         }
@@ -77,4 +74,3 @@ class CheckVisibilityExtension extends basic_extension_1.BasicExtension {
         return parent && parent.getFieldById(id).visibility;
     }
 }
-exports.CheckVisibilityExtension = CheckVisibilityExtension;

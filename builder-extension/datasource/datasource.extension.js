@@ -1,17 +1,14 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.DataSourceExtension = void 0;
-const lodash_1 = require("lodash");
-const basic_extension_1 = require("../basic/basic.extension");
-const calculator_constant_1 = require("../constant/calculator.constant");
-class DataSourceExtension extends basic_extension_1.BasicExtension {
+import { isEmpty, isUndefined } from 'lodash';
+import { BasicExtension } from '../basic/basic.extension';
+import { DATD_SOURCE, LOAD_ACTION, LOAD_VIEW_MODEL } from '../constant/calculator.constant';
+export class DataSourceExtension extends BasicExtension {
     builderFields;
     extension() {
-        this.builderFields = this.mapFields(this.jsonFields.filter(({ dataSource }) => !(0, lodash_1.isUndefined)(dataSource)), this.addFieldCalculators.bind(this));
-        if (!(0, lodash_1.isEmpty)(this.builderFields)) {
+        this.builderFields = this.mapFields(this.jsonFields.filter(({ dataSource }) => !isUndefined(dataSource)), this.addFieldCalculators.bind(this));
+        if (!isEmpty(this.builderFields)) {
             this.pushCalculators(this.json, [{
                     action: this.bindCalculatorAction(this.createOnDataSourceConfig.bind(this)),
-                    dependents: { type: calculator_constant_1.LOAD_ACTION, fieldId: this.builder.id }
+                    dependents: { type: LOAD_ACTION, fieldId: this.builder.id }
                 }]);
         }
     }
@@ -32,23 +29,23 @@ class DataSourceExtension extends basic_extension_1.BasicExtension {
     createOnDataSourceConfig() {
         this.builderFields.forEach((builderField) => {
             const { events = {}, field } = builderField;
-            this.defineProperty(builderField, this.getEventType(calculator_constant_1.DATD_SOURCE), events.onDataSource);
+            this.defineProperty(builderField, this.getEventType(DATD_SOURCE), events.onDataSource);
             delete field.dataSource;
             delete events.onDataSource;
         });
     }
     serializeDataSourceConfig(jsonField) {
         const { dataSource: jsonDataSource } = jsonField;
-        const defaultDependents = { type: calculator_constant_1.LOAD_VIEW_MODEL, fieldId: this.builder.id };
-        const dataSource = this.serializeCalculatorConfig(jsonDataSource, calculator_constant_1.DATD_SOURCE, defaultDependents);
+        const defaultDependents = { type: LOAD_VIEW_MODEL, fieldId: this.builder.id };
+        const dataSource = this.serializeCalculatorConfig(jsonDataSource, DATD_SOURCE, defaultDependents);
         const { action, source } = dataSource;
-        if (!(0, lodash_1.isEmpty)(source)) {
+        if (!isEmpty(source)) {
             action.handler = () => source;
         }
         return dataSource;
     }
     sourceToMetadata(sources, metadata = {}) {
-        if ((0, lodash_1.isEmpty)(metadata)) {
+        if (isEmpty(metadata)) {
             return sources;
         }
         const metdataKeys = Object.keys(metadata);
@@ -63,4 +60,3 @@ class DataSourceExtension extends basic_extension_1.BasicExtension {
         return sources;
     }
 }
-exports.DataSourceExtension = DataSourceExtension;

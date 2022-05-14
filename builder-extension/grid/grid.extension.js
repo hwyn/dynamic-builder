@@ -1,10 +1,7 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.GridExtension = void 0;
-const lodash_1 = require("lodash");
-const token_1 = require("../../token");
-const basic_extension_1 = require("../basic/basic.extension");
-const calculator_constant_1 = require("../constant/calculator.constant");
+import { cloneDeep, groupBy, merge } from 'lodash';
+import { BIND_BUILDER_ELEMENT } from '../../token';
+import { BasicExtension } from '../basic/basic.extension';
+import { ELEMENT, GRID, LATOUT_ID, LAYOUT, LOAD } from '../constant/calculator.constant';
 const defaultLayout = { column: 12, group: 1 };
 const defaultGrid = {
     spacing: 0,
@@ -12,32 +9,32 @@ const defaultGrid = {
     alignItems: 'flex-start',
     groups: [12]
 };
-class GridExtension extends basic_extension_1.BasicExtension {
+export class GridExtension extends BasicExtension {
     layoutBuildFields;
     extension() {
         this.pushCalculators(this.json, {
             action: this.bindCalculatorAction(this.createLoadGrid.bind(this)),
-            dependents: { type: calculator_constant_1.LOAD, fieldId: this.builder.id }
+            dependents: { type: LOAD, fieldId: this.builder.id }
         });
     }
     createLoadGrid() {
-        this.defineProperty(this.cache, calculator_constant_1.GRID, this.createGrid());
+        this.defineProperty(this.cache, GRID, this.createGrid());
         this.layoutBuildFields = this.mapFields(this.jsonFields, this.addFieldLayout.bind(this, {}));
-        this.defineProperty(this.builder, calculator_constant_1.ELEMENT, this.ls.getProvider(token_1.BIND_BUILDER_ELEMENT, this.cache.grid));
+        this.defineProperty(this.builder, ELEMENT, this.ls.getProvider(BIND_BUILDER_ELEMENT, this.cache.grid));
     }
     addFieldLayout(cursor, [, builderField]) {
         const { field, field: { layout } } = builderField;
-        const mergeLayout = (0, lodash_1.merge)((0, lodash_1.cloneDeep)(defaultLayout), layout || {});
+        const mergeLayout = merge(cloneDeep(defaultLayout), layout || {});
         const { row, group } = mergeLayout;
         cursor[group] = row || cursor[group] || 1;
-        this.defineProperty(builderField, calculator_constant_1.LAYOUT, (0, lodash_1.merge)({ row: cursor[group] }, mergeLayout));
+        this.defineProperty(builderField, LAYOUT, merge({ row: cursor[group] }, mergeLayout));
         delete field.layout;
     }
     createGrid() {
         const { grid } = this.json;
-        const { id = calculator_constant_1.LATOUT_ID, groups, additional = [], ...other } = (0, lodash_1.merge)((0, lodash_1.cloneDeep)(defaultGrid), grid);
+        const { id = LATOUT_ID, groups, additional = [], ...other } = merge(cloneDeep(defaultGrid), grid);
         const { justify, alignItems, spacing } = other;
-        const groupLayout = (0, lodash_1.groupBy)(additional, ({ group }) => group);
+        const groupLayout = groupBy(additional, ({ group }) => group);
         const defaultGroupAdditional = { justify, alignItems, spacing };
         const groupAdditional = groups.map((xs, index) => {
             const [item = {}] = groupLayout[index + 1] || [];
@@ -46,10 +43,9 @@ class GridExtension extends basic_extension_1.BasicExtension {
         return { id, ...other, additional: groupAdditional };
     }
     destory() {
-        this.defineProperty(this.cache, calculator_constant_1.GRID, null);
-        this.defineProperty(this.builder, calculator_constant_1.ELEMENT, null);
-        this.layoutBuildFields.forEach((builderField) => this.defineProperty(builderField, calculator_constant_1.LAYOUT, null));
+        this.defineProperty(this.cache, GRID, null);
+        this.defineProperty(this.builder, ELEMENT, null);
+        this.layoutBuildFields.forEach((builderField) => this.defineProperty(builderField, LAYOUT, null));
         return super.destory();
     }
 }
-exports.GridExtension = GridExtension;

@@ -1,33 +1,30 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.FormExtension = void 0;
-const lodash_1 = require("lodash");
-const builder_1 = require("../../builder");
-const token_1 = require("../../token");
-const basic_extension_1 = require("../basic/basic.extension");
-const calculator_constant_1 = require("../constant/calculator.constant");
-class FormExtension extends basic_extension_1.BasicExtension {
+import { isEmpty } from 'lodash';
+import { Visibility } from '../../builder';
+import { BIND_FORM_CONTROL } from '../../token';
+import { BasicExtension } from '../basic/basic.extension';
+import { CHANGE, CHECK_VISIBILITY, CONTROL, LOAD_ACTION, NOTIFY_VIEW_MODEL_CHANGE } from '../constant/calculator.constant';
+export class FormExtension extends BasicExtension {
     builderFields = [];
-    defaultChangeType = calculator_constant_1.CHANGE;
+    defaultChangeType = CHANGE;
     extension() {
-        this.builderFields = this.mapFields(this.jsonFields.filter(({ dataBinding }) => !(0, lodash_1.isEmpty)(dataBinding)), this.createMergeControl.bind(this));
+        this.builderFields = this.mapFields(this.jsonFields.filter(({ dataBinding }) => !isEmpty(dataBinding)), this.createMergeControl.bind(this));
     }
     createMergeControl([jsonField, builderField]) {
         const { id, updateOn, checkVisibility, validators } = jsonField;
         const changeType = this.getChangeType(jsonField);
         this.pushCalculators(jsonField, [{
                 action: this.bindCalculatorAction(this.addControl.bind(this, jsonField, builderField)),
-                dependents: { type: calculator_constant_1.LOAD_ACTION, fieldId: this.builder.id }
+                dependents: { type: LOAD_ACTION, fieldId: this.builder.id }
             }, {
                 action: this.bindCalculatorAction(this.createChange.bind(this)),
                 dependents: { type: changeType, fieldId: id }
             }, {
                 action: this.bindCalculatorAction(this.createNotifyChange.bind(this, jsonField)),
-                dependents: { type: calculator_constant_1.NOTIFY_VIEW_MODEL_CHANGE, fieldId: this.builder.id }
+                dependents: { type: NOTIFY_VIEW_MODEL_CHANGE, fieldId: this.builder.id }
             },
             ...checkVisibility ? [{
                     action: this.bindCalculatorAction(this.createVisibility.bind(this)),
-                    dependents: { type: calculator_constant_1.CHECK_VISIBILITY, fieldId: id }
+                    dependents: { type: CHECK_VISIBILITY, fieldId: id }
                 }] : [],
             ...validators ? [{
                     action: this.bindCalculatorAction(this.createValidaity.bind(this)),
@@ -37,8 +34,8 @@ class FormExtension extends basic_extension_1.BasicExtension {
     addControl(jsonField, builderField) {
         const { dataBinding } = jsonField;
         const value = this.getValueToModel(dataBinding, builderField);
-        const control = this.ls.getProvider(token_1.BIND_FORM_CONTROL, value, { builder: this.builder, builderField });
-        this.defineProperty(builderField, calculator_constant_1.CONTROL, control);
+        const control = this.ls.getProvider(BIND_FORM_CONTROL, value, { builder: this.builder, builderField });
+        this.defineProperty(builderField, CONTROL, control);
         control.changeValues.subscribe((_value) => this.setValueToModel(dataBinding, _value, builderField));
         delete builderField.field.dataBinding;
         this.excuteChangeEvent(jsonField, value);
@@ -55,9 +52,9 @@ class FormExtension extends basic_extension_1.BasicExtension {
     createVisibility({ builderField, builder: { ready }, actionEvent }) {
         ready && this.changeVisibility(builderField, actionEvent);
     }
-    changeVisibility({ control }, visibility = builder_1.Visibility.visible) {
+    changeVisibility({ control }, visibility = Visibility.visible) {
         if (control) {
-            const { none, disabled, hidden, readonly } = builder_1.Visibility;
+            const { none, disabled, hidden, readonly } = Visibility;
             const isDisabled = [none, hidden, disabled, readonly].includes(visibility);
             isDisabled ? control.disable() : control.enable();
         }
@@ -88,9 +85,8 @@ class FormExtension extends basic_extension_1.BasicExtension {
     destory() {
         this.builderFields.forEach((builderField) => {
             builderField.control?.destory();
-            this.defineProperty(builderField, calculator_constant_1.CONTROL, null);
+            this.defineProperty(builderField, CONTROL, null);
         });
         return super.destory();
     }
 }
-exports.FormExtension = FormExtension;

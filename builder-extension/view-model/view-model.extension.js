@@ -1,37 +1,34 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ViewModelExtension = void 0;
-const basic_extension_1 = require("../basic/basic.extension");
-const calculator_constant_1 = require("../constant/calculator.constant");
-const base_view_1 = require("./base.view");
-class ViewModelExtension extends basic_extension_1.BasicExtension {
+import { BasicExtension } from '../basic/basic.extension';
+import { LOAD, LOAD_VIEW_MODEL, NOTIFY_VIEW_MODEL_CHANGE, REFRES_DATA, VIEW_MODEL } from '../constant/calculator.constant';
+import { BaseView } from './base.view';
+export class ViewModelExtension extends BasicExtension {
     extension() {
         this.pushCalculators(this.json, {
             action: this.createViewModelCalculator(),
-            dependents: { type: calculator_constant_1.LOAD, fieldId: this.builder.id }
+            dependents: { type: LOAD, fieldId: this.builder.id }
         });
     }
     createViewModelCalculator() {
         const { actions = [] } = this.json;
-        const hasLoadEvent = actions.some(({ type = `` }) => type === calculator_constant_1.LOAD);
+        const hasLoadEvent = actions.some(({ type = `` }) => type === LOAD);
         const handler = ({ actionEvent }) => {
             this.createViewModel(hasLoadEvent ? actionEvent : {});
             this.createNotifyEvent();
         };
-        return { type: calculator_constant_1.LOAD_VIEW_MODEL, handler };
+        return { type: LOAD_VIEW_MODEL, handler };
     }
     createViewModel(store) {
-        this.cache.viewModel = store instanceof base_view_1.BaseView ? store : new base_view_1.BaseView(this.ls, store);
-        this.definePropertyGet(this.builder, calculator_constant_1.VIEW_MODEL, () => this.cache.viewModel.model);
+        this.cache.viewModel = store instanceof BaseView ? store : new BaseView(this.ls, store);
+        this.definePropertyGet(this.builder, VIEW_MODEL, () => this.cache.viewModel.model);
     }
     createNotifyEvent() {
-        const notifyAction = { type: calculator_constant_1.NOTIFY_VIEW_MODEL_CHANGE, handler: this.notifyHandler.bind(this) };
-        const refresAction = { type: calculator_constant_1.REFRES_DATA, handler: this.refresHandler.bind(this) };
+        const notifyAction = { type: NOTIFY_VIEW_MODEL_CHANGE, handler: this.notifyHandler.bind(this) };
+        const refresAction = { type: REFRES_DATA, handler: this.refresHandler.bind(this) };
         const props = { builder: this.builder, id: this.builder.id };
         const actions = this.createActions([notifyAction, refresAction], props, { ls: this.ls });
         this.definePropertys(this.builder, {
-            [calculator_constant_1.NOTIFY_VIEW_MODEL_CHANGE]: actions[this.getEventType(calculator_constant_1.NOTIFY_VIEW_MODEL_CHANGE)],
-            [calculator_constant_1.REFRES_DATA]: actions[this.getEventType(calculator_constant_1.REFRES_DATA)]
+            [NOTIFY_VIEW_MODEL_CHANGE]: actions[this.getEventType(NOTIFY_VIEW_MODEL_CHANGE)],
+            [REFRES_DATA]: actions[this.getEventType(REFRES_DATA)]
         });
     }
     notifyHandler({ builder, actionEvent }, options = { hasSelf: true }) {
@@ -44,8 +41,7 @@ class ViewModelExtension extends basic_extension_1.BasicExtension {
         this.cache?.viewModel.refreshData(actionEvent);
     }
     destory() {
-        this.unDefineProperty(this.builder, [calculator_constant_1.VIEW_MODEL, calculator_constant_1.NOTIFY_VIEW_MODEL_CHANGE]);
+        this.unDefineProperty(this.builder, [VIEW_MODEL, NOTIFY_VIEW_MODEL_CHANGE]);
         return super.destory();
     }
 }
-exports.ViewModelExtension = ViewModelExtension;
