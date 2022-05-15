@@ -2,7 +2,9 @@
   "name": "dynamic-builder",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "./cjs/index.js",
+  "module": "./esm5/index.js",
+  "es2015": "./esm/index.js",
   "dependencies": {
     "@fm/import-rxjs": "git+https://github.com/hwyn/import-rxjs.git"
   },
