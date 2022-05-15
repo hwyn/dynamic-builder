@@ -1,8 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LifeCycleExtension = void 0;
-const import_rxjs_1 = require("@fm/import-rxjs");
 const lodash_1 = require("lodash");
+const rxjs_1 = require("rxjs");
+const operators_1 = require("rxjs/operators");
 const utility_1 = require("../../utility");
 const basic_extension_1 = require("../basic/basic.extension");
 const calculator_constant_1 = require("../constant/calculator.constant");
@@ -11,7 +12,7 @@ class LifeCycleExtension extends basic_extension_1.BasicExtension {
     calculators = [];
     nonSelfCalculators = [];
     lifeActions;
-    detectChanges = this.cache.detectChanges.pipe((0, import_rxjs_1.filter)(() => !this.hasChange));
+    detectChanges = this.cache.detectChanges.pipe((0, operators_1.filter)(() => !this.hasChange));
     extension() {
         const nonSelfBuilders = this.builder.root.$$cache.nonSelfBuilders;
         this.defineProperty(this.cache, calculator_constant_1.NON_SELF_BUILSERS, nonSelfBuilders || []);
@@ -37,7 +38,7 @@ class LifeCycleExtension extends basic_extension_1.BasicExtension {
     }
     invokeLifeCycle(type, event, otherEvent) {
         const lifeActions = this.lifeActions;
-        return lifeActions[type] ? lifeActions[type](event, otherEvent) : (0, import_rxjs_1.of)(event);
+        return lifeActions[type] ? lifeActions[type](event, otherEvent) : (0, rxjs_1.of)(event);
     }
     serializeCalculators() {
         this.createCalculators();
@@ -108,7 +109,7 @@ class LifeCycleExtension extends basic_extension_1.BasicExtension {
         this.unDefineProperty(this.cache, [calculator_constant_1.ORIGIN_CALCULATORS, calculator_constant_1.ORIGIN_NON_SELF_CALCULATORS, calculator_constant_1.NON_SELF_BUILSERS]);
         this.unDefineProperty(this, ['detectChanges', 'lifeActions']);
         const parentField = this.builder.parent?.getFieldById(this.builder.id);
-        return (0, utility_1.transformObservable)(super.destory()).pipe((0, import_rxjs_1.tap)(() => parentField && parentField.instance?.destory.next(this.builder.id)));
+        return (0, utility_1.transformObservable)(super.destory()).pipe((0, operators_1.tap)(() => parentField && parentField.instance?.destory.next(this.builder.id)));
     }
 }
 exports.LifeCycleExtension = LifeCycleExtension;

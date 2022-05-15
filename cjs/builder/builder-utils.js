@@ -3,8 +3,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.init = void 0;
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-use-before-define */
-const import_rxjs_1 = require("@fm/import-rxjs");
 const lodash_1 = require("lodash");
+const rxjs_1 = require("rxjs");
+const operators_1 = require("rxjs/operators");
 const token_1 = require("../token");
 const utility_1 = require("../utility");
 const builder_engine_service_1 = require("./builder-engine.service");
@@ -31,7 +32,7 @@ function loadForBuild(props) {
         Object.defineProperty(this, '$$cache', (0, utility_1.withValue)(getCacheObj.call(this, props)));
         const beforeInits = Extensions.map((Extension) => new Extension(this, props, this.$$cache, props.config).init());
         return (0, utility_1.toForkJoin)([loadExample, ...beforeInits]);
-    }), (0, utility_1.observableMap)((examples) => (0, utility_1.toForkJoin)(examples.map((example) => example.afterInit()))), (0, import_rxjs_1.tap)((beforeDestorys) => {
+    }), (0, utility_1.observableMap)((examples) => (0, utility_1.toForkJoin)(examples.map((example) => example.afterInit()))), (0, operators_1.tap)((beforeDestorys) => {
         this.$$cache.ready = true;
         this.$$cache.beforeDestorys = beforeDestorys;
         this.$$cache.destoryed && destory.apply(this);
@@ -39,7 +40,7 @@ function loadForBuild(props) {
 }
 function getCacheObj(props) {
     const { config: { fields = [] } = {} } = props;
-    const { ready = false, destoryed = false, detectChanges = new import_rxjs_1.Subject(), destory: modelDestory = destory.bind(this), addChild: modelAddChild = addChild.bind(this), removeChild: modelRemoveChild = removeChild.bind(this) } = this.$$cache || {};
+    const { ready = false, destoryed = false, detectChanges = new rxjs_1.Subject(), destory: modelDestory = destory.bind(this), addChild: modelAddChild = addChild.bind(this), removeChild: modelRemoveChild = removeChild.bind(this) } = this.$$cache || {};
     return {
         ready,
         destoryed,

@@ -5,5 +5,5 @@ export declare class GridExtension extends BasicExtension {
     private createLoadGrid;
     private addFieldLayout;
     private createGrid;
-    protected destory(): void | import("rxjs/internal/Observable").Observable<any>;
+    protected destory(): void | import("rxjs").Observable<any>;
 }

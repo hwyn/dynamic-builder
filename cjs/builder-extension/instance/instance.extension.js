@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.InstanceExtension = void 0;
-const import_rxjs_1 = require("@fm/import-rxjs");
 const lodash_1 = require("lodash");
+const rxjs_1 = require("rxjs");
 const builder_model_1 = require("../../builder/builder-model");
 const utility_1 = require("../../utility");
 const basic_extension_1 = require("../basic/basic.extension");
@@ -12,7 +12,7 @@ class InstanceExtension extends basic_extension_1.BasicExtension {
     static createInstance() {
         return {
             current: null,
-            destory: new import_rxjs_1.Subject(),
+            destory: new rxjs_1.Subject(),
             onMounted: () => void (0),
             onDestory: () => void (0),
             detectChanges: () => undefined,
@@ -66,7 +66,7 @@ class InstanceExtension extends basic_extension_1.BasicExtension {
     }
     beforeDestory() {
         if (!(0, lodash_1.isEmpty)(this.buildFieldList)) {
-            return (0, utility_1.toForkJoin)(this.buildFieldList.map(({ id, instance }) => new import_rxjs_1.Observable((subscribe) => {
+            return (0, utility_1.toForkJoin)(this.buildFieldList.map(({ id, instance }) => new rxjs_1.Observable((subscribe) => {
                 instance.destory.subscribe(() => {
                     subscribe.next(id);
                     subscribe.complete();

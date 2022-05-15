@@ -1,4 +1,5 @@
-import { forkJoin, map, of } from '@fm/import-rxjs';
+import { forkJoin, of } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { isObservable } from '../utility';
 export function toForkJoin(resultList) {
     const obsListIndex = [];

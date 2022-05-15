@@ -1,4 +1,4 @@
-import { map } from '@fm/import-rxjs';
+import { map } from 'rxjs/operators';
 export function observableMap(fn) {
     return (souce) => souce.lift(function (liftedSource) {
         liftedSource.subscribe((result) => fn(result).subscribe(this));

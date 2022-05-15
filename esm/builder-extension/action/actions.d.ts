@@ -1,5 +1,5 @@
 import { LocatorStorage } from '@fm/di';
-import { Observable } from '@fm/import-rxjs';
+import { Observable } from 'rxjs';
 import { Action as ActionProps, ActionContext, ActionIntercept, ActionInterceptProps } from './type-api';
 export declare class Action implements ActionIntercept {
     private ls;

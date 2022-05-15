@@ -6,5 +6,5 @@ export declare class ViewModelExtension extends BasicExtension {
     private createNotifyEvent;
     private notifyHandler;
     private refresHandler;
-    protected destory(): void | import("rxjs/internal/Observable").Observable<any>;
+    protected destory(): void | import("rxjs").Observable<any>;
 }

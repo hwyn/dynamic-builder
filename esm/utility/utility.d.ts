@@ -1,4 +1,4 @@
-import { Observable } from '@fm/import-rxjs';
+import { Observable } from 'rxjs';
 export declare function isObservable(obj: any): boolean;
 export declare function transformObservable(obj: any): Observable<any>;
 export declare function transformObj(result: any, returnValue?: any): any;

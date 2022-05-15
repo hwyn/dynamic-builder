@@ -15,5 +15,5 @@ export declare class FormExtension extends BasicExtension {
     private getValueToModel;
     private setValueToModel;
     private isDomEvent;
-    destory(): void | import("rxjs/internal/Observable").Observable<any>;
+    destory(): void | import("rxjs").Observable<any>;
 }

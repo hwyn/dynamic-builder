@@ -1,8 +1,9 @@
 import { __decorate, __metadata, __param } from "tslib";
 /* eslint-disable max-lines-per-function */
 import { Inject, LocatorStorage } from '@fm/di';
-import { forkJoin, map, of } from '@fm/import-rxjs';
 import { flatMap, isEmpty } from 'lodash';
+import { forkJoin, of } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { ACTIONS_CONFIG } from '../../token';
 import { observableTap, transformObservable } from '../../utility';
 import { serializeAction } from '../basic/basic.extension';

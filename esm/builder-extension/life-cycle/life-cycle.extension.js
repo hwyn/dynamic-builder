@@ -1,5 +1,6 @@
-import { filter, of, tap } from '@fm/import-rxjs';
 import { cloneDeep, flatMap, isEmpty } from 'lodash';
+import { of } from 'rxjs';
+import { filter, tap } from 'rxjs/operators';
 import { observableMap, transformObservable } from '../../utility';
 import { BasicExtension } from '../basic/basic.extension';
 import { CHANGE, DESTORY, LOAD, NON_SELF_BUILSERS, ORIGIN_CALCULATORS, ORIGIN_NON_SELF_CALCULATORS } from '../constant/calculator.constant';

@@ -4,8 +4,9 @@ exports.Action = void 0;
 const tslib_1 = require("tslib");
 /* eslint-disable max-lines-per-function */
 const di_1 = require("@fm/di");
-const import_rxjs_1 = require("@fm/import-rxjs");
 const lodash_1 = require("lodash");
+const rxjs_1 = require("rxjs");
+const operators_1 = require("rxjs/operators");
 const token_1 = require("../../token");
 const utility_1 = require("../../utility");
 const basic_extension_1 = require("../basic/basic.extension");
@@ -28,7 +29,7 @@ let Action = class Action {
         return (0, lodash_1.isEmpty)(builder) ? {} : { builder, builderField: builder.getFieldById(id) };
     }
     call(calculators, builder, callLink = []) {
-        return (value) => (0, import_rxjs_1.forkJoin)(calculators.map(({ targetId: id, action }) => {
+        return (value) => (0, rxjs_1.forkJoin)(calculators.map(({ targetId: id, action }) => {
             return this.invoke({ ...action, callLink }, { builder, id }, value);
         }));
     }
@@ -36,7 +37,7 @@ let Action = class Action {
         const { builder, id } = props;
         const link = [...callLink || [], { fieldId: id, type: type }];
         const filterCalculators = calculators.filter(({ dependent: { fieldId, type: cType } }) => fieldId === id && cType === type);
-        return !(0, lodash_1.isEmpty)(filterCalculators) ? this.call(filterCalculators, builder, link) : (value) => (0, import_rxjs_1.of)(value);
+        return !(0, lodash_1.isEmpty)(filterCalculators) ? this.call(filterCalculators, builder, link) : (value) => (0, rxjs_1.of)(value);
     }
     invokeCalculators(actionProps, actionSub, props) {
         const { builder, id } = props;
@@ -44,7 +45,7 @@ let Action = class Action {
         const nonSelfBuilders = builder.$$cache.nonSelfBuilders || [];
         const calculatorsInvokes = nonSelfBuilders.map((nonBuild) => this.invokeCallCalculators(nonBuild.nonSelfCalculators, actionProps, { builder: nonBuild, id }));
         calculatorsInvokes.push(this.invokeCallCalculators(calculators || [], actionProps, props));
-        return actionSub.pipe((0, utility_1.observableTap)((value) => (0, import_rxjs_1.forkJoin)(calculatorsInvokes.map((invokeCalculators) => invokeCalculators(value)))));
+        return actionSub.pipe((0, utility_1.observableTap)((value) => (0, rxjs_1.forkJoin)(calculatorsInvokes.map((invokeCalculators) => invokeCalculators(value)))));
     }
     invokeAction(action, props, event = null, ...otherEventParam) {
         const { name, handler, stop } = action;
@@ -52,14 +53,14 @@ let Action = class Action {
             event.stopPropagation();
         }
         const e = this.createEvent(event, otherEventParam);
-        return name || handler ? this.executeAction(action, this.getActionContext(props), e) : (0, import_rxjs_1.of)(event);
+        return name || handler ? this.executeAction(action, this.getActionContext(props), e) : (0, rxjs_1.of)(event);
     }
     invoke(actions, props, event = null, ...otherEventParam) {
         let actionsSub;
         let action;
         if (Array.isArray(actions)) {
             action = (0, basic_extension_1.serializeAction)(actions.filter(({ type }) => !!type)[0]);
-            actionsSub = (0, import_rxjs_1.forkJoin)((actions).map((a) => (this.invokeAction((0, basic_extension_1.serializeAction)(a), props, event, ...otherEventParam)))).pipe((0, import_rxjs_1.map)((result) => result.pop()));
+            actionsSub = (0, rxjs_1.forkJoin)((actions).map((a) => (this.invokeAction((0, basic_extension_1.serializeAction)(a), props, event, ...otherEventParam)))).pipe((0, operators_1.map)((result) => result.pop()));
         }
         else {
             action = (0, basic_extension_1.serializeAction)(actions);

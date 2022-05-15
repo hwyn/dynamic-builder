@@ -1,2 +1,2 @@
-import { Observable } from '@fm/import-rxjs';
+import { Observable } from 'rxjs';
 export declare function toForkJoin(resultList: any[]): Observable<any>;

@@ -1,5 +1,6 @@
-import { map, of, tap } from '@fm/import-rxjs';
 import { cloneDeep, isEmpty, isFunction, isString, uniq } from 'lodash';
+import { of } from 'rxjs';
+import { map, tap } from 'rxjs/operators';
 import { GET_JSON_CONFIG } from '../../token';
 import { observableMap, observableTap, toForkJoin } from '../../utility';
 import { BasicExtension } from "../basic/basic.extension";

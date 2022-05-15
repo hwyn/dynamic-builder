@@ -1,4 +1,5 @@
-import { map, of } from '@fm/import-rxjs';
+import { of } from 'rxjs';
+import { map } from 'rxjs/operators';
 export function isObservable(obj) {
     return obj && !!obj.subscribe;
 }

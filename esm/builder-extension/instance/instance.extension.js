@@ -1,5 +1,5 @@
-import { Observable, Subject } from '@fm/import-rxjs';
 import { isEmpty } from 'lodash';
+import { Observable, Subject } from 'rxjs';
 import { BuilderModel } from '../../builder/builder-model';
 import { observableMap, toForkJoin, transformObservable } from '../../utility';
 import { BasicExtension } from '../basic/basic.extension';
