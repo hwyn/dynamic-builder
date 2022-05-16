@@ -4,6 +4,7 @@ exports.BasicExtension = exports.serializeAction = void 0;
 const lodash_1 = require("lodash");
 const utility_1 = require("../../utility");
 const create_actions_1 = require("../action/create-actions");
+const calculator_constant_1 = require("../constant/calculator.constant");
 const serializeAction = (action) => {
     return ((0, lodash_1.isString)(action) ? { name: action } : (0, lodash_1.isFunction)(action) ? { handler: action } : action);
 };
@@ -50,7 +51,7 @@ class BasicExtension {
         return calculatorConfig;
     }
     bindCalculatorAction(handler) {
-        return { type: 'calculator', handler };
+        return { type: calculator_constant_1.CALCULATOR, handler };
     }
     pushCalculators(fieldConfig, calculator) {
         fieldConfig.calculators = this.toArray(fieldConfig.calculators || []);

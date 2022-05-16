@@ -30,7 +30,7 @@ class InstanceExtension extends basic_extension_1.BasicExtension {
         const { instance, events = {} } = builderField;
         this.definePropertys(instance, {
             [this.getEventType(calculator_constant_1.MOUNTED)]: events.onMounted,
-            [this.getEventType(calculator_constant_1.DESTORY)]: this.proxyDestory(instance, events.onDestory)
+            [this.getEventType(calculator_constant_1.DESTORY)]: events.onDestory
         });
         Object.defineProperty(instance, calculator_constant_1.CURRENT, this.getCurrentProperty(builderField));
         delete events.onMounted;
@@ -52,17 +52,15 @@ class InstanceExtension extends basic_extension_1.BasicExtension {
         return { get, set };
     }
     addInstance([jsonField, builderField]) {
-        this.pushAction(jsonField, [{ type: calculator_constant_1.DESTORY, runObservable: true }, { type: calculator_constant_1.MOUNTED }]);
+        const destory = { type: calculator_constant_1.DESTORY, after: this.bindCalculatorAction(this.instanceDestory.bind(this)) };
+        this.pushAction(jsonField, [destory, { type: calculator_constant_1.MOUNTED }]);
         this.defineProperty(builderField, calculator_constant_1.INSTANCE, InstanceExtension.createInstance());
     }
-    proxyDestory(instance, onDestory) {
-        const destoryHandler = (actionEvent) => {
-            const currentIsBuildModel = instance.current instanceof builder_model_1.BuilderModel;
-            instance.current && (instance.current = null);
-            instance.detectChanges = () => undefined;
-            !currentIsBuildModel && instance.destory.next(actionEvent);
-        };
-        return (...args) => onDestory(...args).subscribe(destoryHandler);
+    instanceDestory({ actionEvent, builderField: { instance } }) {
+        const currentIsBuildModel = instance.current instanceof builder_model_1.BuilderModel;
+        instance.current && (instance.current = null);
+        instance.detectChanges = () => undefined;
+        return !currentIsBuildModel && instance.destory.next(actionEvent);
     }
     beforeDestory() {
         if (!(0, lodash_1.isEmpty)(this.buildFieldList)) {

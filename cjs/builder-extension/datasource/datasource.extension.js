@@ -7,23 +7,19 @@ const calculator_constant_1 = require("../constant/calculator.constant");
 class DataSourceExtension extends basic_extension_1.BasicExtension {
     builderFields;
     extension() {
-        this.builderFields = this.mapFields(this.jsonFields.filter(({ dataSource }) => !(0, lodash_1.isUndefined)(dataSource)), this.addFieldCalculators.bind(this));
-        if (!(0, lodash_1.isEmpty)(this.builderFields)) {
+        const jsonFields = this.jsonFields.filter(({ dataSource }) => !(0, lodash_1.isUndefined)(dataSource));
+        if (!(0, lodash_1.isEmpty)(jsonFields)) {
+            this.builderFields = this.mapFields(jsonFields, this.addFieldCalculators.bind(this));
             this.pushCalculators(this.json, [{
                     action: this.bindCalculatorAction(this.createOnDataSourceConfig.bind(this)),
                     dependents: { type: calculator_constant_1.LOAD_ACTION, fieldId: this.builder.id }
                 }]);
         }
     }
-    addFieldCalculators([jsonField, builderField]) {
+    addFieldCalculators([jsonField]) {
         const { action, dependents, metadata } = this.serializeDataSourceConfig(jsonField);
-        this.pushCalculators(jsonField, [
-            { action, dependents },
-            {
-                action: this.bindCalculatorAction(this.createSourceConfig.bind(this, metadata)),
-                dependents: { fieldId: builderField.id, type: action.type }
-            }
-        ]);
+        action.after = this.bindCalculatorAction(this.createSourceConfig.bind(this, metadata));
+        this.pushCalculators(jsonField, { action, dependents });
     }
     createSourceConfig(metadata, { actionEvent, builderField, builderField: { instance } }) {
         builderField.source = this.sourceToMetadata(actionEvent, metadata);
@@ -42,7 +38,7 @@ class DataSourceExtension extends basic_extension_1.BasicExtension {
         const defaultDependents = { type: calculator_constant_1.LOAD_VIEW_MODEL, fieldId: this.builder.id };
         const dataSource = this.serializeCalculatorConfig(jsonDataSource, calculator_constant_1.DATD_SOURCE, defaultDependents);
         const { action, source } = dataSource;
-        if (!(0, lodash_1.isEmpty)(source)) {
+        if (!(0, lodash_1.isEmpty)(source) && !action.handler) {
             action.handler = () => source;
         }
         return dataSource;

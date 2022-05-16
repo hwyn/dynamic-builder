@@ -4,6 +4,7 @@ export declare class FormExtension extends BasicExtension {
     private defaultChangeType;
     protected extension(): void;
     private createMergeControl;
+    private addChangeAction;
     private addControl;
     private createChange;
     private createValidaity;

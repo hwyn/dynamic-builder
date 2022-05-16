@@ -1,6 +1,6 @@
 import { isEmpty } from 'lodash';
 import { BasicExtension } from '../basic/basic.extension';
-import { ADD_EVENT_LISTENER, LOAD_ACTION, LOAD_VIEW_MODEL } from '../constant/calculator.constant';
+import { ADD_EVENT_LISTENER, EVENTS, LOAD_ACTION, LOAD_VIEW_MODEL } from '../constant/calculator.constant';
 export class ActionExtension extends BasicExtension {
     fields = [];
     extension() {
@@ -24,12 +24,12 @@ export class ActionExtension extends BasicExtension {
         const addActions = this.toArray(actions).filter(({ type }) => !events[this.getEventType(type)]);
         if (!isEmpty(addActions)) {
             const addEvents = this.createActions(this.toArray(addActions), { builder: this.builder, id }, { ls: this.ls });
-            this.defineProperty(builderField, 'events', { ...events, ...addEvents });
+            this.defineProperty(builderField, EVENTS, { ...events, ...addEvents });
             builderField.instance.detectChanges();
         }
     }
     destory() {
-        this.fields.forEach((field) => this.unDefineProperty(field, ['events', ADD_EVENT_LISTENER]));
+        this.fields.forEach((field) => this.unDefineProperty(field, [EVENTS, ADD_EVENT_LISTENER]));
         super.destory();
     }
 }

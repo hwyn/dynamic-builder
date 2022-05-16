@@ -19,8 +19,9 @@ export class ReadConfigExtension extends BasicExtension {
         }));
     }
     preloaded(jsonConfig) {
-        const builderFields = jsonConfig.fields.filter(this.eligiblePreloaded.bind(this));
-        if (jsonConfig.isPreloaded || !builderFields.length) {
+        const { isPreloaded, fields } = jsonConfig;
+        const builderFields = !isPreloaded ? fields.filter(this.eligiblePreloaded.bind(this)) : [];
+        if (!builderFields.length) {
             return of(jsonConfig);
         }
         return toForkJoin(builderFields.map(this.preloadedBuildField.bind(this)));

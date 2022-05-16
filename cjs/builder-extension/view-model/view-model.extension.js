@@ -21,7 +21,7 @@ class ViewModelExtension extends basic_extension_1.BasicExtension {
         return { type: calculator_constant_1.LOAD_VIEW_MODEL, handler };
     }
     createViewModel(store) {
-        this.cache.viewModel = store instanceof base_view_1.BaseView ? store : new base_view_1.BaseView(this.ls, store);
+        this.defineProperty(this.cache, calculator_constant_1.VIEW_MODEL, store instanceof base_view_1.BaseView ? store : new base_view_1.BaseView(this.ls, store));
         this.definePropertyGet(this.builder, calculator_constant_1.VIEW_MODEL, () => this.cache.viewModel.model);
     }
     createNotifyEvent() {
@@ -44,6 +44,7 @@ class ViewModelExtension extends basic_extension_1.BasicExtension {
         this.cache?.viewModel.refreshData(actionEvent);
     }
     destory() {
+        this.unDefineProperty(this.cache, [calculator_constant_1.VIEW_MODEL]);
         this.unDefineProperty(this.builder, [calculator_constant_1.VIEW_MODEL, calculator_constant_1.NOTIFY_VIEW_MODEL_CHANGE]);
         return super.destory();
     }

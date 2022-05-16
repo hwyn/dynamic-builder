@@ -1,6 +1,7 @@
 import { cloneDeep, isFunction, isString, merge } from 'lodash';
 import { transformObj, withGetOrSet, withValue } from '../../utility';
 import { createActions, getEventType } from '../action/create-actions';
+import { CALCULATOR } from '../constant/calculator.constant';
 export const serializeAction = (action) => {
     return (isString(action) ? { name: action } : isFunction(action) ? { handler: action } : action);
 };
@@ -46,7 +47,7 @@ export class BasicExtension {
         return calculatorConfig;
     }
     bindCalculatorAction(handler) {
-        return { type: 'calculator', handler };
+        return { type: CALCULATOR, handler };
     }
     pushCalculators(fieldConfig, calculator) {
         fieldConfig.calculators = this.toArray(fieldConfig.calculators || []);

@@ -61,16 +61,19 @@ function destory() {
     cacheObj.destoryed = true;
     if (ready && !destoryed) {
         try {
-            toForkJoin(beforeDestorys.map((beforeDestory) => beforeDestory && beforeDestory())).pipe(observableMap((extensionDestorys) => toForkJoin(extensionDestorys.map((extensionDestory) => extensionDestory && extensionDestory()))), observableMap(() => transformObservable(this.destory && this.destory.call(this)))).subscribe(() => {
-                cacheObj.ready = false;
-                cacheObj.fields.splice(0);
-                cacheObj.detectChanges.unsubscribe();
-                cacheObj.beforeDestorys.splice(0);
-                this.children.splice(0);
-                this.privateExtension?.splice(0);
-                this.parent && removeChild.call(this.parent, this);
-            }, (e) => {
-                console.error(e);
+            toForkJoin(beforeDestorys.map((beforeDestory) => beforeDestory && beforeDestory())).pipe(observableMap((extensionDestorys) => toForkJoin(extensionDestorys.map((extensionDestory) => extensionDestory && extensionDestory()))), observableMap(() => transformObservable(this.destory && this.destory.call(this)))).subscribe({
+                next: () => {
+                    cacheObj.ready = false;
+                    cacheObj.fields.splice(0);
+                    cacheObj.detectChanges.unsubscribe();
+                    cacheObj.beforeDestorys.splice(0);
+                    this.children.splice(0);
+                    this.privateExtension?.splice(0);
+                    this.parent && removeChild.call(this.parent, this);
+                },
+                error: (e) => {
+                    console.error(e);
+                }
             });
         }
         catch (e) {

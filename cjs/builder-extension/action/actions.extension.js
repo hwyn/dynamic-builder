@@ -27,12 +27,12 @@ class ActionExtension extends basic_extension_1.BasicExtension {
         const addActions = this.toArray(actions).filter(({ type }) => !events[this.getEventType(type)]);
         if (!(0, lodash_1.isEmpty)(addActions)) {
             const addEvents = this.createActions(this.toArray(addActions), { builder: this.builder, id }, { ls: this.ls });
-            this.defineProperty(builderField, 'events', { ...events, ...addEvents });
+            this.defineProperty(builderField, calculator_constant_1.EVENTS, { ...events, ...addEvents });
             builderField.instance.detectChanges();
         }
     }
     destory() {
-        this.fields.forEach((field) => this.unDefineProperty(field, ['events', calculator_constant_1.ADD_EVENT_LISTENER]));
+        this.fields.forEach((field) => this.unDefineProperty(field, [calculator_constant_1.EVENTS, calculator_constant_1.ADD_EVENT_LISTENER]));
         super.destory();
     }
 }

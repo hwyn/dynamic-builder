@@ -18,7 +18,7 @@ export class ViewModelExtension extends BasicExtension {
         return { type: LOAD_VIEW_MODEL, handler };
     }
     createViewModel(store) {
-        this.cache.viewModel = store instanceof BaseView ? store : new BaseView(this.ls, store);
+        this.defineProperty(this.cache, VIEW_MODEL, store instanceof BaseView ? store : new BaseView(this.ls, store));
         this.definePropertyGet(this.builder, VIEW_MODEL, () => this.cache.viewModel.model);
     }
     createNotifyEvent() {
@@ -41,6 +41,7 @@ export class ViewModelExtension extends BasicExtension {
         this.cache?.viewModel.refreshData(actionEvent);
     }
     destory() {
+        this.unDefineProperty(this.cache, [VIEW_MODEL]);
         this.unDefineProperty(this.builder, [VIEW_MODEL, NOTIFY_VIEW_MODEL_CHANGE]);
         return super.destory();
     }

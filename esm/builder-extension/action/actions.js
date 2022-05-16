@@ -49,8 +49,14 @@ let Action = class Action {
         if (stop && !isEmpty(event) && event?.stopPropagation) {
             event.stopPropagation();
         }
+        const { after, before } = action;
         const e = this.createEvent(event, otherEventParam);
-        return name || handler ? this.executeAction(action, this.getActionContext(props), e) : of(event);
+        const executeAction = () => name || handler ? this.executeAction(action, this.getActionContext(props), e) : of(event);
+        let actionSub = before ? this.invoke(before, props, event, otherEventParam).pipe(() => executeAction()) : executeAction();
+        if (after) {
+            actionSub = actionSub.pipe(observableTap((value) => this.invoke(after, props, value, ...otherEventParam)));
+        }
+        return actionSub;
     }
     invoke(actions, props, event = null, ...otherEventParam) {
         let actionsSub;

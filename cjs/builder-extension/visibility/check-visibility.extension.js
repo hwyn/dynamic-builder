@@ -23,13 +23,8 @@ class CheckVisibilityExtension extends basic_extension_1.BasicExtension {
     }
     addFieldCalculators([jsonField, builderField]) {
         const { action, dependents } = this.serializeCheckVisibilityConfig(jsonField);
-        this.pushCalculators(jsonField, [
-            { action, dependents },
-            {
-                action: this.bindCalculatorAction(this.checkVisibilityAfter.bind(this)),
-                dependents: { type: this.visibilityTypeName, fieldId: jsonField.id }
-            }
-        ]);
+        action.after = this.bindCalculatorAction(this.checkVisibilityAfter.bind(this));
+        this.pushCalculators(jsonField, [{ action, dependents }]);
         delete builderField.field.checkVisibility;
         return builderField;
     }
