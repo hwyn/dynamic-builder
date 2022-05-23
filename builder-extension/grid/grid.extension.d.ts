@@ -4,6 +4,5 @@ export declare class GridExtension extends BasicExtension {
     protected extension(): void;
     private createLoadGrid;
     private addFieldLayout;
-    private createGrid;
     protected destory(): void | import("rxjs").Observable<any>;
 }

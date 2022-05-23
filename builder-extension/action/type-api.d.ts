@@ -27,6 +27,6 @@ export interface ActionContext {
     builderField?: BuilderField;
 }
 export interface ActionIntercept {
-    invoke(action: Action, props?: ActionInterceptProps, event?: any, otherEventParam?: any[]): Observable<any>;
+    invoke(action: Action | string, props?: ActionInterceptProps, event?: any, otherEventParam?: any[]): Observable<any>;
     executeAction(action: string | Action, actionContext?: ActionContext, event?: Event | any, otherEventParam?: any[]): Observable<any>;
 }

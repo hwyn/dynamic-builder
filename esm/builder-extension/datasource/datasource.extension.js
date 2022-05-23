@@ -25,9 +25,11 @@ export class DataSourceExtension extends BasicExtension {
     createOnDataSourceConfig() {
         this.builderFields.forEach((builderField) => {
             const { events = {}, field } = builderField;
-            this.defineProperty(builderField, this.getEventType(DATD_SOURCE), events.onDataSource);
+            if (events.onDataSource) {
+                events.onDataSource && this.defineProperty(builderField, this.getEventType(DATD_SOURCE), events.onDataSource);
+                delete events.onDataSource;
+            }
             delete field.dataSource;
-            delete events.onDataSource;
         });
     }
     serializeDataSourceConfig(jsonField) {

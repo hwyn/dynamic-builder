@@ -1,5 +1,5 @@
 import { BuilderModel } from '../../builder/builder-model';
-export class BuilderExtensionsModel extends BuilderModel {
+export class BuilderModelExtensions extends BuilderModel {
     viewModel;
     refreshData;
     notifyViewModelChanges;

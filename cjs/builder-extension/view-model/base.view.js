@@ -9,11 +9,11 @@ class BaseView {
         this.ls = ls;
         this.store = store;
     }
-    setBindValue(dataBinding, value) {
-        (0, lodash_1.set)(this.store, dataBinding.path, value);
+    setBindValue(binding, value) {
+        (0, lodash_1.set)(this.store, binding.path, value);
     }
-    getBindValue(dataBinding) {
-        return (0, lodash_1.get)(this.store, dataBinding.path, dataBinding.default);
+    getBindValue(binding) {
+        return (0, lodash_1.get)(this.store, binding.path, binding.default);
     }
     refreshData(model) {
         this.store = model;

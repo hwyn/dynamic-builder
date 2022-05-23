@@ -65,7 +65,7 @@ let Action = class Action {
         let actionsSub;
         let action;
         if (Array.isArray(actions)) {
-            action = (0, basic_extension_1.serializeAction)(actions.filter(({ type }) => !!type)[0]);
+            action = (0, basic_extension_1.serializeAction)(actions.filter((a) => !!(0, basic_extension_1.serializeAction)(a).type)[0]);
             actionsSub = (0, rxjs_1.forkJoin)((actions).map((a) => (this.invokeAction((0, basic_extension_1.serializeAction)(a), props, event, ...otherEventParam)))).pipe((0, operators_1.map)((result) => result.pop()));
         }
         else {

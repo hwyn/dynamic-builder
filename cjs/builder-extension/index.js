@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.serializeAction = exports.BuilderModel = exports.InjectableValidator = exports.registryExtension = exports.forwardBuilderLayout = exports.forwardFormControl = exports.forwardGetJsonConfig = void 0;
+exports.serializeAction = exports.BuilderModel = exports.Grid = exports.InjectableValidator = exports.registryExtension = exports.forwardBuilderLayout = exports.forwardFormControl = exports.forwardGetJsonConfig = void 0;
 const tslib_1 = require("tslib");
 const di_1 = require("@fm/di");
 // eslint-disable-next-line max-len
@@ -62,7 +62,9 @@ tslib_1.__exportStar(require("./action/create-actions"), exports);
 tslib_1.__exportStar(require("./basic/basic.extension"), exports);
 tslib_1.__exportStar(require("./constant/calculator.constant"), exports);
 tslib_1.__exportStar(require("./form/type-api"), exports);
+var grid_1 = require("./grid/grid");
+Object.defineProperty(exports, "Grid", { enumerable: true, get: function () { return grid_1.Grid; } });
 var builder_extension_model_1 = require("./model/builder-extension-model");
-Object.defineProperty(exports, "BuilderModel", { enumerable: true, get: function () { return builder_extension_model_1.BuilderExtensionsModel; } });
+Object.defineProperty(exports, "BuilderModel", { enumerable: true, get: function () { return builder_extension_model_1.BuilderModelExtensions; } });
 tslib_1.__exportStar(require("./type-api"), exports);
 tslib_1.__exportStar(require("./view-model/base.view"), exports);

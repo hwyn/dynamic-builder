@@ -62,7 +62,7 @@ let Action = class Action {
         let actionsSub;
         let action;
         if (Array.isArray(actions)) {
-            action = serializeAction(actions.filter(({ type }) => !!type)[0]);
+            action = serializeAction(actions.filter((a) => !!serializeAction(a).type)[0]);
             actionsSub = forkJoin((actions).map((a) => (this.invokeAction(serializeAction(a), props, event, ...otherEventParam)))).pipe(map((result) => result.pop()));
         }
         else {

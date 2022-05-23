@@ -6,11 +6,11 @@ export class BaseView {
         this.ls = ls;
         this.store = store;
     }
-    setBindValue(dataBinding, value) {
-        set(this.store, dataBinding.path, value);
+    setBindValue(binding, value) {
+        set(this.store, binding.path, value);
     }
-    getBindValue(dataBinding) {
-        return get(this.store, dataBinding.path, dataBinding.default);
+    getBindValue(binding) {
+        return get(this.store, binding.path, binding.default);
     }
     refreshData(model) {
         this.store = model;
