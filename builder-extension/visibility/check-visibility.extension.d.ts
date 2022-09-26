@@ -1,6 +1,5 @@
 import { BasicExtension } from '../basic/basic.extension';
 export declare class CheckVisibilityExtension extends BasicExtension {
-    private visibilityTypeName;
     private builderFields;
     private defaultDependents;
     protected extension(): void;

@@ -1,4 +1,4 @@
-import { LocatorStorage } from '@fm/di';
+import { Injector } from '@fm/di';
 import { Observable } from 'rxjs';
 import { BuilderProps, CacheObj } from '../../builder';
 import { Action, ActionInterceptProps, BaseAction } from '../action';
@@ -13,7 +13,7 @@ export declare abstract class BasicExtension {
     protected cache: CacheObj;
     protected json: any;
     protected jsonFields: any[];
-    protected ls: LocatorStorage;
+    protected injector: Injector;
     constructor(builder: BuilderModelExtensions, props: BuilderProps, cache: CacheObj, json: any);
     protected abstract extension(): void | Observable<any>;
     protected afterExtension(): void;

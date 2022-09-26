@@ -1,12 +1,12 @@
-import { LocatorStorage, Type } from '@fm/di';
+import { Injector, Type } from '@fm/di';
 import { Observable } from 'rxjs';
 import { BasicExtension, serializeAction } from './basic/basic.extension';
 import { ControlOptions } from './form/type-api';
 import { Grid } from './grid/grid';
 import { BuilderModelExtensions } from './type-api';
-export declare const forwardGetJsonConfig: (getJsonConfig: (configName: string, ls: LocatorStorage) => Observable<object>) => void;
-export declare const forwardFormControl: (factoryFormControl: (value: any, options: ControlOptions, ls: LocatorStorage) => any) => void;
-export declare const forwardBuilderLayout: (createElement: (grid: Grid, builder: BuilderModelExtensions, ls: LocatorStorage) => any) => void;
+export declare const forwardGetJsonConfig: (getJsonConfig: (configName: string, injector: Injector) => Observable<object>) => void;
+export declare const forwardFormControl: (factoryFormControl: (value: any, options: ControlOptions, injector: Injector) => any) => void;
+export declare const forwardBuilderLayout: (createElement: (grid: Grid, builder: BuilderModelExtensions, injector: Injector) => any) => void;
 export declare const registryExtension: (extensions: Type<BasicExtension>[]) => void;
 export declare const InjectableValidator: () => <T>(target: Type<T>) => Type<T>;
 export * from './action';

@@ -1,10 +1,10 @@
-import { LocatorStorage } from '@fm/di';
+import { Injector } from '@fm/di';
 import { BuilderFieldExtensions, BuilderModelExtensions, InstanceExtensions } from '../type-api';
 import { Action, ActionIntercept, TypeEvent } from './type-api';
 export declare class BaseAction<T = any> {
-    protected ls: LocatorStorage;
+    protected injector: Injector;
     private context;
-    constructor(ls: LocatorStorage, context?: any);
+    constructor(injector: Injector, context?: any);
     get builderField(): BuilderFieldExtensions;
     get actionIntercept(): ActionIntercept;
     get builder(): BuilderModelExtensions;

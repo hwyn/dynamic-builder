@@ -1,11 +1,11 @@
-import { LocatorStorage } from '@fm/di';
+import { Injector } from '@fm/di';
 import { Observable } from 'rxjs';
 import { Action as ActionProps, ActionContext, ActionIntercept, ActionInterceptProps } from './type-api';
 declare type InvokeAction = ActionProps | string;
 export declare class Action implements ActionIntercept {
-    private ls;
+    private injector;
     private actions;
-    constructor(ls: LocatorStorage, actions: any[][]);
+    constructor(injector: Injector, actions: any[][]);
     private getAction;
     private createEvent;
     protected getActionContext({ builder, id }?: ActionInterceptProps): ActionContext;

@@ -1,4 +1,4 @@
-import { LocatorStorage, Type } from '@fm/di';
+import { Injector, Type } from '@fm/di';
 import { Observable, Subject } from 'rxjs';
 import { GridType } from '../builder-extension';
 import { Action } from '../builder-extension/action';
@@ -86,7 +86,7 @@ export declare interface BuilderModelInterface {
     readonly ready: boolean | undefined;
     readonly grid?: GridType;
     readonly Element: any;
-    readonly ls: LocatorStorage;
+    readonly injector: Injector;
     readonly privateExtension?: privateExtension[];
     showField(visibility: Visibility | undefined): boolean;
     detectChanges(): void;

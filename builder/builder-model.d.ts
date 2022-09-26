@@ -1,14 +1,14 @@
-import { LocatorStorage } from '@fm/di';
+import { Injector } from '@fm/di';
 import { Visibility } from './consts';
 import { BuilderField, BuilderModelImplements, CacheObj } from './type-api';
 export declare class BuilderModel<S extends BuilderModelImplements = BuilderModelImplements, M extends BuilderField = BuilderField> implements BuilderModelImplements {
-    ls: LocatorStorage;
+    injector: Injector;
     id: string | undefined;
     parent: S | null;
     children: S[];
     $$cache: CacheObj;
     Element: any;
-    constructor(ls: LocatorStorage);
+    constructor(injector: Injector);
     getFieldByTypes<T = M>(type: string): T[];
     getAllFieldByTypes<T = M>(type: string): T[];
     getFieldById<T = M>(id: string): T;

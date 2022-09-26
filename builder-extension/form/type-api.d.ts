@@ -8,6 +8,7 @@ export declare interface FormControl<T = any> {
     readonly enabled: boolean;
     readonly changeValues: Subject<any>;
     readonly updateOn: updateOn;
+    readonly valid: boolean;
     patchValue(value: T): void;
     updateValueAndValidity(): void;
     destory(fieldId?: string): void;

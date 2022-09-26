@@ -1,8 +1,8 @@
-import { LocatorStorage } from '@fm/di';
+import { Injector } from '@fm/di';
 export declare class BaseView<T = any> {
-    private ls;
+    private injector;
     private store;
-    constructor(ls: LocatorStorage, store: any);
+    constructor(injector: Injector, store: any);
     setBindValue(binding: any, value: any): void;
     getBindValue(binding: any): any;
     refreshData(model: T): void;
