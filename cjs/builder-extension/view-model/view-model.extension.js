@@ -21,14 +21,14 @@ class ViewModelExtension extends basic_extension_1.BasicExtension {
         return { type: calculator_constant_1.LOAD_VIEW_MODEL, handler };
     }
     createViewModel(store) {
-        this.defineProperty(this.cache, calculator_constant_1.VIEW_MODEL, store instanceof base_view_1.BaseView ? store : new base_view_1.BaseView(this.ls, store));
+        this.defineProperty(this.cache, calculator_constant_1.VIEW_MODEL, store instanceof base_view_1.BaseView ? store : new base_view_1.BaseView(this.injector, store));
         this.definePropertyGet(this.builder, calculator_constant_1.VIEW_MODEL, () => this.cache.viewModel.model);
     }
     createNotifyEvent() {
         const notifyAction = { type: calculator_constant_1.NOTIFY_VIEW_MODEL_CHANGE, handler: this.notifyHandler.bind(this) };
         const refresAction = { type: calculator_constant_1.REFRES_DATA, handler: this.refresHandler.bind(this) };
         const props = { builder: this.builder, id: this.builder.id };
-        const actions = this.createActions([notifyAction, refresAction], props, { ls: this.ls });
+        const actions = this.createActions([notifyAction, refresAction], props, { injector: this.injector });
         this.definePropertys(this.builder, {
             [calculator_constant_1.NOTIFY_VIEW_MODEL_CHANGE]: actions[this.getEventType(calculator_constant_1.NOTIFY_VIEW_MODEL_CHANGE)],
             [calculator_constant_1.REFRES_DATA]: actions[this.getEventType(calculator_constant_1.REFRES_DATA)]

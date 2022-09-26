@@ -1,6 +1,7 @@
 import { isEmpty } from 'lodash';
 import { Visibility } from '../../builder';
-import { BIND_FORM_CONTROL } from '../../token';
+import { FORM_CONTROL } from '../../token';
+import { transformObservable } from '../../utility';
 import { BasicExtension } from '../basic/basic.extension';
 import { CHANGE, CHECK_VISIBILITY, CONTROL, LOAD_ACTION, NOTIFY_VIEW_MODEL_CHANGE } from '../constant/calculator.constant';
 export class FormExtension extends BasicExtension {
@@ -12,13 +13,14 @@ export class FormExtension extends BasicExtension {
     createMergeControl([jsonField, builderField]) {
         const { id, updateOn, checkVisibility, validators } = jsonField;
         const changeType = this.getChangeType(jsonField);
+        const builderId = this.builder.id;
         this.addChangeAction(changeType, jsonField);
         this.pushCalculators(jsonField, [{
                 action: this.bindCalculatorAction(this.addControl.bind(this, jsonField, builderField)),
-                dependents: { type: LOAD_ACTION, fieldId: this.builder.id }
+                dependents: { type: LOAD_ACTION, fieldId: builderId }
             }, {
                 action: this.bindCalculatorAction(this.createNotifyChange.bind(this, jsonField)),
-                dependents: { type: NOTIFY_VIEW_MODEL_CHANGE, fieldId: this.builder.id }
+                dependents: { type: NOTIFY_VIEW_MODEL_CHANGE, fieldId: builderId }
             },
             ...checkVisibility ? [{
                     action: this.bindCalculatorAction(this.createVisibility.bind(this)),
@@ -38,7 +40,7 @@ export class FormExtension extends BasicExtension {
     }
     addControl(jsonField, builderField) {
         const value = this.getValueToModel(jsonField.binding, builderField);
-        const control = this.ls.getProvider(BIND_FORM_CONTROL, value, { builder: this.builder, builderField });
+        const control = this.injector.get(FORM_CONTROL, value, { builder: this.builder, builderField });
         this.defineProperty(builderField, CONTROL, control);
         delete builderField.field.binding;
         this.excuteChangeEvent(jsonField, value);
@@ -51,7 +53,7 @@ export class FormExtension extends BasicExtension {
         builderField.instance?.detectChanges();
     }
     createValidaity({ builderField: { control }, builder: { ready } }) {
-        ready && control?.updateValueAndValidity();
+        return ready && transformObservable(control?.updateValueAndValidity());
     }
     createVisibility({ builderField, builder: { ready }, actionEvent }) {
         ready && this.changeVisibility(builderField, actionEvent);

@@ -2,14 +2,14 @@ import { flatMap, isEmpty, uniq } from 'lodash';
 import { init } from './builder-utils';
 import { Visibility } from './consts';
 export class BuilderModel {
-    ls;
+    injector;
     id;
     parent = null;
     children = [];
     $$cache = {};
     Element;
-    constructor(ls) {
-        this.ls = ls;
+    constructor(injector) {
+        this.injector = injector;
         init.call(this);
     }
     getFieldByTypes(type) {
@@ -33,7 +33,7 @@ export class BuilderModel {
     }
     detectChanges() {
         if (!this.$$cache.destoryed) {
-            this.$$cache.detectChanges.next(undefined);
+            this.$$cache.detectChanges.next(this);
         }
     }
     get ready() {

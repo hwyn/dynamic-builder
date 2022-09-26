@@ -18,7 +18,7 @@ class GridExtension extends basic_extension_1.BasicExtension {
     createLoadGrid() {
         this.defineProperty(this.cache, calculator_constant_1.GRID, new grid_1.Grid(this.builder, this.json));
         this.layoutBuildFields = this.mapFields(this.jsonFields, this.addFieldLayout.bind(this, {}));
-        this.defineProperty(this.builder, calculator_constant_1.ELEMENT, this.ls.getProvider(token_1.BIND_BUILDER_ELEMENT, this.cache.grid, this.builder));
+        this.defineProperty(this.builder, calculator_constant_1.ELEMENT, this.injector.get(token_1.LAYOUT_ELEMENT, this.cache.grid, this.builder));
     }
     addFieldLayout(cursor, [, builderField]) {
         const { field, field: { layout = {} } } = builderField;

@@ -3,10 +3,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.BaseView = void 0;
 const lodash_1 = require("lodash");
 class BaseView {
-    ls;
+    injector;
     store;
-    constructor(ls, store) {
-        this.ls = ls;
+    constructor(injector, store) {
+        this.injector = injector;
         this.store = store;
     }
     setBindValue(binding, value) {

@@ -5,14 +5,14 @@ const lodash_1 = require("lodash");
 const builder_utils_1 = require("./builder-utils");
 const consts_1 = require("./consts");
 class BuilderModel {
-    ls;
+    injector;
     id;
     parent = null;
     children = [];
     $$cache = {};
     Element;
-    constructor(ls) {
-        this.ls = ls;
+    constructor(injector) {
+        this.injector = injector;
         builder_utils_1.init.call(this);
     }
     getFieldByTypes(type) {
@@ -36,7 +36,7 @@ class BuilderModel {
     }
     detectChanges() {
         if (!this.$$cache.destoryed) {
-            this.$$cache.detectChanges.next(undefined);
+            this.$$cache.detectChanges.next(this);
         }
     }
     get ready() {

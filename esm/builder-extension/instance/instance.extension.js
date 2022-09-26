@@ -12,7 +12,7 @@ export class InstanceExtension extends BasicExtension {
             destory: new Subject(),
             onMounted: () => void (0),
             onDestory: () => void (0),
-            detectChanges: () => undefined,
+            detectChanges: () => undefined
         };
     }
     extension() {

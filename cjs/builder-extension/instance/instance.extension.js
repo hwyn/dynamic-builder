@@ -15,7 +15,7 @@ class InstanceExtension extends basic_extension_1.BasicExtension {
             destory: new rxjs_1.Subject(),
             onMounted: () => void (0),
             onDestory: () => void (0),
-            detectChanges: () => undefined,
+            detectChanges: () => undefined
         };
     }
     extension() {

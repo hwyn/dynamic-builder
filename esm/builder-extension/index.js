@@ -1,6 +1,6 @@
-import { Injectable, LocatorStorage, registryProvider } from '@fm/di';
+import { Injectable, Injector, registryProvider } from '@fm/di';
 // eslint-disable-next-line max-len
-import { ACTION_INTERCEPT, BIND_BUILDER_ELEMENT, BIND_FORM_CONTROL, BUILDER_EXTENSION, GET_JSON_CONFIG, LOAD_BUILDER_CONFIG, VALIDATOR_SERVICE } from '../token';
+import { ACTION_INTERCEPT, BUILDER_EXTENSION, FORM_CONTROL, GET_JSON_CONFIG, LAYOUT_ELEMENT, LOAD_BUILDER_CONFIG, VALIDATOR_SERVICE } from '../token';
 import { Action } from './action/actions';
 import { ActionExtension } from './action/actions.extension';
 import { serializeAction } from './basic/basic.extension';
@@ -14,19 +14,19 @@ import { ReadConfigExtension } from './read-config/read-config.extension';
 import { ViewModelExtension } from './view-model/view-model.extension';
 import { CheckVisibilityExtension } from './visibility/check-visibility.extension';
 const registryFactory = (token, useFactory) => {
-    const proxyUseFactory = (ls, ...args) => useFactory(...args, ls);
-    registryProvider({ provide: token, useFactory: proxyUseFactory, deps: [LocatorStorage] });
+    const proxyUseFactory = (injector, ...args) => useFactory(...args, injector);
+    registryProvider({ provide: token, useFactory: proxyUseFactory, deps: [Injector] });
 };
 export const forwardGetJsonConfig = (getJsonConfig) => {
     registryFactory(GET_JSON_CONFIG, getJsonConfig);
 };
 export const forwardFormControl = (factoryFormControl) => {
-    registryFactory(BIND_FORM_CONTROL, (value, options, ls) => {
-        return factoryFormControl(value, ls.getProvider(VALIDATOR_SERVICE)?.getValidators(options), ls);
+    registryFactory(FORM_CONTROL, (value, options, injector) => {
+        return factoryFormControl(value, injector.get(VALIDATOR_SERVICE)?.getValidators(options), injector);
     });
 };
 export const forwardBuilderLayout = (createElement) => {
-    registryFactory(BIND_BUILDER_ELEMENT, createElement);
+    registryFactory(LAYOUT_ELEMENT, createElement);
 };
 export const registryExtension = (extensions) => {
     registryProvider(extensions.map((extension) => ({ provide: BUILDER_EXTENSION, multi: true, useValue: extension })));

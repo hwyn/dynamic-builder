@@ -2,7 +2,6 @@ import { isEmpty, isUndefined } from 'lodash';
 import { BasicExtension } from '../basic/basic.extension';
 import { CHANGE, CHECK_VISIBILITY, LOAD, LOAD_ACTION } from '../constant/calculator.constant';
 export class CheckVisibilityExtension extends BasicExtension {
-    visibilityTypeName = CHECK_VISIBILITY;
     builderFields;
     defaultDependents = [LOAD, CHANGE].map((type) => ({ type, fieldId: this.builder.id }));
     extension() {
@@ -27,7 +26,7 @@ export class CheckVisibilityExtension extends BasicExtension {
     }
     serializeCheckVisibilityConfig(jsonField) {
         const { checkVisibility: jsonCheckVisibility } = jsonField;
-        return this.serializeCalculatorConfig(jsonCheckVisibility, this.visibilityTypeName, this.defaultDependents);
+        return this.serializeCalculatorConfig(jsonCheckVisibility, CHECK_VISIBILITY, this.defaultDependents);
     }
     checkVisibilityAfter({ actionEvent, builderField, builder }) {
         if (actionEvent && builderField.visibility !== actionEvent) {
@@ -53,7 +52,7 @@ export class CheckVisibilityExtension extends BasicExtension {
     }
     filterNoneCalculators(originCalculators, hiddenList) {
         return originCalculators.filter(({ targetId, action: { type }, dependent: { type: dType } }) => {
-            return type === this.visibilityTypeName || dType === this.visibilityTypeName || !hiddenList.includes(targetId);
+            return type === CHECK_VISIBILITY || dType === CHECK_VISIBILITY || !hiddenList.includes(targetId);
         });
     }
     checkNeedOrDefaultVisibility(jsonField) {

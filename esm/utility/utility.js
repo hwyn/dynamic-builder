@@ -4,7 +4,7 @@ export function isObservable(obj) {
     return obj && !!obj.subscribe;
 }
 export function transformObservable(obj) {
-    return obj && obj.subscribe ? obj : of(obj);
+    return isObservable(obj) ? obj : of(obj);
 }
 export function transformObj(result, returnValue) {
     const notTransform = !isObservable(result) || typeof returnValue === 'undefined';

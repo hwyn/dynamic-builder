@@ -2,7 +2,7 @@ import { groupBy } from 'lodash';
 import { ACTION_INTERCEPT } from '../../token';
 import { observableMap, transformObservable } from '../../utility';
 function mergeHandler(actions, props, options) {
-    const actionIntercept = options.ls.getProvider(ACTION_INTERCEPT);
+    const actionIntercept = options.injector.get(ACTION_INTERCEPT);
     const isMore = actions.length > 1;
     const action = isMore ? actions : actions[0];
     const runObservable = actions.some(({ runObservable }) => runObservable);

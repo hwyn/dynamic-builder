@@ -25,9 +25,9 @@ function init() {
 }
 exports.init = init;
 function loadForBuild(props) {
-    const LoadConfig = this.ls.getProvider(token_1.LOAD_BUILDER_CONFIG);
+    const LoadConfig = this.injector.get(token_1.LOAD_BUILDER_CONFIG);
     const privateExtension = this.privateExtension.map(({ extension }) => extension);
-    const Extensions = [...this.ls.getProvider(token_1.BUILDER_EXTENSION), ...privateExtension];
+    const Extensions = [...this.injector.get(token_1.BUILDER_EXTENSION), ...privateExtension];
     return new LoadConfig(this, props, this.$$cache).init().pipe((0, utility_1.observableMap)((loadExample) => {
         Object.defineProperty(this, '$$cache', (0, utility_1.withValue)(getCacheObj.call(this, props)));
         const beforeInits = Extensions.map((Extension) => new Extension(this, props, this.$$cache, props.config).init());
@@ -54,7 +54,7 @@ function getCacheObj(props) {
 function createField(field) {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { id, type, visibility, ...other } = field;
-    const element = field.element || this.ls.getProvider(builder_engine_service_1.BuilderEngine).getUiComponent(type);
+    const element = field.element || this.injector.get(builder_engine_service_1.BuilderEngine).getUiComponent(type);
     const _field = { id, type, element, visibility, field: other };
     Object.keys(_field).forEach((key) => _field[key] === undefined && delete _field[key]);
     return _field;
@@ -65,7 +65,7 @@ function destory() {
     cacheObj.destoryed = true;
     if (ready && !destoryed) {
         try {
-            (0, utility_1.toForkJoin)(beforeDestorys.map((beforeDestory) => beforeDestory && beforeDestory())).pipe((0, utility_1.observableMap)((extensionDestorys) => (0, utility_1.toForkJoin)(extensionDestorys.map((extensionDestory) => extensionDestory && extensionDestory()))), (0, utility_1.observableMap)(() => (0, utility_1.transformObservable)(this.destory && this.destory.call(this)))).subscribe({
+            (0, utility_1.transformObservable)(this.destory && this.destory.call(this)).pipe((0, utility_1.observableMap)(() => (0, utility_1.toForkJoin)(beforeDestorys.map((beforeDestory) => beforeDestory && beforeDestory()))), (0, utility_1.observableMap)((destorys) => (0, utility_1.toForkJoin)(destorys.map((destory) => destory && destory())))).subscribe({
                 next: () => {
                     cacheObj.ready = false;
                     cacheObj.fields.splice(0);

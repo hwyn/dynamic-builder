@@ -1,6 +1,6 @@
 import { __decorate, __metadata, __param } from "tslib";
 /* eslint-disable max-lines-per-function */
-import { Inject, LocatorStorage } from '@fm/di';
+import { Inject, Injector } from '@fm/di';
 import { flatMap, isEmpty } from 'lodash';
 import { forkJoin, of } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -9,10 +9,10 @@ import { observableTap, transformObservable } from '../../utility';
 import { serializeAction } from '../basic/basic.extension';
 import { BaseAction } from './base.action';
 let Action = class Action {
-    ls;
+    injector;
     actions;
-    constructor(ls, actions) {
-        this.ls = ls;
+    constructor(injector, actions) {
+        this.injector = injector;
         this.actions = flatMap(actions);
     }
     getAction(name) {
@@ -78,7 +78,7 @@ let Action = class Action {
         const { name = ``, handler } = serializeAction(actionPropos);
         const [actionName, execute = 'execute'] = name.match(/([^.]+)/ig) || [name];
         const context = { ...actionContext, actionPropos, actionEvent };
-        let action = new BaseAction(this.ls, context);
+        let action = new BaseAction(this.injector, context);
         let executeHandler = handler;
         let builder = action.builder;
         if (!executeHandler && builder) {
@@ -92,7 +92,7 @@ let Action = class Action {
         }
         if (!executeHandler) {
             const ActionType = this.getAction(actionName);
-            action = ActionType && new ActionType(this.ls, context);
+            action = ActionType && new ActionType(this.injector, context);
             executeHandler = action && action[execute].bind(action);
         }
         if (!executeHandler) {
@@ -102,8 +102,8 @@ let Action = class Action {
     }
 };
 Action = __decorate([
-    __param(0, Inject(LocatorStorage)),
+    __param(0, Inject(Injector)),
     __param(1, Inject(ACTIONS_CONFIG)),
-    __metadata("design:paramtypes", [LocatorStorage, Array])
+    __metadata("design:paramtypes", [Injector, Array])
 ], Action);
 export { Action };

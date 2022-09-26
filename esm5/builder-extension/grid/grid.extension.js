@@ -1,5 +1,5 @@
 import { cloneDeep, merge } from 'lodash';
-import { BIND_BUILDER_ELEMENT } from '../../token';
+import { LAYOUT_ELEMENT } from '../../token';
 import { BasicExtension } from '../basic/basic.extension';
 import { ELEMENT, GRID, LAYOUT, LOAD } from '../constant/calculator.constant';
 import { Grid } from './grid';
@@ -15,7 +15,7 @@ export class GridExtension extends BasicExtension {
     createLoadGrid() {
         this.defineProperty(this.cache, GRID, new Grid(this.builder, this.json));
         this.layoutBuildFields = this.mapFields(this.jsonFields, this.addFieldLayout.bind(this, {}));
-        this.defineProperty(this.builder, ELEMENT, this.ls.getProvider(BIND_BUILDER_ELEMENT, this.cache.grid, this.builder));
+        this.defineProperty(this.builder, ELEMENT, this.injector.get(LAYOUT_ELEMENT, this.cache.grid, this.builder));
     }
     addFieldLayout(cursor, [, builderField]) {
         const { field, field: { layout = {} } } = builderField;

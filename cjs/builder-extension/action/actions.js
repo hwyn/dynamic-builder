@@ -12,10 +12,10 @@ const utility_1 = require("../../utility");
 const basic_extension_1 = require("../basic/basic.extension");
 const base_action_1 = require("./base.action");
 let Action = class Action {
-    ls;
+    injector;
     actions;
-    constructor(ls, actions) {
-        this.ls = ls;
+    constructor(injector, actions) {
+        this.injector = injector;
         this.actions = (0, lodash_1.flatMap)(actions);
     }
     getAction(name) {
@@ -81,7 +81,7 @@ let Action = class Action {
         const { name = ``, handler } = (0, basic_extension_1.serializeAction)(actionPropos);
         const [actionName, execute = 'execute'] = name.match(/([^.]+)/ig) || [name];
         const context = { ...actionContext, actionPropos, actionEvent };
-        let action = new base_action_1.BaseAction(this.ls, context);
+        let action = new base_action_1.BaseAction(this.injector, context);
         let executeHandler = handler;
         let builder = action.builder;
         if (!executeHandler && builder) {
@@ -95,7 +95,7 @@ let Action = class Action {
         }
         if (!executeHandler) {
             const ActionType = this.getAction(actionName);
-            action = ActionType && new ActionType(this.ls, context);
+            action = ActionType && new ActionType(this.injector, context);
             executeHandler = action && action[execute].bind(action);
         }
         if (!executeHandler) {
@@ -105,8 +105,8 @@ let Action = class Action {
     }
 };
 Action = tslib_1.__decorate([
-    tslib_1.__param(0, (0, di_1.Inject)(di_1.LocatorStorage)),
+    tslib_1.__param(0, (0, di_1.Inject)(di_1.Injector)),
     tslib_1.__param(1, (0, di_1.Inject)(token_1.ACTIONS_CONFIG)),
-    tslib_1.__metadata("design:paramtypes", [di_1.LocatorStorage, Array])
+    tslib_1.__metadata("design:paramtypes", [di_1.Injector, Array])
 ], Action);
 exports.Action = Action;

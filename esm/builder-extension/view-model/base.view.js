@@ -1,9 +1,9 @@
 import { get, set } from 'lodash';
 export class BaseView {
-    ls;
+    injector;
     store;
-    constructor(ls, store) {
-        this.ls = ls;
+    constructor(injector, store) {
+        this.injector = injector;
         this.store = store;
     }
     setBindValue(binding, value) {

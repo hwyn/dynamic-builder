@@ -8,7 +8,7 @@ function isObservable(obj) {
 }
 exports.isObservable = isObservable;
 function transformObservable(obj) {
-    return obj && obj.subscribe ? obj : (0, rxjs_1.of)(obj);
+    return isObservable(obj) ? obj : (0, rxjs_1.of)(obj);
 }
 exports.transformObservable = transformObservable;
 function transformObj(result, returnValue) {

@@ -4,6 +4,7 @@ exports.FormExtension = void 0;
 const lodash_1 = require("lodash");
 const builder_1 = require("../../builder");
 const token_1 = require("../../token");
+const utility_1 = require("../../utility");
 const basic_extension_1 = require("../basic/basic.extension");
 const calculator_constant_1 = require("../constant/calculator.constant");
 class FormExtension extends basic_extension_1.BasicExtension {
@@ -15,13 +16,14 @@ class FormExtension extends basic_extension_1.BasicExtension {
     createMergeControl([jsonField, builderField]) {
         const { id, updateOn, checkVisibility, validators } = jsonField;
         const changeType = this.getChangeType(jsonField);
+        const builderId = this.builder.id;
         this.addChangeAction(changeType, jsonField);
         this.pushCalculators(jsonField, [{
                 action: this.bindCalculatorAction(this.addControl.bind(this, jsonField, builderField)),
-                dependents: { type: calculator_constant_1.LOAD_ACTION, fieldId: this.builder.id }
+                dependents: { type: calculator_constant_1.LOAD_ACTION, fieldId: builderId }
             }, {
                 action: this.bindCalculatorAction(this.createNotifyChange.bind(this, jsonField)),
-                dependents: { type: calculator_constant_1.NOTIFY_VIEW_MODEL_CHANGE, fieldId: this.builder.id }
+                dependents: { type: calculator_constant_1.NOTIFY_VIEW_MODEL_CHANGE, fieldId: builderId }
             },
             ...checkVisibility ? [{
                     action: this.bindCalculatorAction(this.createVisibility.bind(this)),
@@ -41,7 +43,7 @@ class FormExtension extends basic_extension_1.BasicExtension {
     }
     addControl(jsonField, builderField) {
         const value = this.getValueToModel(jsonField.binding, builderField);
-        const control = this.ls.getProvider(token_1.BIND_FORM_CONTROL, value, { builder: this.builder, builderField });
+        const control = this.injector.get(token_1.FORM_CONTROL, value, { builder: this.builder, builderField });
         this.defineProperty(builderField, calculator_constant_1.CONTROL, control);
         delete builderField.field.binding;
         this.excuteChangeEvent(jsonField, value);
@@ -54,7 +56,7 @@ class FormExtension extends basic_extension_1.BasicExtension {
         builderField.instance?.detectChanges();
     }
     createValidaity({ builderField: { control }, builder: { ready } }) {
-        ready && control?.updateValueAndValidity();
+        return ready && (0, utility_1.transformObservable)(control?.updateValueAndValidity());
     }
     createVisibility({ builderField, builder: { ready }, actionEvent }) {
         ready && this.changeVisibility(builderField, actionEvent);

@@ -45,7 +45,7 @@ export class ReadConfigExtension extends BasicExtension {
         }
         if (isJsonName) {
             const getJsonName = jsonNameAction ? this.createLoadConfigAction(jsonNameAction, props) : of(jsonName);
-            configOb = getJsonName.pipe(observableMap((configName) => this.ls.getProvider(GET_JSON_CONFIG, configName)));
+            configOb = getJsonName.pipe(observableMap((configName) => this.injector.get(GET_JSON_CONFIG, configName)));
         }
         else {
             configOb = configAction ? this.createLoadConfigAction(configAction, props) : of(config);
@@ -55,7 +55,7 @@ export class ReadConfigExtension extends BasicExtension {
     createLoadConfigAction(actionName, props) {
         const loadAction = { ...this.serializeAction(actionName), type: LOAD_CONFIG_ACTION, runObservable: true };
         const interceptProps = { builder: this.builder, id: props.id };
-        const actions = this.createActions([loadAction], interceptProps, { ls: this.ls });
+        const actions = this.createActions([loadAction], interceptProps, { injector: this.injector });
         return actions[this.getEventType(LOAD_CONFIG_ACTION)](props);
     }
     checkFieldRepeat(jsonConfig) {

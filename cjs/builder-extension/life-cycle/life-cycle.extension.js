@@ -27,7 +27,7 @@ class LifeCycleExtension extends basic_extension_1.BasicExtension {
         const lifeActionsType = actions.filter(({ type }) => lifeEvent.includes(type));
         const props = { builder: this.builder, id: this.builder.id };
         lifeActionsType.forEach((action) => action.runObservable = true);
-        this.lifeActions = this.createActions(lifeActionsType, props, { ls: this.ls });
+        this.lifeActions = this.createActions(lifeActionsType, props, { injector: this.injector });
         this.defineProperty(this.builder, this.getEventType(calculator_constant_1.CHANGE), this.onLifeChange.bind(this));
         return this.invokeLifeCycle(this.getEventType(calculator_constant_1.LOAD), this.props);
     }
@@ -60,7 +60,7 @@ class LifeCycleExtension extends basic_extension_1.BasicExtension {
             this.linkOtherCalculator(calculator);
         }
         if (!nonSource && !actions.some((action) => action.type === type)) {
-            sourceField.actions = [{ type }, ...actions];
+            sourceField.actions.unshift({ type });
         }
     }
     linkOtherCalculator(calculator) {

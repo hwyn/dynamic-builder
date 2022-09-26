@@ -5,7 +5,7 @@ const lodash_1 = require("lodash");
 const token_1 = require("../../token");
 const utility_1 = require("../../utility");
 function mergeHandler(actions, props, options) {
-    const actionIntercept = options.ls.getProvider(token_1.ACTION_INTERCEPT);
+    const actionIntercept = options.injector.get(token_1.ACTION_INTERCEPT);
     const isMore = actions.length > 1;
     const action = isMore ? actions : actions[0];
     const runObservable = actions.some(({ runObservable }) => runObservable);

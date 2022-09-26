@@ -3,17 +3,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.BaseAction = void 0;
 const token_1 = require("../../token");
 class BaseAction {
-    ls;
+    injector;
     context;
-    constructor(ls, context = {}) {
-        this.ls = ls;
+    constructor(injector, context = {}) {
+        this.injector = injector;
         this.context = context;
     }
     get builderField() {
         return this.context.builderField;
     }
     get actionIntercept() {
-        return this.ls.getProvider(token_1.ACTION_INTERCEPT);
+        return this.injector.get(token_1.ACTION_INTERCEPT);
     }
     get builder() {
         return this.context.builder;

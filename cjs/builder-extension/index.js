@@ -19,21 +19,21 @@ const read_config_extension_1 = require("./read-config/read-config.extension");
 const view_model_extension_1 = require("./view-model/view-model.extension");
 const check_visibility_extension_1 = require("./visibility/check-visibility.extension");
 const registryFactory = (token, useFactory) => {
-    const proxyUseFactory = (ls, ...args) => useFactory(...args, ls);
-    (0, di_1.registryProvider)({ provide: token, useFactory: proxyUseFactory, deps: [di_1.LocatorStorage] });
+    const proxyUseFactory = (injector, ...args) => useFactory(...args, injector);
+    (0, di_1.registryProvider)({ provide: token, useFactory: proxyUseFactory, deps: [di_1.Injector] });
 };
 const forwardGetJsonConfig = (getJsonConfig) => {
     registryFactory(token_1.GET_JSON_CONFIG, getJsonConfig);
 };
 exports.forwardGetJsonConfig = forwardGetJsonConfig;
 const forwardFormControl = (factoryFormControl) => {
-    registryFactory(token_1.BIND_FORM_CONTROL, (value, options, ls) => {
-        return factoryFormControl(value, ls.getProvider(token_1.VALIDATOR_SERVICE)?.getValidators(options), ls);
+    registryFactory(token_1.FORM_CONTROL, (value, options, injector) => {
+        return factoryFormControl(value, injector.get(token_1.VALIDATOR_SERVICE)?.getValidators(options), injector);
     });
 };
 exports.forwardFormControl = forwardFormControl;
 const forwardBuilderLayout = (createElement) => {
-    registryFactory(token_1.BIND_BUILDER_ELEMENT, createElement);
+    registryFactory(token_1.LAYOUT_ELEMENT, createElement);
 };
 exports.forwardBuilderLayout = forwardBuilderLayout;
 const registryExtension = (extensions) => {

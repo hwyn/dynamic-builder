@@ -26,7 +26,7 @@ class ActionExtension extends basic_extension_1.BasicExtension {
         const { events = {}, id } = builderField;
         const addActions = this.toArray(actions).filter(({ type }) => !events[this.getEventType(type)]);
         if (!(0, lodash_1.isEmpty)(addActions)) {
-            const addEvents = this.createActions(this.toArray(addActions), { builder: this.builder, id }, { ls: this.ls });
+            const addEvents = this.createActions(this.toArray(addActions), { builder: this.builder, id }, { injector: this.injector });
             this.defineProperty(builderField, calculator_constant_1.EVENTS, { ...events, ...addEvents });
             builderField.instance.detectChanges();
         }

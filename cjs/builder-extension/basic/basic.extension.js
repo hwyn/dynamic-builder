@@ -15,13 +15,13 @@ class BasicExtension {
     cache;
     json;
     jsonFields;
-    ls;
+    injector;
     constructor(builder, props, cache, json) {
         this.builder = builder;
         this.props = props;
         this.cache = cache;
         this.json = json;
-        this.ls = this.builder.ls;
+        this.injector = this.builder.injector;
         this.jsonFields = this.json?.fields;
     }
     afterExtension() { }

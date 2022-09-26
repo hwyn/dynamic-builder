@@ -5,7 +5,6 @@ const lodash_1 = require("lodash");
 const basic_extension_1 = require("../basic/basic.extension");
 const calculator_constant_1 = require("../constant/calculator.constant");
 class CheckVisibilityExtension extends basic_extension_1.BasicExtension {
-    visibilityTypeName = calculator_constant_1.CHECK_VISIBILITY;
     builderFields;
     defaultDependents = [calculator_constant_1.LOAD, calculator_constant_1.CHANGE].map((type) => ({ type, fieldId: this.builder.id }));
     extension() {
@@ -30,7 +29,7 @@ class CheckVisibilityExtension extends basic_extension_1.BasicExtension {
     }
     serializeCheckVisibilityConfig(jsonField) {
         const { checkVisibility: jsonCheckVisibility } = jsonField;
-        return this.serializeCalculatorConfig(jsonCheckVisibility, this.visibilityTypeName, this.defaultDependents);
+        return this.serializeCalculatorConfig(jsonCheckVisibility, calculator_constant_1.CHECK_VISIBILITY, this.defaultDependents);
     }
     checkVisibilityAfter({ actionEvent, builderField, builder }) {
         if (actionEvent && builderField.visibility !== actionEvent) {
@@ -56,7 +55,7 @@ class CheckVisibilityExtension extends basic_extension_1.BasicExtension {
     }
     filterNoneCalculators(originCalculators, hiddenList) {
         return originCalculators.filter(({ targetId, action: { type }, dependent: { type: dType } }) => {
-            return type === this.visibilityTypeName || dType === this.visibilityTypeName || !hiddenList.includes(targetId);
+            return type === calculator_constant_1.CHECK_VISIBILITY || dType === calculator_constant_1.CHECK_VISIBILITY || !hiddenList.includes(targetId);
         });
     }
     checkNeedOrDefaultVisibility(jsonField) {
