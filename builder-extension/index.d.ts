@@ -1,14 +1,7 @@
-import { Injector, Type } from '@fm/di';
-import { Observable } from 'rxjs';
-import { BasicExtension, serializeAction } from './basic/basic.extension';
-import { ControlOptions } from './form/type-api';
-import { Grid } from './grid/grid';
-import { BuilderModelExtensions } from './type-api';
-export declare const forwardGetJsonConfig: (getJsonConfig: (configName: string, injector: Injector) => Observable<object>) => void;
-export declare const forwardFormControl: (factoryFormControl: (value: any, options: ControlOptions, injector: Injector) => any) => void;
-export declare const forwardBuilderLayout: (createElement: (grid: Grid, builder: BuilderModelExtensions, injector: Injector) => any) => void;
-export declare const registryExtension: (extensions: Type<BasicExtension>[]) => void;
-export declare const InjectableValidator: () => <T>(target: Type<T>) => Type<T>;
+import { serializeAction } from './basic/basic.extension';
+import { BuilderContext } from './context/builder-context';
+export declare const InjectableValidator: () => <T>(target: import("@fm/di").Type<T>) => import("@fm/di").Type<T>;
+export declare const useBuilderContext: () => BuilderContext;
 export * from './action';
 export * from './action/create-actions';
 export * from './basic/basic.extension';
