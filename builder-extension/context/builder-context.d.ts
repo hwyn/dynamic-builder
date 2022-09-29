@@ -16,3 +16,4 @@ export declare class BuilderContext extends BasicBuilderContext {
     registryExtension(extensions: Type<BasicExtension>[]): void;
     registryInjector(injector: Injector): void;
 }
+export declare const useBuilderContext: () => BuilderContext;

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.BuilderContext = void 0;
+exports.useBuilderContext = exports.BuilderContext = void 0;
 const di_1 = require("@fm/di");
 const builder_context_1 = require("../../builder/builder-context");
 // eslint-disable-next-line max-len
@@ -16,19 +16,20 @@ const metadata_extension_1 = require("../metadata/metadata.extension");
 const read_config_extension_1 = require("../read-config/read-config.extension");
 const view_model_extension_1 = require("../view-model/view-model.extension");
 const check_visibility_extension_1 = require("../visibility/check-visibility.extension");
+const defaultExtensions = [
+    check_visibility_extension_1.CheckVisibilityExtension,
+    grid_extension_1.GridExtension,
+    instance_extension_1.InstanceExtension,
+    view_model_extension_1.ViewModelExtension,
+    form_extension_1.FormExtension,
+    datasource_extension_1.DataSourceExtension,
+    metadata_extension_1.MetadataExtension,
+    actions_extension_1.ActionExtension,
+    life_cycle_extension_1.LifeCycleExtension
+];
 class BuilderContext extends builder_context_1.BuilderContext {
     map = new Map();
-    extensions = [
-        check_visibility_extension_1.CheckVisibilityExtension,
-        grid_extension_1.GridExtension,
-        instance_extension_1.InstanceExtension,
-        view_model_extension_1.ViewModelExtension,
-        form_extension_1.FormExtension,
-        datasource_extension_1.DataSourceExtension,
-        metadata_extension_1.MetadataExtension,
-        actions_extension_1.ActionExtension,
-        life_cycle_extension_1.LifeCycleExtension
-    ];
+    extensions = defaultExtensions;
     useFactory(useFactory) {
         return (injector, ...args) => useFactory(...args, injector);
     }
@@ -66,3 +67,5 @@ class BuilderContext extends builder_context_1.BuilderContext {
     }
 }
 exports.BuilderContext = BuilderContext;
+const useBuilderContext = () => new BuilderContext();
+exports.useBuilderContext = useBuilderContext;

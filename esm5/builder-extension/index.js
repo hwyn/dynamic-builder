@@ -1,13 +1,12 @@
 import { Injectable } from '@fm/di';
 import { VALIDATOR_SERVICE } from '../token';
 import { serializeAction } from './basic/basic.extension';
-import { BuilderContext } from './context/builder-context';
 export const InjectableValidator = () => Injectable(VALIDATOR_SERVICE);
-export const useBuilderContext = () => new BuilderContext();
 export * from './action';
 export * from './action/create-actions';
 export * from './basic/basic.extension';
 export * from './constant/calculator.constant';
+export { useBuilderContext } from './context/builder-context';
 export * from './form/type-api';
 export { Grid } from './grid/grid';
 export { BuilderModelExtensions as BuilderModel } from './model/builder-extension-model';

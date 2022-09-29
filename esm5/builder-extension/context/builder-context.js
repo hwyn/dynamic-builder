@@ -13,19 +13,20 @@ import { MetadataExtension } from '../metadata/metadata.extension';
 import { ReadConfigExtension } from '../read-config/read-config.extension';
 import { ViewModelExtension } from '../view-model/view-model.extension';
 import { CheckVisibilityExtension } from '../visibility/check-visibility.extension';
+const defaultExtensions = [
+    CheckVisibilityExtension,
+    GridExtension,
+    InstanceExtension,
+    ViewModelExtension,
+    FormExtension,
+    DataSourceExtension,
+    MetadataExtension,
+    ActionExtension,
+    LifeCycleExtension
+];
 export class BuilderContext extends BasicBuilderContext {
     map = new Map();
-    extensions = [
-        CheckVisibilityExtension,
-        GridExtension,
-        InstanceExtension,
-        ViewModelExtension,
-        FormExtension,
-        DataSourceExtension,
-        MetadataExtension,
-        ActionExtension,
-        LifeCycleExtension
-    ];
+    extensions = defaultExtensions;
     useFactory(useFactory) {
         return (injector, ...args) => useFactory(...args, injector);
     }
@@ -62,3 +63,4 @@ export class BuilderContext extends BasicBuilderContext {
         });
     }
 }
+export const useBuilderContext = () => new BuilderContext();
