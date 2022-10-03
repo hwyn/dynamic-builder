@@ -5,9 +5,7 @@
   "main": "./cjs/index.js",
   "module": "./esm5/index.js",
   "es2015": "./esm/index.js",
-  "dependencies": {
-    "@fm/import-rxjs": "git+https://github.com/hwyn/import-rxjs.git"
-  },
+  "dependencies": { },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
