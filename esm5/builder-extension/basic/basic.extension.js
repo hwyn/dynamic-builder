@@ -1,96 +1,105 @@
+import { __assign } from "tslib";
 import { cloneDeep, isFunction, isString, merge } from 'lodash';
 import { transformObj, withGetOrSet, withValue } from '../../utility';
 import { createActions, getEventType } from '../action/create-actions';
 import { CALCULATOR } from '../constant/calculator.constant';
-export const serializeAction = (action) => {
+export var serializeAction = function (action) {
     return (isString(action) ? { name: action } : isFunction(action) ? { handler: action } : action);
 };
-export class BasicExtension {
-    builder;
-    props;
-    cache;
-    json;
-    jsonFields;
-    injector;
-    constructor(builder, props, cache, json) {
+var BasicExtension = /** @class */ (function () {
+    function BasicExtension(builder, props, cache, json) {
+        var _a;
         this.builder = builder;
         this.props = props;
         this.cache = cache;
         this.json = json;
         this.injector = this.builder.injector;
-        this.jsonFields = this.json?.fields;
+        this.jsonFields = (_a = this.json) === null || _a === void 0 ? void 0 : _a.fields;
     }
-    afterExtension() { }
-    beforeDestory() { }
-    destory() { }
-    init() {
+    BasicExtension.prototype.afterExtension = function () { };
+    BasicExtension.prototype.beforeDestory = function () { };
+    BasicExtension.prototype.destory = function () { };
+    BasicExtension.prototype.init = function () {
         return transformObj(this.extension(), this);
-    }
-    afterInit() {
-        return transformObj(this.afterExtension(), () => transformObj(this.beforeDestory(), () => this.destory()));
-    }
-    eachFields(jsonFields, callBack) {
-        jsonFields.forEach((jsonField) => callBack([jsonField, this.getBuilderFieldById(jsonField.id)]));
-    }
-    mapFields(jsonFields, callBack) {
-        return jsonFields.map((jsonField) => {
-            const builderField = this.getBuilderFieldById(jsonField.id);
+    };
+    BasicExtension.prototype.afterInit = function () {
+        var _this = this;
+        return transformObj(this.afterExtension(), function () { return transformObj(_this.beforeDestory(), function () { return _this.destory(); }); });
+    };
+    BasicExtension.prototype.eachFields = function (jsonFields, callBack) {
+        var _this = this;
+        jsonFields.forEach(function (jsonField) { return callBack([jsonField, _this.getBuilderFieldById(jsonField.id)]); });
+    };
+    BasicExtension.prototype.mapFields = function (jsonFields, callBack) {
+        var _this = this;
+        return jsonFields.map(function (jsonField) {
+            var builderField = _this.getBuilderFieldById(jsonField.id);
             return callBack([jsonField, builderField]) || builderField;
         });
-    }
-    serializeCalculatorConfig(jsonCalculator, actionType, defaultDependents) {
-        const needSerialize = isString(jsonCalculator) || isFunction(jsonCalculator);
-        const calculatorConfig = needSerialize ? { action: this.serializeAction(jsonCalculator) } : cloneDeep(jsonCalculator);
-        const { action, dependents = defaultDependents } = calculatorConfig;
+    };
+    BasicExtension.prototype.serializeCalculatorConfig = function (jsonCalculator, actionType, defaultDependents) {
+        var needSerialize = isString(jsonCalculator) || isFunction(jsonCalculator);
+        var calculatorConfig = needSerialize ? { action: this.serializeAction(jsonCalculator) } : cloneDeep(jsonCalculator);
+        var action = calculatorConfig.action, _a = calculatorConfig.dependents, dependents = _a === void 0 ? defaultDependents : _a;
         calculatorConfig.action = merge({ type: actionType }, this.serializeAction(action));
         calculatorConfig.dependents = dependents;
         return calculatorConfig;
-    }
-    bindCalculatorAction(handler) {
-        return { type: CALCULATOR, handler };
-    }
-    pushCalculators(fieldConfig, calculator) {
+    };
+    BasicExtension.prototype.bindCalculatorAction = function (handler) {
+        return { type: CALCULATOR, handler: handler };
+    };
+    BasicExtension.prototype.pushCalculators = function (fieldConfig, calculator) {
         fieldConfig.calculators = this.toArray(fieldConfig.calculators || []);
-        const { calculators = [] } = fieldConfig;
-        calculators.push(...this.toArray(calculator));
+        var _a = fieldConfig.calculators, calculators = _a === void 0 ? [] : _a;
+        calculators.push.apply(calculators, this.toArray(calculator));
         fieldConfig.calculators = calculators;
-    }
-    pushAction(fieldConfig, actions) {
+    };
+    BasicExtension.prototype.pushAction = function (fieldConfig, actions) {
         fieldConfig.actions = this.toArray(fieldConfig.actions || []);
-        const { actions: defaultAction } = fieldConfig;
-        this.toArray(actions).forEach((pushAction) => {
-            const findAction = defaultAction.find(({ type: defaultType }) => pushAction.type === defaultType);
-            !findAction ? defaultAction.push(pushAction) : Object.assign(findAction, { ...pushAction });
+        var defaultAction = fieldConfig.actions;
+        this.toArray(actions).forEach(function (pushAction) {
+            var findAction = defaultAction.find(function (_a) {
+                var defaultType = _a.type;
+                return pushAction.type === defaultType;
+            });
+            !findAction ? defaultAction.push(pushAction) : Object.assign(findAction, __assign({}, pushAction));
         });
-    }
-    toArray(obj) {
+    };
+    BasicExtension.prototype.toArray = function (obj) {
         return Array.isArray(obj) ? obj : [obj];
-    }
-    defineProperty(object, prototypeName, value) {
+    };
+    BasicExtension.prototype.defineProperty = function (object, prototypeName, value) {
         Object.defineProperty(object, prototypeName, withValue(value));
-    }
-    definePropertys(object, prototype) {
-        Object.keys(prototype).forEach((key) => this.defineProperty(object, key, prototype[key]));
-    }
-    definePropertyGet(object, prototypeName, get) {
+    };
+    BasicExtension.prototype.definePropertys = function (object, prototype) {
+        var _this = this;
+        Object.keys(prototype).forEach(function (key) { return _this.defineProperty(object, key, prototype[key]); });
+    };
+    BasicExtension.prototype.definePropertyGet = function (object, prototypeName, get) {
         Object.defineProperty(object, prototypeName, withGetOrSet(get));
-    }
-    unDefineProperty(object, prototypeNames) {
-        prototypeNames.forEach((prototypeName) => this.defineProperty(object, prototypeName, null));
-    }
-    serializeAction(action) {
+    };
+    BasicExtension.prototype.unDefineProperty = function (object, prototypeNames) {
+        var _this = this;
+        prototypeNames.forEach(function (prototypeName) { return _this.defineProperty(object, prototypeName, null); });
+    };
+    BasicExtension.prototype.serializeAction = function (action) {
         return serializeAction(action);
-    }
-    createActions(actions, props, options) {
+    };
+    BasicExtension.prototype.createActions = function (actions, props, options) {
         return createActions(actions, props, options);
-    }
-    getEventType(type) {
+    };
+    BasicExtension.prototype.getEventType = function (type) {
         return getEventType(type);
-    }
-    getJsonFieldById(fieldId) {
-        return this.jsonFields.find(({ id }) => fieldId === id);
-    }
-    getBuilderFieldById(fieldId) {
+    };
+    BasicExtension.prototype.getJsonFieldById = function (fieldId) {
+        return this.jsonFields.find(function (_a) {
+            var id = _a.id;
+            return fieldId === id;
+        });
+    };
+    BasicExtension.prototype.getBuilderFieldById = function (fieldId) {
         return this.builder.getFieldById(fieldId);
-    }
-}
+    };
+    return BasicExtension;
+}());
+export { BasicExtension };

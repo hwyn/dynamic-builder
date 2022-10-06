@@ -1,3 +1,4 @@
+import { __rest } from "tslib";
 import { cloneDeep, groupBy, merge, toArray } from 'lodash';
 import { LATOUT_ID } from '../constant/calculator.constant';
 const defaultGrid = {
@@ -13,22 +14,20 @@ function groupFieldsToArray(fields) {
     return toArray(groupBy(fields, ({ layout: { row } }) => row));
 }
 export class Grid {
-    builder;
-    config;
     constructor(builder, json) {
         this.builder = builder;
         this.config = this.serializationConfig(json.grid);
     }
     serializationConfig(gridConfig) {
-        const { id = LATOUT_ID, groups, additional = [], ...other } = merge(cloneDeep(defaultGrid), gridConfig);
+        const _a = merge(cloneDeep(defaultGrid), gridConfig), { id = LATOUT_ID, groups, additional = [] } = _a, other = __rest(_a, ["id", "groups", "additional"]);
         const { justify, alignItems, spacing } = other;
         const groupLayout = groupBy(additional, ({ group }) => group);
         const defaultGroupAdditional = { justify, alignItems, spacing };
         const groupAdditional = groups.map((xs, index) => {
             const [item = {}] = groupLayout[index + 1] || [];
-            return { xs, ...defaultGroupAdditional, ...item };
+            return Object.assign(Object.assign({ xs }, defaultGroupAdditional), item);
         });
-        return { id, ...other, additional: groupAdditional };
+        return Object.assign(Object.assign({ id }, other), { additional: groupAdditional });
     }
     getViewGrip(props) {
         const config = cloneDeep(this.config);

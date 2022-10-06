@@ -5,7 +5,6 @@ import { ELEMENT, GRID, LAYOUT, LOAD } from '../constant/calculator.constant';
 import { Grid } from './grid';
 const defaultLayout = { column: 12, group: 1 };
 export class GridExtension extends BasicExtension {
-    layoutBuildFields;
     extension() {
         this.pushCalculators(this.json, {
             action: this.bindCalculatorAction(this.createLoadGrid.bind(this)),

@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GET_JSON_CONFIG = exports.VALIDATOR_SERVICE = exports.LAYOUT_ELEMENT = exports.FORM_CONTROL = exports.FACTORY_BUILDER = exports.LOAD_BUILDER_CONFIG = exports.BUILDER_EXTENSION = exports.ACTION_INTERCEPT = exports.ACTIONS_CONFIG = exports.UI_ELEMENT = void 0;
-const di_1 = require("@fm/di");
+var di_1 = require("@fm/di");
 exports.UI_ELEMENT = di_1.InjectorToken.get('UI_ELEMENT');
 exports.ACTIONS_CONFIG = di_1.InjectorToken.get('ACTION_CONFIG');
 exports.ACTION_INTERCEPT = di_1.InjectorToken.get('ACTION_INTERCEPT');

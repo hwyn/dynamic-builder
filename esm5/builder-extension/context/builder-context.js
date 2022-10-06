@@ -1,3 +1,4 @@
+import { __extends, __spreadArray } from "tslib";
 import { Injector } from '@fm/di';
 import { BuilderContext as BasicBuilderContext } from '../../builder/builder-context';
 // eslint-disable-next-line max-len
@@ -13,7 +14,7 @@ import { MetadataExtension } from '../metadata/metadata.extension';
 import { ReadConfigExtension } from '../read-config/read-config.extension';
 import { ViewModelExtension } from '../view-model/view-model.extension';
 import { CheckVisibilityExtension } from '../visibility/check-visibility.extension';
-const defaultExtensions = [
+var defaultExtensions = [
     CheckVisibilityExtension,
     GridExtension,
     InstanceExtension,
@@ -24,43 +25,58 @@ const defaultExtensions = [
     ActionExtension,
     LifeCycleExtension
 ];
-export class BuilderContext extends BasicBuilderContext {
-    map = new Map();
-    extensions = defaultExtensions;
-    useFactory(useFactory) {
-        return (injector, ...args) => useFactory(...args, injector);
+var BuilderContext = /** @class */ (function (_super) {
+    __extends(BuilderContext, _super);
+    function BuilderContext() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.map = new Map();
+        _this.extensions = defaultExtensions;
+        return _this;
     }
-    registryFactory(injector, token) {
-        const proxyFactory = this.map.get(token);
+    BuilderContext.prototype.useFactory = function (useFactory) {
+        return function (injector) {
+            var args = [];
+            for (var _i = 1; _i < arguments.length; _i++) {
+                args[_i - 1] = arguments[_i];
+            }
+            return useFactory.apply(void 0, __spreadArray(__spreadArray([], args, false), [injector], false));
+        };
+    };
+    BuilderContext.prototype.registryFactory = function (injector, token) {
+        var proxyFactory = this.map.get(token);
         if (proxyFactory) {
             injector.set(token, { provide: token, useFactory: this.useFactory(proxyFactory), deps: [Injector] });
         }
-    }
-    forwardGetJsonConfig(getJsonConfig) {
+    };
+    BuilderContext.prototype.forwardGetJsonConfig = function (getJsonConfig) {
         this.map.set(GET_JSON_CONFIG, getJsonConfig);
-    }
-    forwardFormControl(factoryFormControl) {
-        const proxyFactory = (value, options, injector) => {
-            return factoryFormControl(value, injector.get(VALIDATOR_SERVICE)?.getValidators(options), injector);
+    };
+    BuilderContext.prototype.forwardFormControl = function (factoryFormControl) {
+        var proxyFactory = function (value, options, injector) {
+            var _a;
+            return factoryFormControl(value, (_a = injector.get(VALIDATOR_SERVICE)) === null || _a === void 0 ? void 0 : _a.getValidators(options), injector);
         };
         this.map.set(FORM_CONTROL, proxyFactory);
-    }
-    forwardBuilderLayout(createElement) {
+    };
+    BuilderContext.prototype.forwardBuilderLayout = function (createElement) {
         this.map.set(LAYOUT_ELEMENT, createElement);
-    }
-    registryExtension(extensions) {
-        this.extensions = this.extensions.concat(...extensions);
-    }
-    registryInjector(injector) {
-        super.registryInjector(injector);
+    };
+    BuilderContext.prototype.registryExtension = function (extensions) {
+        var _a;
+        this.extensions = (_a = this.extensions).concat.apply(_a, extensions);
+    };
+    BuilderContext.prototype.registryInjector = function (injector) {
+        _super.prototype.registryInjector.call(this, injector);
         this.registryFactory(injector, GET_JSON_CONFIG);
         this.registryFactory(injector, FORM_CONTROL);
         this.registryFactory(injector, LAYOUT_ELEMENT);
         injector.set(ACTION_INTERCEPT, { provide: ACTION_INTERCEPT, useClass: Action });
         injector.set(LOAD_BUILDER_CONFIG, { provide: LOAD_BUILDER_CONFIG, useValue: ReadConfigExtension });
-        this.extensions.forEach((extension) => {
+        this.extensions.forEach(function (extension) {
             injector.set(BUILDER_EXTENSION, { provide: BUILDER_EXTENSION, multi: true, useValue: extension });
         });
-    }
-}
-export const useBuilderContext = () => new BuilderContext();
+    };
+    return BuilderContext;
+}(BasicBuilderContext));
+export { BuilderContext };
+export var useBuilderContext = function () { return new BuilderContext(); };

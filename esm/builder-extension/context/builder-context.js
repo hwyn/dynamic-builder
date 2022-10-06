@@ -25,8 +25,11 @@ const defaultExtensions = [
     LifeCycleExtension
 ];
 export class BuilderContext extends BasicBuilderContext {
-    map = new Map();
-    extensions = defaultExtensions;
+    constructor() {
+        super(...arguments);
+        this.map = new Map();
+        this.extensions = defaultExtensions;
+    }
     useFactory(useFactory) {
         return (injector, ...args) => useFactory(...args, injector);
     }
@@ -41,7 +44,8 @@ export class BuilderContext extends BasicBuilderContext {
     }
     forwardFormControl(factoryFormControl) {
         const proxyFactory = (value, options, injector) => {
-            return factoryFormControl(value, injector.get(VALIDATOR_SERVICE)?.getValidators(options), injector);
+            var _a;
+            return factoryFormControl(value, (_a = injector.get(VALIDATOR_SERVICE)) === null || _a === void 0 ? void 0 : _a.getValidators(options), injector);
         };
         this.map.set(FORM_CONTROL, proxyFactory);
     }

@@ -2,8 +2,10 @@ import { isEmpty, isUndefined } from 'lodash';
 import { BasicExtension } from '../basic/basic.extension';
 import { CHANGE, CHECK_VISIBILITY, LOAD, LOAD_ACTION } from '../constant/calculator.constant';
 export class CheckVisibilityExtension extends BasicExtension {
-    builderFields;
-    defaultDependents = [LOAD, CHANGE].map((type) => ({ type, fieldId: this.builder.id }));
+    constructor() {
+        super(...arguments);
+        this.defaultDependents = [LOAD, CHANGE].map((type) => ({ type, fieldId: this.builder.id }));
+    }
     extension() {
         const visibliityList = this.jsonFields.filter(this.checkNeedOrDefaultVisibility.bind(this));
         if (!isEmpty(visibliityList)) {

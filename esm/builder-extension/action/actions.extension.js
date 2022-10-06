@@ -2,7 +2,10 @@ import { isEmpty } from 'lodash';
 import { BasicExtension } from '../basic/basic.extension';
 import { ADD_EVENT_LISTENER, EVENTS, LOAD_ACTION, LOAD_VIEW_MODEL } from '../constant/calculator.constant';
 export class ActionExtension extends BasicExtension {
-    fields = [];
+    constructor() {
+        super(...arguments);
+        this.fields = [];
+    }
     extension() {
         const eachCallback = this.create.bind(this);
         const handler = this.eachFields.bind(this, this.jsonFields, eachCallback);
@@ -24,7 +27,7 @@ export class ActionExtension extends BasicExtension {
         const addActions = this.toArray(actions).filter(({ type }) => !events[this.getEventType(type)]);
         if (!isEmpty(addActions)) {
             const addEvents = this.createActions(this.toArray(addActions), { builder: this.builder, id }, { injector: this.injector });
-            this.defineProperty(builderField, EVENTS, { ...events, ...addEvents });
+            this.defineProperty(builderField, EVENTS, Object.assign(Object.assign({}, events), addEvents));
             builderField.instance.detectChanges();
         }
     }

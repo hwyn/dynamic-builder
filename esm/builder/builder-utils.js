@@ -1,3 +1,4 @@
+import { __rest } from "tslib";
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-use-before-define */
 import { isEmpty } from 'lodash';
@@ -49,7 +50,7 @@ function getCacheObj(props) {
 }
 function createField(field) {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { id, type, visibility, ...other } = field;
+    const { id, type, visibility } = field, other = __rest(field, ["id", "type", "visibility"]);
     const element = field.element || this.injector.get(BuilderEngine).getUiComponent(type);
     const _field = { id, type, element, visibility, field: other };
     Object.keys(_field).forEach((key) => _field[key] === undefined && delete _field[key]);
@@ -63,12 +64,13 @@ function destory() {
         try {
             transformObservable(this.destory && this.destory.call(this)).pipe(observableMap(() => toForkJoin(beforeDestorys.map((beforeDestory) => beforeDestory && beforeDestory()))), observableMap((destorys) => toForkJoin(destorys.map((destory) => destory && destory())))).subscribe({
                 next: () => {
+                    var _a;
                     cacheObj.ready = false;
                     cacheObj.fields.splice(0);
                     cacheObj.detectChanges.unsubscribe();
                     cacheObj.beforeDestorys.splice(0);
                     this.children.splice(0);
-                    this.privateExtension?.splice(0);
+                    (_a = this.privateExtension) === null || _a === void 0 ? void 0 : _a.splice(0);
                     this.parent && removeChild.call(this.parent, this);
                 },
                 error: (e) => {
@@ -82,10 +84,12 @@ function destory() {
     }
 }
 function extendsProviders(child) {
-    this.privateExtension?.forEach((extensionProvider) => {
+    var _a;
+    (_a = this.privateExtension) === null || _a === void 0 ? void 0 : _a.forEach((extensionProvider) => {
+        var _a, _b;
         const { needExtends, extension: parentExtension } = extensionProvider;
-        if (needExtends && !child.privateExtension?.some(({ extension }) => extension === parentExtension)) {
-            child.privateExtension?.push(extensionProvider);
+        if (needExtends && !((_a = child.privateExtension) === null || _a === void 0 ? void 0 : _a.some(({ extension }) => extension === parentExtension))) {
+            (_b = child.privateExtension) === null || _b === void 0 ? void 0 : _b.push(extensionProvider);
         }
     });
 }

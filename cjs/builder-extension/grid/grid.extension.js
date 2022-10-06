@@ -1,38 +1,45 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GridExtension = void 0;
-const lodash_1 = require("lodash");
-const token_1 = require("../../token");
-const basic_extension_1 = require("../basic/basic.extension");
-const calculator_constant_1 = require("../constant/calculator.constant");
-const grid_1 = require("./grid");
-const defaultLayout = { column: 12, group: 1 };
-class GridExtension extends basic_extension_1.BasicExtension {
-    layoutBuildFields;
-    extension() {
+var tslib_1 = require("tslib");
+var lodash_1 = require("lodash");
+var token_1 = require("../../token");
+var basic_extension_1 = require("../basic/basic.extension");
+var calculator_constant_1 = require("../constant/calculator.constant");
+var grid_1 = require("./grid");
+var defaultLayout = { column: 12, group: 1 };
+var GridExtension = /** @class */ (function (_super) {
+    tslib_1.__extends(GridExtension, _super);
+    function GridExtension() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    GridExtension.prototype.extension = function () {
         this.pushCalculators(this.json, {
             action: this.bindCalculatorAction(this.createLoadGrid.bind(this)),
             dependents: { type: calculator_constant_1.LOAD, fieldId: this.builder.id }
         });
-    }
-    createLoadGrid() {
+    };
+    GridExtension.prototype.createLoadGrid = function () {
         this.defineProperty(this.cache, calculator_constant_1.GRID, new grid_1.Grid(this.builder, this.json));
         this.layoutBuildFields = this.mapFields(this.jsonFields, this.addFieldLayout.bind(this, {}));
         this.defineProperty(this.builder, calculator_constant_1.ELEMENT, this.injector.get(token_1.LAYOUT_ELEMENT, this.cache.grid, this.builder));
-    }
-    addFieldLayout(cursor, [, builderField]) {
-        const { field, field: { layout = {} } } = builderField;
-        const mergeLayout = (0, lodash_1.merge)((0, lodash_1.cloneDeep)(defaultLayout), layout);
-        const { row, group } = mergeLayout;
+    };
+    GridExtension.prototype.addFieldLayout = function (cursor, _a) {
+        var builderField = _a[1];
+        var field = builderField.field, _b = builderField.field.layout, layout = _b === void 0 ? {} : _b;
+        var mergeLayout = (0, lodash_1.merge)((0, lodash_1.cloneDeep)(defaultLayout), layout);
+        var row = mergeLayout.row, group = mergeLayout.group;
         cursor[group] = row || cursor[group] || 1;
         this.defineProperty(builderField, calculator_constant_1.LAYOUT, (0, lodash_1.merge)({ row: cursor[group] }, mergeLayout));
         delete field.layout;
-    }
-    destory() {
+    };
+    GridExtension.prototype.destory = function () {
+        var _this = this;
         this.defineProperty(this.cache, calculator_constant_1.GRID, null);
         this.defineProperty(this.builder, calculator_constant_1.ELEMENT, null);
-        this.layoutBuildFields.forEach((builderField) => this.defineProperty(builderField, calculator_constant_1.LAYOUT, null));
-        return super.destory();
-    }
-}
+        this.layoutBuildFields.forEach(function (builderField) { return _this.defineProperty(builderField, calculator_constant_1.LAYOUT, null); });
+        return _super.prototype.destory.call(this);
+    };
+    return GridExtension;
+}(basic_extension_1.BasicExtension));
 exports.GridExtension = GridExtension;

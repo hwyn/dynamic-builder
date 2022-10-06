@@ -5,7 +5,10 @@ import { observableMap, toForkJoin, transformObservable } from '../../utility';
 import { BasicExtension } from '../basic/basic.extension';
 import { CURRENT, DESTORY, INSTANCE, LOAD_ACTION, MOUNTED } from '../constant/calculator.constant';
 export class InstanceExtension extends BasicExtension {
-    buildFieldList = [];
+    constructor() {
+        super(...arguments);
+        this.buildFieldList = [];
+    }
     static createInstance() {
         return {
             current: null,

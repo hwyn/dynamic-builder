@@ -9,8 +9,6 @@ import { observableTap, transformObservable } from '../../utility';
 import { serializeAction } from '../basic/basic.extension';
 import { BaseAction } from './base.action';
 let Action = class Action {
-    injector;
-    actions;
     constructor(injector, actions) {
         this.injector = injector;
         this.actions = flatMap(actions);
@@ -27,7 +25,7 @@ let Action = class Action {
     }
     call(calculators, builder, callLink = []) {
         return (value) => forkJoin(calculators.map(({ targetId: id, action }) => {
-            return this.invoke({ ...action, callLink }, { builder, id }, value);
+            return this.invoke(Object.assign(Object.assign({}, action), { callLink }), { builder, id }, value);
         }));
     }
     invokeCallCalculators(calculators, { type, callLink }, props) {
@@ -46,7 +44,7 @@ let Action = class Action {
     }
     invokeAction(action, props, event = null, ...otherEventParam) {
         const { name, handler, stop } = action;
-        if (stop && !isEmpty(event) && event?.stopPropagation) {
+        if (stop && !isEmpty(event) && (event === null || event === void 0 ? void 0 : event.stopPropagation)) {
             event.stopPropagation();
         }
         const { after, before } = action;
@@ -77,7 +75,7 @@ let Action = class Action {
         const [actionEvent, ...otherEvent] = event;
         const { name = ``, handler } = serializeAction(actionPropos);
         const [actionName, execute = 'execute'] = name.match(/([^.]+)/ig) || [name];
-        const context = { ...actionContext, actionPropos, actionEvent };
+        const context = Object.assign(Object.assign({}, actionContext), { actionPropos, actionEvent });
         let action = new BaseAction(this.injector, context);
         let executeHandler = handler;
         let builder = action.builder;

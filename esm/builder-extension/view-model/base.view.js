@@ -1,7 +1,5 @@
 import { get, set } from 'lodash';
 export class BaseView {
-    injector;
-    store;
     constructor(injector, store) {
         this.injector = injector;
         this.store = store;

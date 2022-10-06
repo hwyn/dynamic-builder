@@ -1,12 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.serializeAction = exports.BuilderModel = exports.Grid = exports.useBuilderContext = exports.InjectableValidator = void 0;
-const tslib_1 = require("tslib");
-const di_1 = require("@fm/di");
-const token_1 = require("../token");
-const basic_extension_1 = require("./basic/basic.extension");
+var tslib_1 = require("tslib");
+var di_1 = require("@fm/di");
+var token_1 = require("../token");
+var basic_extension_1 = require("./basic/basic.extension");
 Object.defineProperty(exports, "serializeAction", { enumerable: true, get: function () { return basic_extension_1.serializeAction; } });
-const InjectableValidator = () => (0, di_1.Injectable)(token_1.VALIDATOR_SERVICE);
+var InjectableValidator = function () { return (0, di_1.Injectable)(token_1.VALIDATOR_SERVICE); };
 exports.InjectableValidator = InjectableValidator;
 tslib_1.__exportStar(require("./action"), exports);
 tslib_1.__exportStar(require("./action/create-actions"), exports);

@@ -1,11 +1,13 @@
 import { map } from 'rxjs/operators';
 export function observableMap(fn) {
-    return (souce) => souce.lift(function (liftedSource) {
-        liftedSource.subscribe((result) => fn(result).subscribe(this));
-    });
+    return function (souce) { return souce.lift(function (liftedSource) {
+        var _this = this;
+        liftedSource.subscribe(function (result) { return fn(result).subscribe(_this); });
+    }); };
 }
 export function observableTap(fn) {
-    return (souce) => souce.lift(function (liftedSource) {
-        liftedSource.subscribe((result) => fn(result).pipe(map(() => result)).subscribe(this));
-    });
+    return function (souce) { return souce.lift(function (liftedSource) {
+        var _this = this;
+        liftedSource.subscribe(function (result) { return fn(result).pipe(map(function () { return result; })).subscribe(_this); });
+    }); };
 }

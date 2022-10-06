@@ -1,81 +1,99 @@
+import { __extends } from "tslib";
 import { isEmpty } from 'lodash';
 import { Observable, Subject } from 'rxjs';
 import { BuilderModel } from '../../builder/builder-model';
 import { observableMap, toForkJoin, transformObservable } from '../../utility';
 import { BasicExtension } from '../basic/basic.extension';
 import { CURRENT, DESTORY, INSTANCE, LOAD_ACTION, MOUNTED } from '../constant/calculator.constant';
-export class InstanceExtension extends BasicExtension {
-    buildFieldList = [];
-    static createInstance() {
+var InstanceExtension = /** @class */ (function (_super) {
+    __extends(InstanceExtension, _super);
+    function InstanceExtension() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.buildFieldList = [];
+        return _this;
+    }
+    InstanceExtension.createInstance = function () {
         return {
             current: null,
             destory: new Subject(),
-            onMounted: () => void (0),
-            onDestory: () => void (0),
-            detectChanges: () => undefined
+            onMounted: function () { return void (0); },
+            onDestory: function () { return void (0); },
+            detectChanges: function () { return undefined; }
         };
-    }
-    extension() {
+    };
+    InstanceExtension.prototype.extension = function () {
         this.buildFieldList = this.mapFields(this.jsonFields, this.addInstance.bind(this));
-        const handler = this.eachFields.bind(this, this.jsonFields, this.createInstanceLife.bind(this));
+        var handler = this.eachFields.bind(this, this.jsonFields, this.createInstanceLife.bind(this));
         this.pushCalculators(this.json, [{
                 action: this.bindCalculatorAction(handler),
                 dependents: { type: LOAD_ACTION, fieldId: this.builder.id }
             }]);
-    }
-    createInstanceLife([, builderField]) {
-        const { instance, events = {} } = builderField;
-        this.definePropertys(instance, {
-            [this.getEventType(MOUNTED)]: events.onMounted,
-            [this.getEventType(DESTORY)]: events.onDestory
-        });
+    };
+    InstanceExtension.prototype.createInstanceLife = function (_a) {
+        var _b;
+        var builderField = _a[1];
+        var instance = builderField.instance, _c = builderField.events, events = _c === void 0 ? {} : _c;
+        this.definePropertys(instance, (_b = {},
+            _b[this.getEventType(MOUNTED)] = events.onMounted,
+            _b[this.getEventType(DESTORY)] = events.onDestory,
+            _b));
         Object.defineProperty(instance, CURRENT, this.getCurrentProperty(builderField));
         delete events.onMounted;
         delete events.onDestory;
-    }
-    getCurrentProperty({ instance, id }) {
-        let _current;
-        const get = () => _current;
-        const set = (current) => {
-            const hasMounted = !!current && _current !== current;
+    };
+    InstanceExtension.prototype.getCurrentProperty = function (_a) {
+        var instance = _a.instance, id = _a.id;
+        var _current;
+        var get = function () { return _current; };
+        var set = function (current) {
+            var hasMounted = !!current && _current !== current;
             _current = current;
             if (hasMounted) {
                 instance.onMounted(id);
             }
             if (current instanceof BuilderModel && !current.id) {
-                console.error(`Builder needs to set the ID property: ${id}`);
+                console.error("Builder needs to set the ID property: ".concat(id));
             }
         };
-        return { get, set };
-    }
-    addInstance([jsonField, builderField]) {
-        const destory = { type: DESTORY, after: this.bindCalculatorAction(this.instanceDestory.bind(this)) };
+        return { get: get, set: set };
+    };
+    InstanceExtension.prototype.addInstance = function (_a) {
+        var jsonField = _a[0], builderField = _a[1];
+        var destory = { type: DESTORY, after: this.bindCalculatorAction(this.instanceDestory.bind(this)) };
         this.pushAction(jsonField, [destory, { type: MOUNTED }]);
         this.defineProperty(builderField, INSTANCE, InstanceExtension.createInstance());
-    }
-    instanceDestory({ actionEvent, builderField: { instance } }) {
-        const currentIsBuildModel = instance.current instanceof BuilderModel;
+    };
+    InstanceExtension.prototype.instanceDestory = function (_a) {
+        var actionEvent = _a.actionEvent, instance = _a.builderField.instance;
+        var currentIsBuildModel = instance.current instanceof BuilderModel;
         instance.current && (instance.current = null);
-        instance.detectChanges = () => undefined;
+        instance.detectChanges = function () { return undefined; };
         return !currentIsBuildModel && instance.destory.next(actionEvent);
-    }
-    beforeDestory() {
+    };
+    InstanceExtension.prototype.beforeDestory = function () {
+        var _this = this;
         if (!isEmpty(this.buildFieldList)) {
-            return toForkJoin(this.buildFieldList.map(({ id, instance }) => new Observable((subscribe) => {
-                instance.destory.subscribe(() => {
-                    subscribe.next(id);
-                    subscribe.complete();
+            return toForkJoin(this.buildFieldList.map(function (_a) {
+                var id = _a.id, instance = _a.instance;
+                return new Observable(function (subscribe) {
+                    instance.destory.subscribe(function () {
+                        subscribe.next(id);
+                        subscribe.complete();
+                    });
                 });
-            }))).pipe(observableMap(() => transformObservable(super.beforeDestory())));
+            })).pipe(observableMap(function () { return transformObservable(_super.prototype.beforeDestory.call(_this)); }));
         }
-    }
-    destory() {
-        this.buildFieldList.forEach((buildField) => {
-            const { instance } = buildField;
+    };
+    InstanceExtension.prototype.destory = function () {
+        var _this = this;
+        this.buildFieldList.forEach(function (buildField) {
+            var instance = buildField.instance;
             instance.destory.unsubscribe();
-            this.unDefineProperty(instance, ['detectChanges', this.getEventType(DESTORY), this.getEventType(MOUNTED), CURRENT]);
-            this.defineProperty(buildField, INSTANCE, null);
+            _this.unDefineProperty(instance, ['detectChanges', _this.getEventType(DESTORY), _this.getEventType(MOUNTED), CURRENT]);
+            _this.defineProperty(buildField, INSTANCE, null);
         });
-        return super.destory();
-    }
-}
+        return _super.prototype.destory.call(this);
+    };
+    return InstanceExtension;
+}(BasicExtension));
+export { InstanceExtension };

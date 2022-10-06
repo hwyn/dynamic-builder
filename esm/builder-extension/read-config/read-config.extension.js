@@ -53,7 +53,7 @@ export class ReadConfigExtension extends BasicExtension {
         return configOb.pipe(map((_config = []) => Object.assign({ fields: [] }, Array.isArray(_config) ? { fields: _config } : _config, id ? { id } : {})));
     }
     createLoadConfigAction(actionName, props) {
-        const loadAction = { ...this.serializeAction(actionName), type: LOAD_CONFIG_ACTION, runObservable: true };
+        const loadAction = Object.assign(Object.assign({}, this.serializeAction(actionName)), { type: LOAD_CONFIG_ACTION, runObservable: true });
         const interceptProps = { builder: this.builder, id: props.id };
         const actions = this.createActions([loadAction], interceptProps, { injector: this.injector });
         return actions[this.getEventType(LOAD_CONFIG_ACTION)](props);

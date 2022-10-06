@@ -1,21 +1,25 @@
 import { get, set } from 'lodash';
-export class BaseView {
-    injector;
-    store;
-    constructor(injector, store) {
+var BaseView = /** @class */ (function () {
+    function BaseView(injector, store) {
         this.injector = injector;
         this.store = store;
     }
-    setBindValue(binding, value) {
+    BaseView.prototype.setBindValue = function (binding, value) {
         set(this.store, binding.path, value);
-    }
-    getBindValue(binding) {
+    };
+    BaseView.prototype.getBindValue = function (binding) {
         return get(this.store, binding.path, binding.default);
-    }
-    refreshData(model) {
+    };
+    BaseView.prototype.refreshData = function (model) {
         this.store = model;
-    }
-    get model() {
-        return this.store;
-    }
-}
+    };
+    Object.defineProperty(BaseView.prototype, "model", {
+        get: function () {
+            return this.store;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    return BaseView;
+}());
+export { BaseView };

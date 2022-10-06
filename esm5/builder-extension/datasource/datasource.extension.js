@@ -1,10 +1,17 @@
+import { __extends } from "tslib";
 import { isEmpty, isUndefined } from 'lodash';
 import { BasicExtension } from '../basic/basic.extension';
 import { DATD_SOURCE, LOAD_ACTION, LOAD_VIEW_MODEL } from '../constant/calculator.constant';
-export class DataSourceExtension extends BasicExtension {
-    builderFields;
-    extension() {
-        const jsonFields = this.jsonFields.filter(({ dataSource }) => !isUndefined(dataSource));
+var DataSourceExtension = /** @class */ (function (_super) {
+    __extends(DataSourceExtension, _super);
+    function DataSourceExtension() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    DataSourceExtension.prototype.extension = function () {
+        var jsonFields = this.jsonFields.filter(function (_a) {
+            var dataSource = _a.dataSource;
+            return !isUndefined(dataSource);
+        });
         if (!isEmpty(jsonFields)) {
             this.builderFields = this.mapFields(jsonFields, this.addFieldCalculators.bind(this));
             this.pushCalculators(this.json, [{
@@ -12,49 +19,55 @@ export class DataSourceExtension extends BasicExtension {
                     dependents: { type: LOAD_ACTION, fieldId: this.builder.id }
                 }]);
         }
-    }
-    addFieldCalculators([jsonField]) {
-        const { action, dependents, metadata } = this.serializeDataSourceConfig(jsonField);
+    };
+    DataSourceExtension.prototype.addFieldCalculators = function (_a) {
+        var jsonField = _a[0];
+        var _b = this.serializeDataSourceConfig(jsonField), action = _b.action, dependents = _b.dependents, metadata = _b.metadata;
         action.after = this.bindCalculatorAction(this.createSourceConfig.bind(this, metadata));
-        this.pushCalculators(jsonField, { action, dependents });
-    }
-    createSourceConfig(metadata, { actionEvent, builderField, builderField: { instance } }) {
+        this.pushCalculators(jsonField, { action: action, dependents: dependents });
+    };
+    DataSourceExtension.prototype.createSourceConfig = function (metadata, _a) {
+        var actionEvent = _a.actionEvent, builderField = _a.builderField, instance = _a.builderField.instance;
         builderField.source = this.sourceToMetadata(actionEvent, metadata);
         instance.detectChanges();
-    }
-    createOnDataSourceConfig() {
-        this.builderFields.forEach((builderField) => {
-            const { events = {}, field } = builderField;
+    };
+    DataSourceExtension.prototype.createOnDataSourceConfig = function () {
+        var _this = this;
+        this.builderFields.forEach(function (builderField) {
+            var _a = builderField.events, events = _a === void 0 ? {} : _a, field = builderField.field;
             if (events.onDataSource) {
-                events.onDataSource && this.defineProperty(builderField, this.getEventType(DATD_SOURCE), events.onDataSource);
+                events.onDataSource && _this.defineProperty(builderField, _this.getEventType(DATD_SOURCE), events.onDataSource);
                 delete events.onDataSource;
             }
             delete field.dataSource;
         });
-    }
-    serializeDataSourceConfig(jsonField) {
-        const { dataSource: jsonDataSource } = jsonField;
-        const defaultDependents = { type: LOAD_VIEW_MODEL, fieldId: this.builder.id };
-        const dataSource = this.serializeCalculatorConfig(jsonDataSource, DATD_SOURCE, defaultDependents);
-        const { action, source } = dataSource;
+    };
+    DataSourceExtension.prototype.serializeDataSourceConfig = function (jsonField) {
+        var jsonDataSource = jsonField.dataSource;
+        var defaultDependents = { type: LOAD_VIEW_MODEL, fieldId: this.builder.id };
+        var dataSource = this.serializeCalculatorConfig(jsonDataSource, DATD_SOURCE, defaultDependents);
+        var action = dataSource.action, source = dataSource.source;
         if (!isEmpty(source) && !action.handler) {
-            action.handler = () => source;
+            action.handler = function () { return source; };
         }
         return dataSource;
-    }
-    sourceToMetadata(sources, metadata = {}) {
+    };
+    DataSourceExtension.prototype.sourceToMetadata = function (sources, metadata) {
+        if (metadata === void 0) { metadata = {}; }
         if (isEmpty(metadata)) {
             return sources;
         }
-        const metdataKeys = Object.keys(metadata);
-        this.toArray(sources).forEach((source) => {
-            metdataKeys.forEach((key) => {
-                const value = source[metadata[key]];
+        var metdataKeys = Object.keys(metadata);
+        this.toArray(sources).forEach(function (source) {
+            metdataKeys.forEach(function (key) {
+                var value = source[metadata[key]];
                 if (![undefined].includes(value)) {
                     source[key] = value;
                 }
             });
         });
         return sources;
-    }
-}
+    };
+    return DataSourceExtension;
+}(BasicExtension));
+export { DataSourceExtension };

@@ -5,8 +5,11 @@ import { transformObservable } from '../../utility';
 import { BasicExtension } from '../basic/basic.extension';
 import { CHANGE, CHECK_VISIBILITY, CONTROL, LOAD_ACTION, NOTIFY_VIEW_MODEL_CHANGE } from '../constant/calculator.constant';
 export class FormExtension extends BasicExtension {
-    builderFields = [];
-    defaultChangeType = CHANGE;
+    constructor() {
+        super(...arguments);
+        this.builderFields = [];
+        this.defaultChangeType = CHANGE;
+    }
     extension() {
         this.builderFields = this.mapFields(this.jsonFields.filter(({ binding }) => !isEmpty(binding)), this.createMergeControl.bind(this));
     }
@@ -47,13 +50,14 @@ export class FormExtension extends BasicExtension {
         this.changeVisibility(builderField, builderField.visibility);
     }
     createChange({ binding }, { builderField, actionEvent }) {
+        var _a, _b;
         const value = this.isDomEvent(actionEvent) ? actionEvent.target.value : actionEvent;
         this.setValueToModel(binding, value, builderField);
-        builderField.control?.patchValue(value);
-        builderField.instance?.detectChanges();
+        (_a = builderField.control) === null || _a === void 0 ? void 0 : _a.patchValue(value);
+        (_b = builderField.instance) === null || _b === void 0 ? void 0 : _b.detectChanges();
     }
     createValidaity({ builderField: { control }, builder: { ready } }) {
-        return ready && transformObservable(control?.updateValueAndValidity());
+        return ready && transformObservable(control === null || control === void 0 ? void 0 : control.updateValueAndValidity());
     }
     createVisibility({ builderField, builder: { ready }, actionEvent }) {
         ready && this.changeVisibility(builderField, actionEvent);
@@ -90,7 +94,8 @@ export class FormExtension extends BasicExtension {
     }
     destory() {
         this.builderFields.forEach((builderField) => {
-            builderField.control?.destory();
+            var _a;
+            (_a = builderField.control) === null || _a === void 0 ? void 0 : _a.destory();
             this.defineProperty(builderField, CONTROL, null);
         });
         return super.destory();

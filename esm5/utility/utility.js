@@ -7,12 +7,12 @@ export function transformObservable(obj) {
     return isObservable(obj) ? obj : of(obj);
 }
 export function transformObj(result, returnValue) {
-    const notTransform = !isObservable(result) || typeof returnValue === 'undefined';
-    return notTransform ? returnValue : result.pipe(map(() => returnValue));
+    var notTransform = !isObservable(result) || typeof returnValue === 'undefined';
+    return notTransform ? returnValue : result.pipe(map(function () { return returnValue; }));
 }
 export function withValue(value) {
-    return { value, enumerable: true, configurable: true };
+    return { value: value, enumerable: true, configurable: true };
 }
 export function withGetOrSet(get, set) {
-    return { get, set, enumerable: true, configurable: true };
+    return { get: get, set: set, enumerable: true, configurable: true };
 }

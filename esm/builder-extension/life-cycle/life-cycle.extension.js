@@ -5,11 +5,13 @@ import { observableMap, transformObservable } from '../../utility';
 import { BasicExtension } from '../basic/basic.extension';
 import { CHANGE, DESTORY, LOAD, NON_SELF_BUILSERS, ORIGIN_CALCULATORS, ORIGIN_NON_SELF_CALCULATORS } from '../constant/calculator.constant';
 export class LifeCycleExtension extends BasicExtension {
-    hasChange = false;
-    calculators = [];
-    nonSelfCalculators = [];
-    lifeActions;
-    detectChanges = this.cache.detectChanges.pipe(filter(() => !this.hasChange));
+    constructor() {
+        super(...arguments);
+        this.hasChange = false;
+        this.calculators = [];
+        this.nonSelfCalculators = [];
+        this.detectChanges = this.cache.detectChanges.pipe(filter(() => !this.hasChange));
+    }
     extension() {
         const nonSelfBuilders = this.builder.root.$$cache.nonSelfBuilders;
         this.defineProperty(this.cache, NON_SELF_BUILSERS, nonSelfBuilders || []);
@@ -72,12 +74,13 @@ export class LifeCycleExtension extends BasicExtension {
         const fieldsCalculators = cloneDeep(fields.filter(({ calculators }) => !isEmpty(calculators)));
         this.calculators = [];
         fieldsCalculators.forEach(({ id: targetId, calculators = [] }) => {
+            var _a;
             this.toArray(calculators).forEach(({ action, dependents }) => {
                 this.toArray(dependents).forEach((dependent) => {
                     this.calculators.push({ targetId, action: this.serializeAction(action), dependent });
                 });
             });
-            delete this.getBuilderFieldById(targetId)?.field.calculators;
+            (_a = this.getBuilderFieldById(targetId)) === null || _a === void 0 ? true : delete _a.field.calculators;
         });
     }
     getNonSelfCalculators() {
@@ -99,13 +102,14 @@ export class LifeCycleExtension extends BasicExtension {
         return this.invokeLifeCycle(this.getEventType(DESTORY)).pipe(observableMap(() => transformObservable(super.beforeDestory())));
     }
     destory() {
+        var _a;
         if (this.nonSelfCalculators.length) {
             this.nonSelfBuilders.splice(this.nonSelfBuilders.indexOf(this.builder), 1);
         }
         this.unDefineProperty(this.builder, ['calculators', 'nonSelfCalculators', this.getEventType(CHANGE)]);
         this.unDefineProperty(this.cache, [ORIGIN_CALCULATORS, ORIGIN_NON_SELF_CALCULATORS, NON_SELF_BUILSERS]);
         this.unDefineProperty(this, ['detectChanges', 'lifeActions']);
-        const parentField = this.builder.parent?.getFieldById(this.builder.id);
-        return transformObservable(super.destory()).pipe(tap(() => parentField && parentField.instance?.destory.next(this.builder.id)));
+        const parentField = (_a = this.builder.parent) === null || _a === void 0 ? void 0 : _a.getFieldById(this.builder.id);
+        return transformObservable(super.destory()).pipe(tap(() => { var _a; return parentField && ((_a = parentField.instance) === null || _a === void 0 ? void 0 : _a.destory.next(this.builder.id)); }));
     }
 }

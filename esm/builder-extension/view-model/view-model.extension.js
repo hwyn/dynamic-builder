@@ -32,13 +32,14 @@ export class ViewModelExtension extends BasicExtension {
         });
     }
     notifyHandler({ builder, actionEvent }, options = { hasSelf: true }) {
-        if (!options?.hasSelf) {
+        if (!(options === null || options === void 0 ? void 0 : options.hasSelf)) {
             builder.children.forEach((child) => child.notifyViewModelChanges(actionEvent, options));
         }
         return actionEvent;
     }
     refresHandler({ actionEvent }) {
-        this.cache?.viewModel.refreshData(actionEvent);
+        var _a;
+        (_a = this.cache) === null || _a === void 0 ? void 0 : _a.viewModel.refreshData(actionEvent);
     }
     destory() {
         this.unDefineProperty(this.cache, [VIEW_MODEL]);

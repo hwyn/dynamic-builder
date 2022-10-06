@@ -1,7 +1,7 @@
 import { Injectable } from '@fm/di';
 import { VALIDATOR_SERVICE } from '../token';
 import { serializeAction } from './basic/basic.extension';
-export const InjectableValidator = () => Injectable(VALIDATOR_SERVICE);
+export var InjectableValidator = function () { return Injectable(VALIDATOR_SERVICE); };
 export * from './action';
 export * from './action/create-actions';
 export * from './basic/basic.extension';

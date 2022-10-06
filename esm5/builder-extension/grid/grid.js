@@ -1,41 +1,49 @@
+import { __assign, __rest } from "tslib";
 import { cloneDeep, groupBy, merge, toArray } from 'lodash';
 import { LATOUT_ID } from '../constant/calculator.constant';
-const defaultGrid = {
+var defaultGrid = {
     spacing: 0,
     justify: 'flex-start',
     alignItems: 'flex-start',
     groups: [12]
 };
 function groupByFields(fields) {
-    return groupBy(fields, ({ layout: { group } }) => group);
+    return groupBy(fields, function (_a) {
+        var group = _a.layout.group;
+        return group;
+    });
 }
 function groupFieldsToArray(fields) {
-    return toArray(groupBy(fields, ({ layout: { row } }) => row));
+    return toArray(groupBy(fields, function (_a) {
+        var row = _a.layout.row;
+        return row;
+    }));
 }
-export class Grid {
-    builder;
-    config;
-    constructor(builder, json) {
+var Grid = /** @class */ (function () {
+    function Grid(builder, json) {
         this.builder = builder;
         this.config = this.serializationConfig(json.grid);
     }
-    serializationConfig(gridConfig) {
-        const { id = LATOUT_ID, groups, additional = [], ...other } = merge(cloneDeep(defaultGrid), gridConfig);
-        const { justify, alignItems, spacing } = other;
-        const groupLayout = groupBy(additional, ({ group }) => group);
-        const defaultGroupAdditional = { justify, alignItems, spacing };
-        const groupAdditional = groups.map((xs, index) => {
-            const [item = {}] = groupLayout[index + 1] || [];
-            return { xs, ...defaultGroupAdditional, ...item };
+    Grid.prototype.serializationConfig = function (gridConfig) {
+        var _a = merge(cloneDeep(defaultGrid), gridConfig), _b = _a.id, id = _b === void 0 ? LATOUT_ID : _b, groups = _a.groups, _c = _a.additional, additional = _c === void 0 ? [] : _c, other = __rest(_a, ["id", "groups", "additional"]);
+        var justify = other.justify, alignItems = other.alignItems, spacing = other.spacing;
+        var groupLayout = groupBy(additional, function (_a) {
+            var group = _a.group;
+            return group;
         });
-        return { id, ...other, additional: groupAdditional };
-    }
-    getViewGrip(props) {
-        const config = cloneDeep(this.config);
-        const { additional = [], className = '', style } = config;
-        const { className: propsClassName = '', style: propsStyle } = props;
-        const groupLayout = groupByFields(this.builder.fields);
-        additional.forEach((item, group) => item.fieldRows = groupFieldsToArray(groupLayout[group + 1]));
+        var defaultGroupAdditional = { justify: justify, alignItems: alignItems, spacing: spacing };
+        var groupAdditional = groups.map(function (xs, index) {
+            var _a = (groupLayout[index + 1] || [])[0], item = _a === void 0 ? {} : _a;
+            return __assign(__assign({ xs: xs }, defaultGroupAdditional), item);
+        });
+        return __assign(__assign({ id: id }, other), { additional: groupAdditional });
+    };
+    Grid.prototype.getViewGrip = function (props) {
+        var config = cloneDeep(this.config);
+        var _a = config.additional, additional = _a === void 0 ? [] : _a, _b = config.className, className = _b === void 0 ? '' : _b, style = config.style;
+        var _c = props.className, propsClassName = _c === void 0 ? '' : _c, propsStyle = props.style;
+        var groupLayout = groupByFields(this.builder.fields);
+        additional.forEach(function (item, group) { return item.fieldRows = groupFieldsToArray(groupLayout[group + 1]); });
         if (className || propsClassName) {
             config.className = [className, propsClassName].join(' ');
         }
@@ -43,5 +51,7 @@ export class Grid {
             config.style = Object.assign({}, style, propsStyle);
         }
         return config;
-    }
-}
+    };
+    return Grid;
+}());
+export { Grid };

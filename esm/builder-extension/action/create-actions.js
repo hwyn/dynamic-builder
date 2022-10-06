@@ -18,8 +18,5 @@ export function getEventType(type) {
 }
 export const createActions = (actions, props, options) => {
     const events = groupBy(actions, 'type');
-    return Object.keys(events).reduce((obj, type) => ({
-        ...obj,
-        [getEventType(type)]: mergeHandler(events[type], props, options)
-    }), {});
+    return Object.keys(events).reduce((obj, type) => (Object.assign(Object.assign({}, obj), { [getEventType(type)]: mergeHandler(events[type], props, options) })), {});
 };

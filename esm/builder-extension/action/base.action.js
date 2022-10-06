@@ -1,7 +1,5 @@
 import { ACTION_INTERCEPT } from '../../token';
 export class BaseAction {
-    injector;
-    context;
     constructor(injector, context = {}) {
         this.injector = injector;
         this.context = context;

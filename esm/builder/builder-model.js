@@ -2,14 +2,11 @@ import { flatMap, isEmpty, uniq } from 'lodash';
 import { init } from './builder-utils';
 import { Visibility } from './consts';
 export class BuilderModel {
-    injector;
-    id;
-    parent = null;
-    children = [];
-    $$cache = {};
-    Element;
     constructor(injector) {
         this.injector = injector;
+        this.parent = null;
+        this.children = [];
+        this.$$cache = {};
         init.call(this);
     }
     getFieldByTypes(type) {
@@ -22,9 +19,10 @@ export class BuilderModel {
         return fields;
     }
     getFieldById(id) {
+        var _a;
         const hasSelf = id === this.id && !!this.parent;
         const { fields = [] } = this.$$cache;
-        return hasSelf ? this.parent?.getFieldById(id) : fields.find(({ id: fieldId }) => fieldId === id);
+        return hasSelf ? (_a = this.parent) === null || _a === void 0 ? void 0 : _a.getFieldById(id) : fields.find(({ id: fieldId }) => fieldId === id);
     }
     getAllFieldById(id) {
         const fields = flatMap(this.children.map((child) => child.getAllFieldById(id)));

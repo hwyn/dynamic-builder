@@ -1,10 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BuilderModelExtensions = void 0;
-const builder_model_1 = require("../../builder/builder-model");
-class BuilderModelExtensions extends builder_model_1.BuilderModel {
-    viewModel;
-    refreshData;
-    notifyViewModelChanges;
-}
+var tslib_1 = require("tslib");
+var builder_model_1 = require("../../builder/builder-model");
+var BuilderModelExtensions = /** @class */ (function (_super) {
+    tslib_1.__extends(BuilderModelExtensions, _super);
+    function BuilderModelExtensions() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    return BuilderModelExtensions;
+}(builder_model_1.BuilderModel));
 exports.BuilderModelExtensions = BuilderModelExtensions;

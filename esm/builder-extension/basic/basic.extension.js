@@ -6,19 +6,14 @@ export const serializeAction = (action) => {
     return (isString(action) ? { name: action } : isFunction(action) ? { handler: action } : action);
 };
 export class BasicExtension {
-    builder;
-    props;
-    cache;
-    json;
-    jsonFields;
-    injector;
     constructor(builder, props, cache, json) {
+        var _a;
         this.builder = builder;
         this.props = props;
         this.cache = cache;
         this.json = json;
         this.injector = this.builder.injector;
-        this.jsonFields = this.json?.fields;
+        this.jsonFields = (_a = this.json) === null || _a === void 0 ? void 0 : _a.fields;
     }
     afterExtension() { }
     beforeDestory() { }
@@ -60,7 +55,7 @@ export class BasicExtension {
         const { actions: defaultAction } = fieldConfig;
         this.toArray(actions).forEach((pushAction) => {
             const findAction = defaultAction.find(({ type: defaultType }) => pushAction.type === defaultType);
-            !findAction ? defaultAction.push(pushAction) : Object.assign(findAction, { ...pushAction });
+            !findAction ? defaultAction.push(pushAction) : Object.assign(findAction, Object.assign({}, pushAction));
         });
     }
     toArray(obj) {

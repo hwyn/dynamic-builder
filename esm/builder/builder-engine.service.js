@@ -3,7 +3,6 @@ import { Inject, Injectable } from '@fm/di';
 import { flatMap } from 'lodash';
 import { UI_ELEMENT } from '../token';
 let BuilderEngine = class BuilderEngine {
-    uiElement;
     constructor(uiComponents) {
         this.uiElement = flatMap(uiComponents);
     }

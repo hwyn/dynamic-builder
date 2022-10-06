@@ -2,7 +2,6 @@ import { isEmpty, isUndefined } from 'lodash';
 import { BasicExtension } from '../basic/basic.extension';
 import { DATD_SOURCE, LOAD_ACTION, LOAD_VIEW_MODEL } from '../constant/calculator.constant';
 export class DataSourceExtension extends BasicExtension {
-    builderFields;
     extension() {
         const jsonFields = this.jsonFields.filter(({ dataSource }) => !isUndefined(dataSource));
         if (!isEmpty(jsonFields)) {

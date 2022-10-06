@@ -1,13 +1,17 @@
+import { __rest } from "tslib";
 import { Injector } from '@fm/di';
 import { FACTORY_BUILDER, UI_ELEMENT } from '../token';
 import { BuilderModel } from './builder-model';
 export class BuilderContext {
-    uiElements = [];
+    constructor() {
+        this.uiElements = [];
+    }
     forwardUiElement(name, Element) {
         this.uiElements.push({ name, component: Element });
         return Element;
     }
-    factoryBuilder(injector, { BuilderModel: NewBuilderModel = BuilderModel, ...props }) {
+    factoryBuilder(injector, _a) {
+        var { BuilderModel: NewBuilderModel = BuilderModel } = _a, props = __rest(_a, ["BuilderModel"]);
         return new NewBuilderModel(injector).loadForBuild(props);
     }
     registryInjector(injector) {
