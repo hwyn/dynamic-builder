@@ -1,14 +1,15 @@
 {
-  "name": "dynamic-builder",
-  "version": "1.0.0",
-  "description": "",
-  "main": "./cjs/index.js",
-  "module": "./esm5/index.js",
-  "es2015": "./esm/index.js",
-  "dependencies": { },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "",
-  "license": "ISC"
+	"name": "dynamic-builder",
+	"version": "1.0.0",
+	"description": "",
+	"main": "./cjs/index.js",
+	"module": "./esm5/index.js",
+	"es2015": "./esm/index.js",
+	"exports": {},
+	"dependencies": {},
+	"scripts": {
+		"test": "echo 'Error: no test specified' && exit 1"
+	},
+	"author": "",
+	"license": "ISC"
 }
