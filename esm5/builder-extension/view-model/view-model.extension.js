@@ -58,7 +58,7 @@ var ViewModelExtension = /** @class */ (function (_super) {
     };
     ViewModelExtension.prototype.destory = function () {
         this.unDefineProperty(this.cache, [VIEW_MODEL]);
-        this.unDefineProperty(this.builder, [VIEW_MODEL, NOTIFY_VIEW_MODEL_CHANGE]);
+        this.unDefineProperty(this.builder, [VIEW_MODEL, REFRES_DATA, NOTIFY_VIEW_MODEL_CHANGE]);
         return _super.prototype.destory.call(this);
     };
     return ViewModelExtension;

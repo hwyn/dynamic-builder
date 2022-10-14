@@ -61,7 +61,7 @@ var ViewModelExtension = /** @class */ (function (_super) {
     };
     ViewModelExtension.prototype.destory = function () {
         this.unDefineProperty(this.cache, [calculator_constant_1.VIEW_MODEL]);
-        this.unDefineProperty(this.builder, [calculator_constant_1.VIEW_MODEL, calculator_constant_1.NOTIFY_VIEW_MODEL_CHANGE]);
+        this.unDefineProperty(this.builder, [calculator_constant_1.VIEW_MODEL, calculator_constant_1.REFRES_DATA, calculator_constant_1.NOTIFY_VIEW_MODEL_CHANGE]);
         return _super.prototype.destory.call(this);
     };
     return ViewModelExtension;

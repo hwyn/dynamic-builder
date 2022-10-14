@@ -43,7 +43,7 @@ export class ViewModelExtension extends BasicExtension {
     }
     destory() {
         this.unDefineProperty(this.cache, [VIEW_MODEL]);
-        this.unDefineProperty(this.builder, [VIEW_MODEL, NOTIFY_VIEW_MODEL_CHANGE]);
+        this.unDefineProperty(this.builder, [VIEW_MODEL, REFRES_DATA, NOTIFY_VIEW_MODEL_CHANGE]);
         return super.destory();
     }
 }
