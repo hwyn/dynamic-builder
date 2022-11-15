@@ -9,6 +9,7 @@ export class FormExtension extends BasicExtension {
         super(...arguments);
         this.builderFields = [];
         this.defaultChangeType = CHANGE;
+        this.getControl = this.injector.get(FORM_CONTROL);
     }
     extension() {
         this.builderFields = this.mapFields(this.jsonFields.filter(({ binding }) => !isEmpty(binding)), this.createMergeControl.bind(this));
@@ -43,7 +44,7 @@ export class FormExtension extends BasicExtension {
     }
     addControl(jsonField, builderField) {
         const value = this.getValueToModel(jsonField.binding, builderField);
-        const control = this.injector.get(FORM_CONTROL, value, { builder: this.builder, builderField });
+        const control = this.getControl(value, { builder: this.builder, builderField });
         this.defineProperty(builderField, CONTROL, control);
         delete builderField.field.binding;
         this.excuteChangeEvent(jsonField, value);

@@ -1,6 +1,7 @@
 import { Observable } from 'rxjs';
 import { BasicExtension } from "../basic/basic.extension";
 export declare class ReadConfigExtension extends BasicExtension {
+    private getJsonConfig;
     protected extension(): void | Observable<any>;
     private extendsConfig;
     private preloaded;

@@ -14,6 +14,7 @@ var FormExtension = /** @class */ (function (_super) {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.builderFields = [];
         _this.defaultChangeType = calculator_constant_1.CHANGE;
+        _this.getControl = _this.injector.get(token_1.FORM_CONTROL);
         return _this;
     }
     FormExtension.prototype.extension = function () {
@@ -54,7 +55,7 @@ var FormExtension = /** @class */ (function (_super) {
     };
     FormExtension.prototype.addControl = function (jsonField, builderField) {
         var value = this.getValueToModel(jsonField.binding, builderField);
-        var control = this.injector.get(token_1.FORM_CONTROL, value, { builder: this.builder, builderField: builderField });
+        var control = this.getControl(value, { builder: this.builder, builderField: builderField });
         this.defineProperty(builderField, calculator_constant_1.CONTROL, control);
         delete builderField.field.binding;
         this.excuteChangeEvent(jsonField, value);

@@ -10,12 +10,14 @@ export class BuilderContext {
         this.uiElements.push({ name, component: Element });
         return Element;
     }
-    factoryBuilder(injector, _a) {
-        var { BuilderModel: NewBuilderModel = BuilderModel } = _a, props = __rest(_a, ["BuilderModel"]);
-        return new NewBuilderModel(injector).loadForBuild(props);
+    factoryBuilder(injector) {
+        return (_a) => {
+            var { BuilderModel: NB = BuilderModel } = _a, props = __rest(_a, ["BuilderModel"]);
+            return new NB(injector).loadForBuild(props);
+        };
     }
     registryInjector(injector) {
         injector.set(UI_ELEMENT, { provide: UI_ELEMENT, multi: true, useValue: this.uiElements });
-        injector.set(FACTORY_BUILDER, { provide: FACTORY_BUILDER, useFactory: this.factoryBuilder.bind(this), deps: [Injector] });
+        injector.set(FACTORY_BUILDER, { provide: FACTORY_BUILDER, useFactory: this.factoryBuilder, deps: [Injector] });
     }
 }

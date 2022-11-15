@@ -2,6 +2,7 @@ import { BasicExtension } from '../basic/basic.extension';
 export declare class FormExtension extends BasicExtension {
     private builderFields;
     private defaultChangeType;
+    private getControl;
     protected extension(): void;
     private createMergeControl;
     private addChangeAction;

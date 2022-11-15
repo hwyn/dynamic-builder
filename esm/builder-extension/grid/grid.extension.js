@@ -5,6 +5,10 @@ import { ELEMENT, GRID, LAYOUT, LOAD } from '../constant/calculator.constant';
 import { Grid } from './grid';
 const defaultLayout = { column: 12, group: 1 };
 export class GridExtension extends BasicExtension {
+    constructor() {
+        super(...arguments);
+        this.getLayoutElement = this.injector.get(LAYOUT_ELEMENT);
+    }
     extension() {
         this.pushCalculators(this.json, {
             action: this.bindCalculatorAction(this.createLoadGrid.bind(this)),
@@ -14,7 +18,7 @@ export class GridExtension extends BasicExtension {
     createLoadGrid() {
         this.defineProperty(this.cache, GRID, new Grid(this.builder, this.json));
         this.layoutBuildFields = this.mapFields(this.jsonFields, this.addFieldLayout.bind(this, {}));
-        this.defineProperty(this.builder, ELEMENT, this.injector.get(LAYOUT_ELEMENT, this.cache.grid, this.builder));
+        this.defineProperty(this.builder, ELEMENT, this.getLayoutElement(this.cache.grid, this.builder));
     }
     addFieldLayout(cursor, [, builderField]) {
         const { field, field: { layout = {} } } = builderField;

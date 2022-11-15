@@ -34,13 +34,13 @@ var BuilderContext = /** @class */ (function (_super) {
         return _this;
     }
     BuilderContext.prototype.useFactory = function (useFactory) {
-        return function (injector) {
+        return function (injector) { return function () {
             var args = [];
-            for (var _i = 1; _i < arguments.length; _i++) {
-                args[_i - 1] = arguments[_i];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                args[_i] = arguments[_i];
             }
             return useFactory.apply(void 0, __spreadArray(__spreadArray([], args, false), [injector], false));
-        };
+        }; };
     };
     BuilderContext.prototype.registryFactory = function (injector, token) {
         var proxyFactory = this.map.get(token);

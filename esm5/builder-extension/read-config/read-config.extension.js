@@ -9,7 +9,9 @@ import { LOAD_CONFIG_ACTION } from '../constant/calculator.constant';
 var ReadConfigExtension = /** @class */ (function (_super) {
     __extends(ReadConfigExtension, _super);
     function ReadConfigExtension() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.getJsonConfig = _this.injector.get(GET_JSON_CONFIG);
+        return _this;
     }
     ReadConfigExtension.prototype.extension = function () {
         var _this = this;
@@ -53,7 +55,7 @@ var ReadConfigExtension = /** @class */ (function (_super) {
         }
         if (isJsonName) {
             var getJsonName = jsonNameAction ? this.createLoadConfigAction(jsonNameAction, props) : of(jsonName);
-            configOb = getJsonName.pipe(observableMap(function (configName) { return _this.injector.get(GET_JSON_CONFIG, configName); }));
+            configOb = getJsonName.pipe(observableMap(function (configName) { return _this.getJsonConfig(configName); }));
         }
         else {
             configOb = configAction ? this.createLoadConfigAction(configAction, props) : of(config);

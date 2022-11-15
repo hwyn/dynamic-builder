@@ -6,6 +6,10 @@ import { observableMap, observableTap, toForkJoin } from '../../utility';
 import { BasicExtension } from "../basic/basic.extension";
 import { LOAD_CONFIG_ACTION } from '../constant/calculator.constant';
 export class ReadConfigExtension extends BasicExtension {
+    constructor() {
+        super(...arguments);
+        this.getJsonConfig = this.injector.get(GET_JSON_CONFIG);
+    }
     extension() {
         this.definePropertys(this.builder, { id: this.props.id, getExecuteHandler: this.createGetExecuteHandler() });
         return this.getConfigJson(this.props).pipe(tap((jsonConfig) => this.props.config = jsonConfig));
@@ -45,7 +49,7 @@ export class ReadConfigExtension extends BasicExtension {
         }
         if (isJsonName) {
             const getJsonName = jsonNameAction ? this.createLoadConfigAction(jsonNameAction, props) : of(jsonName);
-            configOb = getJsonName.pipe(observableMap((configName) => this.injector.get(GET_JSON_CONFIG, configName)));
+            configOb = getJsonName.pipe(observableMap((configName) => this.getJsonConfig(configName)));
         }
         else {
             configOb = configAction ? this.createLoadConfigAction(configAction, props) : of(config);

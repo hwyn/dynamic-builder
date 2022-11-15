@@ -31,7 +31,7 @@ export class BuilderContext extends BasicBuilderContext {
         this.extensions = defaultExtensions;
     }
     useFactory(useFactory) {
-        return (injector, ...args) => useFactory(...args, injector);
+        return (injector) => (...args) => useFactory(...args, injector);
     }
     registryFactory(injector, token) {
         const proxyFactory = this.map.get(token);

@@ -11,7 +11,9 @@ var defaultLayout = { column: 12, group: 1 };
 var GridExtension = /** @class */ (function (_super) {
     tslib_1.__extends(GridExtension, _super);
     function GridExtension() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.getLayoutElement = _this.injector.get(token_1.LAYOUT_ELEMENT);
+        return _this;
     }
     GridExtension.prototype.extension = function () {
         this.pushCalculators(this.json, {
@@ -22,7 +24,7 @@ var GridExtension = /** @class */ (function (_super) {
     GridExtension.prototype.createLoadGrid = function () {
         this.defineProperty(this.cache, calculator_constant_1.GRID, new grid_1.Grid(this.builder, this.json));
         this.layoutBuildFields = this.mapFields(this.jsonFields, this.addFieldLayout.bind(this, {}));
-        this.defineProperty(this.builder, calculator_constant_1.ELEMENT, this.injector.get(token_1.LAYOUT_ELEMENT, this.cache.grid, this.builder));
+        this.defineProperty(this.builder, calculator_constant_1.ELEMENT, this.getLayoutElement(this.cache.grid, this.builder));
     };
     GridExtension.prototype.addFieldLayout = function (cursor, _a) {
         var builderField = _a[1];
