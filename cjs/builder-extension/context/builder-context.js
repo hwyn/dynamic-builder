@@ -4,7 +4,6 @@ exports.useBuilderContext = exports.BuilderContext = void 0;
 var tslib_1 = require("tslib");
 var di_1 = require("@fm/di");
 var builder_context_1 = require("../../builder/builder-context");
-// eslint-disable-next-line max-len
 var token_1 = require("../../token");
 var actions_1 = require("../action/actions");
 var actions_extension_1 = require("../action/actions.extension");

@@ -1,5 +1,4 @@
 import { serializeAction } from './basic/basic.extension';
-export declare const InjectableValidator: () => (cls: import("@fm/di").Type<any>) => any;
 export * from './action';
 export * from './action/create-actions';
 export * from './basic/basic.extension';

@@ -1,6 +1,5 @@
 import { Injector } from '@fm/di';
 import { BuilderContext as BasicBuilderContext } from '../../builder/builder-context';
-// eslint-disable-next-line max-len
 import { ACTION_INTERCEPT, BUILDER_EXTENSION, FORM_CONTROL, GET_JSON_CONFIG, LAYOUT_ELEMENT, LOAD_BUILDER_CONFIG, VALIDATOR_SERVICE } from '../../token';
 import { Action } from '../action/actions';
 import { ActionExtension } from '../action/actions.extension';
