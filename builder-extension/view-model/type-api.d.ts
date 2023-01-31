@@ -5,5 +5,5 @@ export declare type notifyOptions = {
 export declare interface BuilderViewModel {
     readonly viewModel?: any;
     refreshData(model: any): void;
-    notifyViewModelChanges(builderField?: BuilderFieldExtensions, options?: notifyOptions): void;
+    notifyModelChanges(builderField?: BuilderFieldExtensions, options?: notifyOptions): void;
 }

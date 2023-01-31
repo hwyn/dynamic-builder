@@ -18,6 +18,7 @@ export interface Action {
     before?: Action;
     after?: Action;
 }
+export declare type InvokeAction = Action | string;
 export interface BuilderFieldAction extends BuilderField {
     actions: Action[];
     addEventListener: (actions: Action | Action[]) => any;
@@ -27,6 +28,7 @@ export interface ActionContext {
     builderField?: BuilderField;
 }
 export interface ActionIntercept {
+    callAction(actionName: InvokeAction, context: ActionInterceptProps, ...events: any[]): Observable<any>;
     invoke(action: Action | string, props?: ActionInterceptProps, event?: any, otherEventParam?: any[]): Observable<any>;
-    executeAction(action: string | Action, actionContext?: ActionContext, event?: Event | any, otherEventParam?: any[]): Observable<any>;
+    executeAction(actionPropos: Action, actionContext?: ActionContext, event?: any[]): Observable<any>;
 }

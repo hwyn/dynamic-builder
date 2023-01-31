@@ -36,7 +36,7 @@ var BuilderModel = /** @class */ (function () {
         return uniq(fields.filter(function (field) { return !isEmpty(field); }));
     };
     BuilderModel.prototype.detectChanges = function () {
-        if (!this.$$cache.destoryed) {
+        if (!this.$$cache.destoryed && this.ready) {
             this.$$cache.detectChanges.next(this);
         }
     };

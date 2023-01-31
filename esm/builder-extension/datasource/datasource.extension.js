@@ -1,6 +1,6 @@
 import { isEmpty, isUndefined } from 'lodash';
 import { BasicExtension } from '../basic/basic.extension';
-import { DATD_SOURCE, LOAD_ACTION, LOAD_VIEW_MODEL } from '../constant/calculator.constant';
+import { DATD_SOURCE, LOAD } from '../constant/calculator.constant';
 export class DataSourceExtension extends BasicExtension {
     extension() {
         const jsonFields = this.jsonFields.filter(({ dataSource }) => !isUndefined(dataSource));
@@ -8,32 +8,26 @@ export class DataSourceExtension extends BasicExtension {
             this.builderFields = this.mapFields(jsonFields, this.addFieldCalculators.bind(this));
             this.pushCalculators(this.json, [{
                     action: this.bindCalculatorAction(this.createOnDataSourceConfig.bind(this)),
-                    dependents: { type: LOAD_ACTION, fieldId: this.builder.id }
+                    dependents: { type: LOAD, fieldId: this.builder.id }
                 }]);
         }
     }
-    addFieldCalculators([jsonField]) {
+    addFieldCalculators([jsonField, { field }]) {
         const { action, dependents, metadata } = this.serializeDataSourceConfig(jsonField);
         action.after = this.bindCalculatorAction(this.createSourceConfig.bind(this, metadata));
         this.pushCalculators(jsonField, { action, dependents });
+        delete field.dataSource;
     }
     createSourceConfig(metadata, { actionEvent, builderField, builderField: { instance } }) {
         builderField.source = this.sourceToMetadata(actionEvent, metadata);
         instance.detectChanges();
     }
     createOnDataSourceConfig() {
-        this.builderFields.forEach((builderField) => {
-            const { events = {}, field } = builderField;
-            if (events.onDataSource) {
-                events.onDataSource && this.defineProperty(builderField, this.getEventType(DATD_SOURCE), events.onDataSource);
-                delete events.onDataSource;
-            }
-            delete field.dataSource;
-        });
+        this.builderFields.forEach(({ events = {} }) => delete events.onDataSource);
     }
     serializeDataSourceConfig(jsonField) {
         const { dataSource: jsonDataSource } = jsonField;
-        const defaultDependents = { type: LOAD_VIEW_MODEL, fieldId: this.builder.id };
+        const defaultDependents = { type: LOAD, fieldId: this.builder.id };
         const dataSource = this.serializeCalculatorConfig(jsonDataSource, DATD_SOURCE, defaultDependents);
         const { action, source } = dataSource;
         if (!isEmpty(source) && !action.handler) {

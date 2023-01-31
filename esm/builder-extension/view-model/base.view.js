@@ -1,19 +1,22 @@
-import { get, set } from 'lodash';
+import { get, omit, set } from 'lodash';
 export class BaseView {
-    constructor(injector, store) {
+    constructor(injector, _store) {
         this.injector = injector;
-        this.store = store;
+        this._store = _store;
+    }
+    getBindValue({ path, default: value }) {
+        return get(this._store, path, value);
     }
     setBindValue(binding, value) {
-        set(this.store, binding.path, value);
+        set(this._store, binding.path, value);
     }
-    getBindValue(binding) {
-        return get(this.store, binding.path, binding.default);
+    deleteBindValue(binding) {
+        omit(this._store, [binding.path]);
     }
     refreshData(model) {
-        this.store = model;
+        this._store = model;
     }
     get model() {
-        return this.store;
+        return this._store;
     }
 }

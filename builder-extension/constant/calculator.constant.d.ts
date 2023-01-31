@@ -1,3 +1,4 @@
+export declare const LOAD_SOURCE = "loadSource";
 export declare const LOAD = "load";
 export declare const CHANGE = "change";
 export declare const DESTORY = "destory";
@@ -6,8 +7,9 @@ export declare const LOAD_ACTION = "loadAction";
 export declare const LOAD_CONFIG_ACTION = "loadConfigType";
 export declare const LOAD_VIEW_MODEL = "loadViewModel";
 export declare const CALCULATOR = "calculator";
-export declare const NOTIFY_VIEW_MODEL_CHANGE = "notifyViewModelChanges";
-export declare const REFRES_DATA = "refreshData";
+export declare const NOTIFY_MODEL_CHANGE = "notifyModelChanges";
+export declare const REFRESH_VISIBILITY = "refreshVisibility";
+export declare const REFRESH_DATA = "refreshData";
 export declare const DATD_SOURCE = "dataSource";
 export declare const CHECK_VISIBILITY = "checkVisibility";
 export declare const ADD_EVENT_LISTENER = "addEventListener";

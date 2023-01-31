@@ -7,12 +7,14 @@ var rxjs_1 = require("rxjs");
 var operators_1 = require("rxjs/operators");
 var utility_1 = require("../../utility");
 var basic_extension_1 = require("../basic/basic.extension");
+// eslint-disable-next-line max-len
 var calculator_constant_1 = require("../constant/calculator.constant");
 var LifeCycleExtension = /** @class */ (function (_super) {
     tslib_1.__extends(LifeCycleExtension, _super);
     function LifeCycleExtension() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.hasChange = false;
+        _this.lifeEvent = [calculator_constant_1.LOAD, calculator_constant_1.CHANGE];
         _this.calculators = [];
         _this.nonSelfCalculators = [];
         _this.detectChanges = _this.cache.detectChanges.pipe((0, operators_1.filter)(function () { return !_this.hasChange; }));
@@ -26,12 +28,22 @@ var LifeCycleExtension = /** @class */ (function (_super) {
         this.serializeCalculators();
         return this.createLife();
     };
+    LifeCycleExtension.prototype.createLoadAction = function (json) {
+        var _a = json.actions, actions = _a === void 0 ? [] : _a;
+        var loadIndex = actions.findIndex(function (_a) {
+            var type = _a.type;
+            return type === calculator_constant_1.LOAD;
+        });
+        var loadAction = { before: tslib_1.__assign(tslib_1.__assign({}, actions[loadIndex]), { type: calculator_constant_1.LOAD_SOURCE }), type: calculator_constant_1.LOAD };
+        loadIndex === -1 ? actions.push(loadAction) : actions[loadIndex] = loadAction;
+        return json;
+    };
     LifeCycleExtension.prototype.createLife = function () {
-        var _a = this.json.actions, actions = _a === void 0 ? [] : _a;
-        var lifeEvent = [calculator_constant_1.LOAD, calculator_constant_1.CHANGE];
+        var _this = this;
+        var actions = this.createLoadAction(this.json).actions;
         var lifeActionsType = actions.filter(function (_a) {
             var type = _a.type;
-            return lifeEvent.includes(type);
+            return _this.lifeEvent.includes(type);
         });
         var props = { builder: this.builder, id: this.builder.id };
         lifeActionsType.forEach(function (action) { return action.runObservable = true; });

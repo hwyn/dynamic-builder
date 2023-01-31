@@ -1,6 +1,6 @@
 import { __extends } from "tslib";
 import { BasicExtension } from '../basic/basic.extension';
-import { LOAD, LOAD_VIEW_MODEL, NOTIFY_VIEW_MODEL_CHANGE, REFRES_DATA, VIEW_MODEL } from '../constant/calculator.constant';
+import { LOAD, LOAD_SOURCE, LOAD_VIEW_MODEL, NOTIFY_MODEL_CHANGE, REFRESH_DATA, VIEW_MODEL } from '../constant/calculator.constant';
 import { BaseView } from './base.view';
 var ViewModelExtension = /** @class */ (function (_super) {
     __extends(ViewModelExtension, _super);
@@ -10,7 +10,7 @@ var ViewModelExtension = /** @class */ (function (_super) {
     ViewModelExtension.prototype.extension = function () {
         this.pushCalculators(this.json, {
             action: this.createViewModelCalculator(),
-            dependents: { type: LOAD, fieldId: this.builder.id }
+            dependents: { type: LOAD_SOURCE, fieldId: this.builder.id }
         });
     };
     ViewModelExtension.prototype.createViewModelCalculator = function () {
@@ -33,21 +33,16 @@ var ViewModelExtension = /** @class */ (function (_super) {
         this.definePropertyGet(this.builder, VIEW_MODEL, function () { return _this.cache.viewModel.model; });
     };
     ViewModelExtension.prototype.createNotifyEvent = function () {
-        var _a;
-        var notifyAction = { type: NOTIFY_VIEW_MODEL_CHANGE, handler: this.notifyHandler.bind(this) };
-        var refresAction = { type: REFRES_DATA, handler: this.refresHandler.bind(this) };
-        var props = { builder: this.builder, id: this.builder.id };
-        var actions = this.createActions([notifyAction, refresAction], props, { injector: this.injector });
-        this.definePropertys(this.builder, (_a = {},
-            _a[NOTIFY_VIEW_MODEL_CHANGE] = actions[this.getEventType(NOTIFY_VIEW_MODEL_CHANGE)],
-            _a[REFRES_DATA] = actions[this.getEventType(REFRES_DATA)],
-            _a));
+        this.pushActionToMethod([
+            { type: NOTIFY_MODEL_CHANGE, handler: this.notifyHandler.bind(this) },
+            { type: REFRESH_DATA, handler: this.refresHandler.bind(this) }
+        ]);
     };
     ViewModelExtension.prototype.notifyHandler = function (_a, options) {
         var builder = _a.builder, actionEvent = _a.actionEvent;
         if (options === void 0) { options = { hasSelf: true }; }
         if (!(options === null || options === void 0 ? void 0 : options.hasSelf)) {
-            builder.children.forEach(function (child) { return child.notifyViewModelChanges(actionEvent, options); });
+            builder.children.forEach(function (child) { return child.notifyModelChanges(actionEvent, options); });
         }
         return actionEvent;
     };
@@ -58,7 +53,7 @@ var ViewModelExtension = /** @class */ (function (_super) {
     };
     ViewModelExtension.prototype.destory = function () {
         this.unDefineProperty(this.cache, [VIEW_MODEL]);
-        this.unDefineProperty(this.builder, [VIEW_MODEL, REFRES_DATA, NOTIFY_VIEW_MODEL_CHANGE]);
+        this.unDefineProperty(this.builder, [VIEW_MODEL, REFRESH_DATA, NOTIFY_MODEL_CHANGE]);
         return _super.prototype.destory.call(this);
     };
     return ViewModelExtension;

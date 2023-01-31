@@ -46,7 +46,10 @@ var Grid = /** @class */ (function () {
         var _a = config.additional, additional = _a === void 0 ? [] : _a, _b = config.className, className = _b === void 0 ? '' : _b, style = config.style;
         var _c = props.className, propsClassName = _c === void 0 ? '' : _c, propsStyle = props.style;
         var groupLayout = groupByFields(this.builder.fields);
-        additional.forEach(function (item, group) { return item.fieldRows = groupFieldsToArray(groupLayout[group + 1]); });
+        config.additional = additional.filter(function (item, group) {
+            item.fieldRows = groupFieldsToArray(groupLayout[group + 1]);
+            return !!item.fieldRows.length;
+        });
         if (className || propsClassName) {
             config.className = [className, propsClassName].join(' ');
         }

@@ -24,12 +24,10 @@ export declare abstract class BasicExtension {
     protected eachFields(jsonFields: any[], callBack: CallBack): void;
     protected mapFields<T = BuilderFieldExtensions>(jsonFields: any[], callBack: CallBack): T[];
     protected serializeCalculatorConfig(jsonCalculator: any, actionType: string, defaultDependents: CalculatorsDependent | CalculatorsDependent[]): any;
-    protected bindCalculatorAction(handler: (baseAction: BaseAction) => any): {
-        type: string;
-        handler: (baseAction: BaseAction) => any;
-    };
+    protected bindCalculatorAction(handler: (baseAction: BaseAction) => any): Action;
     protected pushCalculators(fieldConfig: BuilderFieldExtensions, calculator: Calculators | Calculators[]): void;
     protected pushAction(fieldConfig: BuilderFieldExtensions, actions: Action | Action[]): void;
+    protected pushActionToMethod(actions: Action | Action[]): void;
     protected toArray<T = any>(obj: any): T[];
     protected defineProperty(object: any, prototypeName: string, value: any): void;
     protected definePropertys(object: any, prototype: {

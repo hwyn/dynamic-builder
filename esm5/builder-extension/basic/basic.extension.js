@@ -46,7 +46,9 @@ var BasicExtension = /** @class */ (function () {
         return calculatorConfig;
     };
     BasicExtension.prototype.bindCalculatorAction = function (handler) {
-        return { type: CALCULATOR, handler: handler };
+        var action = this.serializeAction(handler);
+        action.type = CALCULATOR;
+        return action;
     };
     BasicExtension.prototype.pushCalculators = function (fieldConfig, calculator) {
         fieldConfig.calculators = this.toArray(fieldConfig.calculators || []);
@@ -64,6 +66,13 @@ var BasicExtension = /** @class */ (function () {
             });
             !findAction ? defaultAction.push(pushAction) : Object.assign(findAction, __assign({}, pushAction));
         });
+    };
+    BasicExtension.prototype.pushActionToMethod = function (actions) {
+        var _this = this;
+        var props = { builder: this.builder, id: this.builder.id };
+        var _actions = this.toArray(actions).map(this.serializeAction);
+        var events = this.createActions(_actions, props, { injector: this.injector });
+        _actions.forEach(function (action) { return _this.defineProperty(_this.builder, action.type, events[_this.getEventType(action.type)]); });
     };
     BasicExtension.prototype.toArray = function (obj) {
         return Array.isArray(obj) ? obj : [obj];

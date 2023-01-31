@@ -18,7 +18,7 @@ var GridExtension = /** @class */ (function (_super) {
     GridExtension.prototype.extension = function () {
         this.pushCalculators(this.json, {
             action: this.bindCalculatorAction(this.createLoadGrid.bind(this)),
-            dependents: { type: calculator_constant_1.LOAD, fieldId: this.builder.id }
+            dependents: { type: calculator_constant_1.LOAD_SOURCE, fieldId: this.builder.id }
         });
     };
     GridExtension.prototype.createLoadGrid = function () {

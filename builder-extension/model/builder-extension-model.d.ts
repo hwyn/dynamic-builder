@@ -3,7 +3,8 @@ import { BuilderFieldExtensions, BuilderModelExtensions as ModelExtensions } fro
 export declare class BuilderModelExtensions extends BuilderModel<ModelExtensions, BuilderFieldExtensions> {
     readonly viewModel?: any;
     refreshData: (model: any) => void;
-    notifyViewModelChanges: (builderField?: BuilderFieldExtensions, options?: {
+    refreshVisibility: (builderField?: BuilderFieldExtensions) => void;
+    notifyModelChanges: (builderField?: BuilderFieldExtensions, options?: {
         hasSelf: boolean;
     }) => void;
 }

@@ -1,11 +1,11 @@
 import { BasicExtension } from '../basic/basic.extension';
-import { LOAD, LOAD_VIEW_MODEL, NOTIFY_VIEW_MODEL_CHANGE, REFRES_DATA, VIEW_MODEL } from '../constant/calculator.constant';
+import { LOAD, LOAD_SOURCE, LOAD_VIEW_MODEL, NOTIFY_MODEL_CHANGE, REFRESH_DATA, VIEW_MODEL } from '../constant/calculator.constant';
 import { BaseView } from './base.view';
 export class ViewModelExtension extends BasicExtension {
     extension() {
         this.pushCalculators(this.json, {
             action: this.createViewModelCalculator(),
-            dependents: { type: LOAD, fieldId: this.builder.id }
+            dependents: { type: LOAD_SOURCE, fieldId: this.builder.id }
         });
     }
     createViewModelCalculator() {
@@ -22,18 +22,14 @@ export class ViewModelExtension extends BasicExtension {
         this.definePropertyGet(this.builder, VIEW_MODEL, () => this.cache.viewModel.model);
     }
     createNotifyEvent() {
-        const notifyAction = { type: NOTIFY_VIEW_MODEL_CHANGE, handler: this.notifyHandler.bind(this) };
-        const refresAction = { type: REFRES_DATA, handler: this.refresHandler.bind(this) };
-        const props = { builder: this.builder, id: this.builder.id };
-        const actions = this.createActions([notifyAction, refresAction], props, { injector: this.injector });
-        this.definePropertys(this.builder, {
-            [NOTIFY_VIEW_MODEL_CHANGE]: actions[this.getEventType(NOTIFY_VIEW_MODEL_CHANGE)],
-            [REFRES_DATA]: actions[this.getEventType(REFRES_DATA)]
-        });
+        this.pushActionToMethod([
+            { type: NOTIFY_MODEL_CHANGE, handler: this.notifyHandler.bind(this) },
+            { type: REFRESH_DATA, handler: this.refresHandler.bind(this) }
+        ]);
     }
     notifyHandler({ builder, actionEvent }, options = { hasSelf: true }) {
         if (!(options === null || options === void 0 ? void 0 : options.hasSelf)) {
-            builder.children.forEach((child) => child.notifyViewModelChanges(actionEvent, options));
+            builder.children.forEach((child) => child.notifyModelChanges(actionEvent, options));
         }
         return actionEvent;
     }
@@ -43,7 +39,7 @@ export class ViewModelExtension extends BasicExtension {
     }
     destory() {
         this.unDefineProperty(this.cache, [VIEW_MODEL]);
-        this.unDefineProperty(this.builder, [VIEW_MODEL, REFRES_DATA, NOTIFY_VIEW_MODEL_CHANGE]);
+        this.unDefineProperty(this.builder, [VIEW_MODEL, REFRESH_DATA, NOTIFY_MODEL_CHANGE]);
         return super.destory();
     }
 }

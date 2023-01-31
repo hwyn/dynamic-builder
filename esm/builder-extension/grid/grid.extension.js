@@ -1,7 +1,7 @@
 import { cloneDeep, merge } from 'lodash';
 import { LAYOUT_ELEMENT } from '../../token';
 import { BasicExtension } from '../basic/basic.extension';
-import { ELEMENT, GRID, LAYOUT, LOAD } from '../constant/calculator.constant';
+import { ELEMENT, GRID, LAYOUT, LOAD_SOURCE } from '../constant/calculator.constant';
 import { Grid } from './grid';
 const defaultLayout = { column: 12, group: 1 };
 export class GridExtension extends BasicExtension {
@@ -12,7 +12,7 @@ export class GridExtension extends BasicExtension {
     extension() {
         this.pushCalculators(this.json, {
             action: this.bindCalculatorAction(this.createLoadGrid.bind(this)),
-            dependents: { type: LOAD, fieldId: this.builder.id }
+            dependents: { type: LOAD_SOURCE, fieldId: this.builder.id }
         });
     }
     createLoadGrid() {

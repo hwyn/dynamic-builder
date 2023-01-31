@@ -1,7 +1,6 @@
 import { Injector } from '@fm/di';
 import { Observable } from 'rxjs';
-import { Action as ActionProps, ActionContext, ActionIntercept, ActionInterceptProps } from './type-api';
-declare type InvokeAction = ActionProps | string;
+import { Action as ActionProps, ActionContext, ActionIntercept, ActionInterceptProps, InvokeAction } from './type-api';
 export declare class Action implements ActionIntercept {
     private injector;
     private actions;
@@ -12,8 +11,9 @@ export declare class Action implements ActionIntercept {
     private call;
     private invokeCallCalculators;
     private invokeCalculators;
+    private execute;
     private invokeAction;
     invoke(actions: InvokeAction | InvokeAction[], props?: ActionInterceptProps, event?: Event | any, ...otherEventParam: any[]): Observable<any>;
+    callAction(actionName: InvokeAction, context: ActionInterceptProps, ...events: any[]): Observable<any>;
     executeAction(actionPropos: ActionProps, actionContext?: ActionContext, event?: any[]): Observable<any>;
 }
-export {};

@@ -34,7 +34,10 @@ export class Grid {
         const { additional = [], className = '', style } = config;
         const { className: propsClassName = '', style: propsStyle } = props;
         const groupLayout = groupByFields(this.builder.fields);
-        additional.forEach((item, group) => item.fieldRows = groupFieldsToArray(groupLayout[group + 1]));
+        config.additional = additional.filter((item, group) => {
+            item.fieldRows = groupFieldsToArray(groupLayout[group + 1]);
+            return !!item.fieldRows.length;
+        });
         if (className || propsClassName) {
             config.className = [className, propsClassName].join(' ');
         }

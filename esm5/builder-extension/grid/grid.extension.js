@@ -2,7 +2,7 @@ import { __extends } from "tslib";
 import { cloneDeep, merge } from 'lodash';
 import { LAYOUT_ELEMENT } from '../../token';
 import { BasicExtension } from '../basic/basic.extension';
-import { ELEMENT, GRID, LAYOUT, LOAD } from '../constant/calculator.constant';
+import { ELEMENT, GRID, LAYOUT, LOAD_SOURCE } from '../constant/calculator.constant';
 import { Grid } from './grid';
 var defaultLayout = { column: 12, group: 1 };
 var GridExtension = /** @class */ (function (_super) {
@@ -15,7 +15,7 @@ var GridExtension = /** @class */ (function (_super) {
     GridExtension.prototype.extension = function () {
         this.pushCalculators(this.json, {
             action: this.bindCalculatorAction(this.createLoadGrid.bind(this)),
-            dependents: { type: LOAD, fieldId: this.builder.id }
+            dependents: { type: LOAD_SOURCE, fieldId: this.builder.id }
         });
     };
     GridExtension.prototype.createLoadGrid = function () {

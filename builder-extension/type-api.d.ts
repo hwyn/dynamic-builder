@@ -2,6 +2,7 @@ import { BuilderField, BuilderModelInterface, Instance, Model } from '../builder
 import { Action, BuilderFieldAction, ExecuteHandler, TypeEvent } from './action';
 import { BuilderFormField } from './form/type-api';
 import { BuilderViewModel } from './view-model/type-api';
+import { BuilderVisibilityModel } from './visibility/type-api';
 declare type Column = boolean | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 'auto' | 11 | 12 | undefined;
 declare type Spacing = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
 declare type AlignItems = 'flex-start' | 'center' | 'flex-end' | 'stretch' | 'baseline';
@@ -79,7 +80,7 @@ export interface BuilderFieldExtensions extends BuilderFormField, BuilderFieldAc
         source?: any;
     };
 }
-export interface BuilderModelExtensions extends BuilderModelInterface, BuilderViewModel, Model<BuilderModelExtensions, BuilderFieldExtensions> {
+export interface BuilderModelExtensions extends BuilderModelInterface, BuilderViewModel, BuilderVisibilityModel, Model<BuilderModelExtensions, BuilderFieldExtensions> {
     readonly grid: GridType;
     calculators: OriginCalculators[];
     nonSelfCalculators: OriginCalculators[];

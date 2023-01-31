@@ -1,11 +1,11 @@
-import { __decorate, __metadata, __param } from "tslib";
+import { __decorate, __metadata, __param, __rest } from "tslib";
 /* eslint-disable max-lines-per-function */
 import { Inject, Injector } from '@fm/di';
 import { flatMap, isEmpty } from 'lodash';
 import { forkJoin, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ACTIONS_CONFIG } from '../../token';
-import { observableTap, transformObservable } from '../../utility';
+import { observableMap, observableTap, transformObservable } from '../../utility';
 import { serializeAction } from '../basic/basic.extension';
 import { BaseAction } from './base.action';
 let Action = class Action {
@@ -42,33 +42,37 @@ let Action = class Action {
         calculatorsInvokes.push(this.invokeCallCalculators(calculators || [], actionProps, props));
         return actionSub.pipe(observableTap((value) => forkJoin(calculatorsInvokes.map((invokeCalculators) => invokeCalculators(value)))));
     }
-    invokeAction(action, props, event = null, ...otherEventParam) {
-        const { name, handler, stop } = action;
+    execute(action, props, event = null, ...otherEventParam) {
+        const { name, handler, stop, type } = action;
         if (stop && !isEmpty(event) && (event === null || event === void 0 ? void 0 : event.stopPropagation)) {
             event.stopPropagation();
         }
-        const { after, before } = action;
         const e = this.createEvent(event, otherEventParam);
-        const executeAction = () => name || handler ? this.executeAction(action, this.getActionContext(props), e) : of(event);
-        let actionSub = before ? this.invoke(before, props, event, otherEventParam).pipe(() => executeAction()) : executeAction();
+        const actionSub = name || handler ? this.executeAction(action, this.getActionContext(props), e) : of(event);
+        const hasInvokeCalculators = !!props && action && type;
+        return hasInvokeCalculators ? this.invokeCalculators(action, actionSub, props) : actionSub;
+    }
+    invokeAction(action, props, event = null, ...otherEventParam) {
+        const { before, after } = action, current = __rest(action, ["before", "after"]);
+        const execute = () => this.execute(current, props, event, ...otherEventParam);
+        let actionSub = before ? this.invoke(before, props, event, otherEventParam).pipe(observableMap(() => execute())) : execute();
         if (after) {
-            actionSub = actionSub.pipe(observableTap((value) => this.invoke(after, props, value, ...otherEventParam)));
+            actionSub = actionSub.pipe(observableTap((value) => this.invoke(after, props, typeof value === 'undefined' ? event : value, ...otherEventParam)));
         }
         return actionSub;
     }
     invoke(actions, props, event = null, ...otherEventParam) {
         let actionsSub;
-        let action;
         if (Array.isArray(actions)) {
-            action = serializeAction(actions.filter((a) => !!serializeAction(a).type)[0]);
-            actionsSub = forkJoin((actions).map((a) => (this.invokeAction(serializeAction(a), props, event, ...otherEventParam)))).pipe(map((result) => result.pop()));
+            actionsSub = forkJoin((actions).map((a) => this.invokeAction(serializeAction(a), props, event, ...otherEventParam))).pipe(map((result) => result.pop()));
         }
         else {
-            action = serializeAction(actions);
-            actionsSub = this.invokeAction(action, props, event, ...otherEventParam);
+            actionsSub = this.invokeAction(serializeAction(actions), props, event, ...otherEventParam);
         }
-        const hasInvokeCalculators = !isEmpty(props) && action && action.type;
-        return hasInvokeCalculators ? this.invokeCalculators(action, actionsSub, props) : actionsSub;
+        return actionsSub;
+    }
+    callAction(actionName, context, ...events) {
+        return this.invoke(serializeAction(actionName), context, ...events);
     }
     // eslint-disable-next-line complexity
     executeAction(actionPropos, actionContext, event = this.createEvent(void (0))) {
@@ -79,6 +83,11 @@ let Action = class Action {
         let action = new BaseAction(this.injector, context);
         let executeHandler = handler;
         let builder = action.builder;
+        let ActionType = null;
+        if (!executeHandler && (ActionType = this.getAction(actionName))) {
+            action = ActionType && new ActionType(this.injector, context);
+            executeHandler = action && action[execute].bind(action);
+        }
         if (!executeHandler && builder) {
             while (builder) {
                 executeHandler = builder.getExecuteHandler(name) || executeHandler;
@@ -87,11 +96,6 @@ let Action = class Action {
                 }
                 builder = builder.parent;
             }
-        }
-        if (!executeHandler) {
-            const ActionType = this.getAction(actionName);
-            action = ActionType && new ActionType(this.injector, context);
-            executeHandler = action && action[execute].bind(action);
         }
         if (!executeHandler) {
             throw new Error(`${name} not defined!`);

@@ -3,11 +3,13 @@ import { of } from 'rxjs';
 import { filter, tap } from 'rxjs/operators';
 import { observableMap, transformObservable } from '../../utility';
 import { BasicExtension } from '../basic/basic.extension';
-import { CHANGE, DESTORY, LOAD, NON_SELF_BUILSERS, ORIGIN_CALCULATORS, ORIGIN_NON_SELF_CALCULATORS } from '../constant/calculator.constant';
+// eslint-disable-next-line max-len
+import { CHANGE, DESTORY, LOAD, LOAD_SOURCE, NON_SELF_BUILSERS, ORIGIN_CALCULATORS, ORIGIN_NON_SELF_CALCULATORS } from '../constant/calculator.constant';
 export class LifeCycleExtension extends BasicExtension {
     constructor() {
         super(...arguments);
         this.hasChange = false;
+        this.lifeEvent = [LOAD, CHANGE];
         this.calculators = [];
         this.nonSelfCalculators = [];
         this.detectChanges = this.cache.detectChanges.pipe(filter(() => !this.hasChange));
@@ -20,10 +22,16 @@ export class LifeCycleExtension extends BasicExtension {
         this.serializeCalculators();
         return this.createLife();
     }
+    createLoadAction(json) {
+        const { actions = [] } = json;
+        const loadIndex = actions.findIndex(({ type }) => type === LOAD);
+        const loadAction = { before: Object.assign(Object.assign({}, actions[loadIndex]), { type: LOAD_SOURCE }), type: LOAD };
+        loadIndex === -1 ? actions.push(loadAction) : actions[loadIndex] = loadAction;
+        return json;
+    }
     createLife() {
-        const { actions = [] } = this.json;
-        const lifeEvent = [LOAD, CHANGE];
-        const lifeActionsType = actions.filter(({ type }) => lifeEvent.includes(type));
+        const { actions } = this.createLoadAction(this.json);
+        const lifeActionsType = actions.filter(({ type }) => this.lifeEvent.includes(type));
         const props = { builder: this.builder, id: this.builder.id };
         lifeActionsType.forEach((action) => action.runObservable = true);
         this.lifeActions = this.createActions(lifeActionsType, props, { injector: this.injector });

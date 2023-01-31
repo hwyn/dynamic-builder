@@ -1,15 +1,17 @@
-import { __extends, __spreadArray } from "tslib";
+import { __assign, __extends, __spreadArray } from "tslib";
 import { cloneDeep, flatMap, isEmpty } from 'lodash';
 import { of } from 'rxjs';
 import { filter, tap } from 'rxjs/operators';
 import { observableMap, transformObservable } from '../../utility';
 import { BasicExtension } from '../basic/basic.extension';
-import { CHANGE, DESTORY, LOAD, NON_SELF_BUILSERS, ORIGIN_CALCULATORS, ORIGIN_NON_SELF_CALCULATORS } from '../constant/calculator.constant';
+// eslint-disable-next-line max-len
+import { CHANGE, DESTORY, LOAD, LOAD_SOURCE, NON_SELF_BUILSERS, ORIGIN_CALCULATORS, ORIGIN_NON_SELF_CALCULATORS } from '../constant/calculator.constant';
 var LifeCycleExtension = /** @class */ (function (_super) {
     __extends(LifeCycleExtension, _super);
     function LifeCycleExtension() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.hasChange = false;
+        _this.lifeEvent = [LOAD, CHANGE];
         _this.calculators = [];
         _this.nonSelfCalculators = [];
         _this.detectChanges = _this.cache.detectChanges.pipe(filter(function () { return !_this.hasChange; }));
@@ -23,12 +25,22 @@ var LifeCycleExtension = /** @class */ (function (_super) {
         this.serializeCalculators();
         return this.createLife();
     };
+    LifeCycleExtension.prototype.createLoadAction = function (json) {
+        var _a = json.actions, actions = _a === void 0 ? [] : _a;
+        var loadIndex = actions.findIndex(function (_a) {
+            var type = _a.type;
+            return type === LOAD;
+        });
+        var loadAction = { before: __assign(__assign({}, actions[loadIndex]), { type: LOAD_SOURCE }), type: LOAD };
+        loadIndex === -1 ? actions.push(loadAction) : actions[loadIndex] = loadAction;
+        return json;
+    };
     LifeCycleExtension.prototype.createLife = function () {
-        var _a = this.json.actions, actions = _a === void 0 ? [] : _a;
-        var lifeEvent = [LOAD, CHANGE];
+        var _this = this;
+        var actions = this.createLoadAction(this.json).actions;
         var lifeActionsType = actions.filter(function (_a) {
             var type = _a.type;
-            return lifeEvent.includes(type);
+            return _this.lifeEvent.includes(type);
         });
         var props = { builder: this.builder, id: this.builder.id };
         lifeActionsType.forEach(function (action) { return action.runObservable = true; });

@@ -1,39 +1,38 @@
 import { isEmpty, isUndefined } from 'lodash';
 import { BasicExtension } from '../basic/basic.extension';
-import { CHANGE, CHECK_VISIBILITY, LOAD, LOAD_ACTION } from '../constant/calculator.constant';
+import { CHANGE, CHECK_VISIBILITY, LOAD, REFRESH_VISIBILITY } from '../constant/calculator.constant';
 export class CheckVisibilityExtension extends BasicExtension {
-    constructor() {
-        super(...arguments);
-        this.defaultDependents = [LOAD, CHANGE].map((type) => ({ type, fieldId: this.builder.id }));
-    }
     extension() {
         const visibliityList = this.jsonFields.filter(this.checkNeedOrDefaultVisibility.bind(this));
+        this.pushActionToMethod({ type: REFRESH_VISIBILITY });
         if (!isEmpty(visibliityList)) {
             this.builderFields = this.mapFields(visibliityList, this.addFieldCalculators.bind(this));
             this.pushCalculators(this.json, [{
                     action: this.bindCalculatorAction(this.checkVisibility.bind(this, {})),
-                    dependents: this.defaultDependents
+                    dependents: this.createDependents([LOAD, CHANGE])
                 }, {
                     action: this.bindCalculatorAction(this.removeOnEvent.bind(this)),
-                    dependents: { type: LOAD_ACTION, fieldId: this.builder.id }
+                    dependents: { type: LOAD, fieldId: this.builder.id }
                 }]);
         }
     }
-    addFieldCalculators([jsonField, builderField]) {
+    createDependents(types) {
+        return types.map((type) => ({ type, fieldId: this.builder.id }));
+    }
+    addFieldCalculators([jsonField, { field }]) {
         const { action, dependents } = this.serializeCheckVisibilityConfig(jsonField);
         action.after = this.bindCalculatorAction(this.checkVisibilityAfter.bind(this));
         this.pushCalculators(jsonField, [{ action, dependents }]);
-        delete builderField.field.checkVisibility;
-        return builderField;
+        delete field.checkVisibility;
     }
     serializeCheckVisibilityConfig(jsonField) {
         const { checkVisibility: jsonCheckVisibility } = jsonField;
-        return this.serializeCalculatorConfig(jsonCheckVisibility, CHECK_VISIBILITY, this.defaultDependents);
+        return this.serializeCalculatorConfig(jsonCheckVisibility, CHECK_VISIBILITY, this.createDependents([LOAD, REFRESH_VISIBILITY]));
     }
     checkVisibilityAfter({ actionEvent, builderField, builder }) {
         if (actionEvent && builderField.visibility !== actionEvent) {
             builderField.visibility = actionEvent;
-            builder.detectChanges();
+            builder.ready && builder.detectChanges();
         }
     }
     removeOnEvent() {
@@ -68,5 +67,9 @@ export class CheckVisibilityExtension extends BasicExtension {
     getParentVisibility() {
         const { id, parent } = this.builder;
         return parent && parent.getFieldById(id).visibility;
+    }
+    destory() {
+        this.unDefineProperty(this.builder, [REFRESH_VISIBILITY]);
+        return super.destory();
     }
 }

@@ -1,3 +1,4 @@
+export var LOAD_SOURCE = 'loadSource';
 export var LOAD = 'load';
 export var CHANGE = 'change';
 export var DESTORY = 'destory';
@@ -6,8 +7,9 @@ export var LOAD_ACTION = 'loadAction';
 export var LOAD_CONFIG_ACTION = 'loadConfigType';
 export var LOAD_VIEW_MODEL = 'loadViewModel';
 export var CALCULATOR = 'calculator';
-export var NOTIFY_VIEW_MODEL_CHANGE = 'notifyViewModelChanges';
-export var REFRES_DATA = 'refreshData';
+export var NOTIFY_MODEL_CHANGE = 'notifyModelChanges';
+export var REFRESH_VISIBILITY = 'refreshVisibility';
+export var REFRESH_DATA = 'refreshData';
 export var DATD_SOURCE = 'dataSource';
 export var CHECK_VISIBILITY = 'checkVisibility';
 export var ADD_EVENT_LISTENER = 'addEventListener';
