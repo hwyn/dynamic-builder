@@ -84,7 +84,7 @@ var Action = /** @class */ (function () {
         }
         var before = action.before, after = action.after, current = tslib_1.__rest(action, ["before", "after"]);
         var execute = function () { return _this.execute.apply(_this, tslib_1.__spreadArray([current, props, event], otherEventParam, false)); };
-        var actionSub = before ? this.invoke(before, props, event, otherEventParam).pipe((0, utility_1.observableMap)(function () { return execute(); })) : execute();
+        var actionSub = before ? this.invoke.apply(this, tslib_1.__spreadArray([before, props, event], otherEventParam, false)).pipe((0, utility_1.observableMap)(function () { return execute(); })) : execute();
         if (after) {
             actionSub = actionSub.pipe((0, utility_1.observableTap)(function (value) {
                 return _this.invoke.apply(_this, tslib_1.__spreadArray([after, props, typeof value === 'undefined' ? event : value], otherEventParam, false));

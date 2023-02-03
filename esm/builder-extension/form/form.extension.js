@@ -31,7 +31,7 @@ export class FormExtension extends BasicExtension {
                     action: this.bindCalculatorAction(this.createVisibility.bind(this, jsonField)),
                     dependents: { type: CHECK_VISIBILITY, fieldId: id }
                 }] : [],
-            ...validators ? [{
+            ...validators && !validators.length ? [{
                     action: this.bindCalculatorAction(this.createValidaity.bind(this)),
                     dependents: { type: updateOn || changeType, fieldId: id }
                 }] : []]);

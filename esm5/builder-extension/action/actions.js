@@ -81,7 +81,7 @@ var Action = /** @class */ (function () {
         }
         var before = action.before, after = action.after, current = __rest(action, ["before", "after"]);
         var execute = function () { return _this.execute.apply(_this, __spreadArray([current, props, event], otherEventParam, false)); };
-        var actionSub = before ? this.invoke(before, props, event, otherEventParam).pipe(observableMap(function () { return execute(); })) : execute();
+        var actionSub = before ? this.invoke.apply(this, __spreadArray([before, props, event], otherEventParam, false)).pipe(observableMap(function () { return execute(); })) : execute();
         if (after) {
             actionSub = actionSub.pipe(observableTap(function (value) {
                 return _this.invoke.apply(_this, __spreadArray([after, props, typeof value === 'undefined' ? event : value], otherEventParam, false));

@@ -39,7 +39,7 @@ var FormExtension = /** @class */ (function (_super) {
             }], checkVisibility ? [{
                 action: this.bindCalculatorAction(this.createVisibility.bind(this, jsonField)),
                 dependents: { type: calculator_constant_1.CHECK_VISIBILITY, fieldId: id }
-            }] : [], true), validators ? [{
+            }] : [], true), validators && !validators.length ? [{
                 action: this.bindCalculatorAction(this.createValidaity.bind(this)),
                 dependents: { type: updateOn || changeType, fieldId: id }
             }] : [], true));

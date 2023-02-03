@@ -55,7 +55,7 @@ let Action = class Action {
     invokeAction(action, props, event = null, ...otherEventParam) {
         const { before, after } = action, current = __rest(action, ["before", "after"]);
         const execute = () => this.execute(current, props, event, ...otherEventParam);
-        let actionSub = before ? this.invoke(before, props, event, otherEventParam).pipe(observableMap(() => execute())) : execute();
+        let actionSub = before ? this.invoke(before, props, event, ...otherEventParam).pipe(observableMap(() => execute())) : execute();
         if (after) {
             actionSub = actionSub.pipe(observableTap((value) => this.invoke(after, props, typeof value === 'undefined' ? event : value, ...otherEventParam)));
         }

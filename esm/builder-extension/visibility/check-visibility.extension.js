@@ -65,8 +65,9 @@ export class CheckVisibilityExtension extends BasicExtension {
         return isCheck;
     }
     getParentVisibility() {
+        var _a;
         const { id, parent } = this.builder;
-        return parent && parent.getFieldById(id).visibility;
+        return parent && ((_a = parent.getFieldById(id)) === null || _a === void 0 ? void 0 : _a.visibility);
     }
     destory() {
         this.unDefineProperty(this.builder, [REFRESH_VISIBILITY]);

@@ -85,8 +85,9 @@ var CheckVisibilityExtension = /** @class */ (function (_super) {
         return isCheck;
     };
     CheckVisibilityExtension.prototype.getParentVisibility = function () {
-        var _a = this.builder, id = _a.id, parent = _a.parent;
-        return parent && parent.getFieldById(id).visibility;
+        var _a;
+        var _b = this.builder, id = _b.id, parent = _b.parent;
+        return parent && ((_a = parent.getFieldById(id)) === null || _a === void 0 ? void 0 : _a.visibility);
     };
     CheckVisibilityExtension.prototype.destory = function () {
         this.unDefineProperty(this.builder, [REFRESH_VISIBILITY]);
