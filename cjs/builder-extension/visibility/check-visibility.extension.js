@@ -20,7 +20,7 @@ var CheckVisibilityExtension = /** @class */ (function (_super) {
                     dependents: this.createDependents([calculator_constant_1.LOAD, calculator_constant_1.CHANGE])
                 }, {
                     action: this.bindCalculatorAction(this.removeOnEvent.bind(this)),
-                    dependents: { type: calculator_constant_1.LOAD_ACTION, fieldId: this.builder.id }
+                    dependents: { type: calculator_constant_1.LOAD, fieldId: this.builder.id }
                 }]);
         }
     };

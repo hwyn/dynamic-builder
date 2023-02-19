@@ -14,7 +14,11 @@ var LifeCycleExtension = /** @class */ (function (_super) {
     function LifeCycleExtension() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.hasChange = false;
+<<<<<<< HEAD
         _this.lifeEvent = [calculator_constant_1.LOAD, calculator_constant_1.CHANGE, calculator_constant_1.DESTORY];
+=======
+        _this.lifeEvent = [calculator_constant_1.LOAD, calculator_constant_1.CHANGE];
+>>>>>>> b725ec0019f64741ea9b3bccd3f6d0ae3ad37680
         _this.calculators = [];
         _this.nonSelfCalculators = [];
         _this.detectChanges = _this.cache.detectChanges.pipe((0, operators_1.filter)(function () { return !_this.hasChange; }));

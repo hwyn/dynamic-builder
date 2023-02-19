@@ -9,7 +9,11 @@ export class LifeCycleExtension extends BasicExtension {
     constructor() {
         super(...arguments);
         this.hasChange = false;
+<<<<<<< HEAD
         this.lifeEvent = [LOAD, CHANGE, DESTORY];
+=======
+        this.lifeEvent = [LOAD, CHANGE];
+>>>>>>> b725ec0019f64741ea9b3bccd3f6d0ae3ad37680
         this.calculators = [];
         this.nonSelfCalculators = [];
         this.detectChanges = this.cache.detectChanges.pipe(filter(() => !this.hasChange));
@@ -32,6 +36,10 @@ export class LifeCycleExtension extends BasicExtension {
     createLife() {
         const { actions } = this.createLoadAction(this.json);
         const lifeActionsType = actions.filter(({ type }) => this.lifeEvent.includes(type));
+<<<<<<< HEAD
+=======
+        const props = { builder: this.builder, id: this.builder.id };
+>>>>>>> b725ec0019f64741ea9b3bccd3f6d0ae3ad37680
         lifeActionsType.forEach((action) => action.runObservable = true);
         this.lifeActions = this.createLifeActions(lifeActionsType);
         this.defineProperty(this.builder, this.getEventType(CHANGE), this.onLifeChange.bind(this));

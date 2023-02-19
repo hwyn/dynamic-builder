@@ -5,7 +5,11 @@ import { Visibility } from '../../builder';
 import { COVERT_INTERCEPT, FORM_CONTROL } from '../../token';
 import { transformObservable } from '../../utility';
 import { BasicExtension } from '../basic/basic.extension';
+<<<<<<< HEAD
 import { CHANGE, CHECK_VISIBILITY, CONTROL, COVERT, LOAD_ACTION, NOTIFY_MODEL_CHANGE } from '../constant/calculator.constant';
+=======
+import { CHANGE, CHECK_VISIBILITY, CONTROL, LOAD, NOTIFY_MODEL_CHANGE } from '../constant/calculator.constant';
+>>>>>>> b725ec0019f64741ea9b3bccd3f6d0ae3ad37680
 var FormExtension = /** @class */ (function (_super) {
     __extends(FormExtension, _super);
     function FormExtension() {
@@ -13,7 +17,10 @@ var FormExtension = /** @class */ (function (_super) {
         _this.builderFields = [];
         _this.defaultChangeType = CHANGE;
         _this.getControl = _this.injector.get(FORM_CONTROL);
+<<<<<<< HEAD
         _this.covertIntercept = _this.injector.get(COVERT_INTERCEPT);
+=======
+>>>>>>> b725ec0019f64741ea9b3bccd3f6d0ae3ad37680
         return _this;
     }
     FormExtension.prototype.extension = function () {
@@ -30,7 +37,7 @@ var FormExtension = /** @class */ (function (_super) {
         this.addChangeAction(changeType, jsonField, builderField);
         this.pushCalculators(jsonField, __spreadArray(__spreadArray([{
                 action: this.bindCalculatorAction(this.addControl.bind(this, jsonField, builderField)),
-                dependents: { type: LOAD_ACTION, fieldId: builderId }
+                dependents: { type: LOAD, fieldId: builderId }
             }, {
                 action: this.bindCalculatorAction(this.createNotifyChange.bind(this, jsonField)),
                 dependents: { type: NOTIFY_MODEL_CHANGE, fieldId: builderId }
@@ -42,20 +49,32 @@ var FormExtension = /** @class */ (function (_super) {
                 dependents: { type: updateOn || changeType, fieldId: id }
             }] : [], true));
     };
+<<<<<<< HEAD
     FormExtension.prototype.addChangeAction = function (changeType, jsonField, builderField) {
         var id = jsonField.id, _a = jsonField.actions, actions = _a === void 0 ? [] : _a, binding = jsonField.binding;
         var covert = binding.covert, _b = binding.intercept, intercept = _b === void 0 ? '' : _b;
+=======
+    FormExtension.prototype.addChangeAction = function (changeType, jsonField) {
+        var _a = jsonField.actions, actions = _a === void 0 ? [] : _a, _b = jsonField.binding.intercept, intercept = _b === void 0 ? '' : _b;
+>>>>>>> b725ec0019f64741ea9b3bccd3f6d0ae3ad37680
         var actionIndex = actions.findIndex(function (_a) {
             var type = _a.type;
             return type === changeType;
         });
+<<<<<<< HEAD
         var changeAfter = this.bindCalculatorAction(this.detectChanges.bind(this, id));
         var replaceAction = { type: changeType, after: changeAfter };
+=======
+        var replaceAction = { type: changeType };
+>>>>>>> b725ec0019f64741ea9b3bccd3f6d0ae3ad37680
         var bindingViewModel = __assign(__assign({}, this.bindCalculatorAction(this.createChange.bind(this, jsonField))), actions[actionIndex] ? { after: this.bindCalculatorAction(actions[actionIndex]) } : {});
         jsonField.actions = actions;
         replaceAction.before = intercept ? __assign(__assign({}, this.bindCalculatorAction(intercept)), { after: bindingViewModel }) : bindingViewModel;
         actionIndex === -1 ? actions.push(replaceAction) : actions[actionIndex] = replaceAction;
+<<<<<<< HEAD
         this.defineProperty(binding, COVERT, this.covertIntercept.getCovertObj(covert, this.builder, builderField));
+=======
+>>>>>>> b725ec0019f64741ea9b3bccd3f6d0ae3ad37680
     };
     FormExtension.prototype.addControl = function (jsonField, builderField) {
         var binding = jsonField.binding;
@@ -85,7 +104,11 @@ var FormExtension = /** @class */ (function (_super) {
     };
     FormExtension.prototype.changeVisibility = function (builderField, binding, visibility) {
         if (visibility === void 0) { visibility = Visibility.visible; }
+<<<<<<< HEAD
         var control = builderField.control, _a = builderField.visibility, v = _a === void 0 ? Visibility.visible : _a;
+=======
+        var control = builderField.control, v = builderField.visibility;
+>>>>>>> b725ec0019f64741ea9b3bccd3f6d0ae3ad37680
         if (control && v !== visibility) {
             var none = Visibility.none, disabled = Visibility.disabled, hidden = Visibility.hidden, readonly = Visibility.readonly;
             var isDisabled = [none, hidden, disabled, readonly].includes(visibility);
@@ -112,11 +135,17 @@ var FormExtension = /** @class */ (function (_super) {
         return changeType;
     };
     FormExtension.prototype.getValueToModel = function (binding) {
+<<<<<<< HEAD
         var value = this.cache.viewModel.getBindValue(binding);
         return this.covertIntercept.covertToView(binding.covert, value);
     };
     FormExtension.prototype.setValueToModel = function (binding, value) {
         value = this.covertIntercept.covertToModel(binding.covert, value);
+=======
+        return this.cache.viewModel.getBindValue(binding);
+    };
+    FormExtension.prototype.setValueToModel = function (binding, value) {
+>>>>>>> b725ec0019f64741ea9b3bccd3f6d0ae3ad37680
         this.cache.viewModel.setBindValue(binding, value);
     };
     FormExtension.prototype.deleteValueToModel = function (binding) {

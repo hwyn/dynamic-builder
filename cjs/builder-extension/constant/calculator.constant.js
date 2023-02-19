@@ -1,6 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+<<<<<<< HEAD
 exports.Visibility = exports.ORIGIN_NON_SELF_CALCULATORS = exports.ORIGIN_CALCULATORS = exports.NON_SELF_BUILSERS = exports.EVENTS = exports.INSTANCE = exports.CURRENT = exports.LATOUT_ID = exports.ELEMENT = exports.LAYOUT = exports.GRID = exports.CONTROL = exports.COVERT = exports.VIEW_MODEL = exports.ADD_EVENT_LISTENER = exports.CHECK_VISIBILITY = exports.DATD_SOURCE = exports.REFRESH_DATA = exports.REFRESH_VISIBILITY = exports.NOTIFY_MODEL_CHANGE = exports.CALCULATOR = exports.LOAD_VIEW_MODEL = exports.LOAD_CONFIG_ACTION = exports.LOAD_ACTION = exports.MOUNTED = exports.DESTORY = exports.CHANGE = exports.LOAD = exports.LOAD_SOURCE = void 0;
+=======
+exports.ORIGIN_NON_SELF_CALCULATORS = exports.ORIGIN_CALCULATORS = exports.NON_SELF_BUILSERS = exports.EVENTS = exports.INSTANCE = exports.CURRENT = exports.LATOUT_ID = exports.ELEMENT = exports.LAYOUT = exports.GRID = exports.CONTROL = exports.VIEW_MODEL = exports.ADD_EVENT_LISTENER = exports.CHECK_VISIBILITY = exports.DATD_SOURCE = exports.REFRESH_DATA = exports.REFRESH_VISIBILITY = exports.NOTIFY_MODEL_CHANGE = exports.CALCULATOR = exports.LOAD_VIEW_MODEL = exports.LOAD_CONFIG_ACTION = exports.LOAD_ACTION = exports.MOUNTED = exports.DESTORY = exports.CHANGE = exports.LOAD = exports.LOAD_SOURCE = void 0;
+>>>>>>> b725ec0019f64741ea9b3bccd3f6d0ae3ad37680
 exports.LOAD_SOURCE = 'loadSource';
 exports.LOAD = 'load';
 exports.CHANGE = 'change';

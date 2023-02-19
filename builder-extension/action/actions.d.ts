@@ -13,7 +13,14 @@ export declare class Action implements ActionIntercept {
     private invokeCallCalculators;
     private invokeCalculators;
     private execute;
+<<<<<<< HEAD
     invoke(actions: InvokeAction | InvokeAction[], props?: ActionInterceptProps, event?: Event | any, ...otherEventParam: any[]): Observable<any>;
     callAction(actionName: InvokeAction, context: ActionInterceptProps, ...events: any[]): Observable<any>;
     executeAction(actionPropos: ActionProps, actionContext?: ActionContext, [actionEvent, ...otherEvent]?: any[]): Observable<any>;
+=======
+    private invokeAction;
+    invoke(actions: InvokeAction | InvokeAction[], props?: ActionInterceptProps, event?: Event | any, ...otherEventParam: any[]): Observable<any>;
+    callAction(actionName: InvokeAction, context: ActionInterceptProps, ...events: any[]): Observable<any>;
+    executeAction(actionPropos: ActionProps, actionContext?: ActionContext, event?: any[]): Observable<any>;
+>>>>>>> b725ec0019f64741ea9b3bccd3f6d0ae3ad37680
 }

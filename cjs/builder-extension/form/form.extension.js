@@ -16,7 +16,10 @@ var FormExtension = /** @class */ (function (_super) {
         _this.builderFields = [];
         _this.defaultChangeType = calculator_constant_1.CHANGE;
         _this.getControl = _this.injector.get(token_1.FORM_CONTROL);
+<<<<<<< HEAD
         _this.covertIntercept = _this.injector.get(token_1.COVERT_INTERCEPT);
+=======
+>>>>>>> b725ec0019f64741ea9b3bccd3f6d0ae3ad37680
         return _this;
     }
     FormExtension.prototype.extension = function () {
@@ -33,7 +36,7 @@ var FormExtension = /** @class */ (function (_super) {
         this.addChangeAction(changeType, jsonField, builderField);
         this.pushCalculators(jsonField, tslib_1.__spreadArray(tslib_1.__spreadArray([{
                 action: this.bindCalculatorAction(this.addControl.bind(this, jsonField, builderField)),
-                dependents: { type: calculator_constant_1.LOAD_ACTION, fieldId: builderId }
+                dependents: { type: calculator_constant_1.LOAD, fieldId: builderId }
             }, {
                 action: this.bindCalculatorAction(this.createNotifyChange.bind(this, jsonField)),
                 dependents: { type: calculator_constant_1.NOTIFY_MODEL_CHANGE, fieldId: builderId }
@@ -45,20 +48,32 @@ var FormExtension = /** @class */ (function (_super) {
                 dependents: { type: updateOn || changeType, fieldId: id }
             }] : [], true));
     };
+<<<<<<< HEAD
     FormExtension.prototype.addChangeAction = function (changeType, jsonField, builderField) {
         var id = jsonField.id, _a = jsonField.actions, actions = _a === void 0 ? [] : _a, binding = jsonField.binding;
         var covert = binding.covert, _b = binding.intercept, intercept = _b === void 0 ? '' : _b;
+=======
+    FormExtension.prototype.addChangeAction = function (changeType, jsonField) {
+        var _a = jsonField.actions, actions = _a === void 0 ? [] : _a, _b = jsonField.binding.intercept, intercept = _b === void 0 ? '' : _b;
+>>>>>>> b725ec0019f64741ea9b3bccd3f6d0ae3ad37680
         var actionIndex = actions.findIndex(function (_a) {
             var type = _a.type;
             return type === changeType;
         });
+<<<<<<< HEAD
         var changeAfter = this.bindCalculatorAction(this.detectChanges.bind(this, id));
         var replaceAction = { type: changeType, after: changeAfter };
+=======
+        var replaceAction = { type: changeType };
+>>>>>>> b725ec0019f64741ea9b3bccd3f6d0ae3ad37680
         var bindingViewModel = tslib_1.__assign(tslib_1.__assign({}, this.bindCalculatorAction(this.createChange.bind(this, jsonField))), actions[actionIndex] ? { after: this.bindCalculatorAction(actions[actionIndex]) } : {});
         jsonField.actions = actions;
         replaceAction.before = intercept ? tslib_1.__assign(tslib_1.__assign({}, this.bindCalculatorAction(intercept)), { after: bindingViewModel }) : bindingViewModel;
         actionIndex === -1 ? actions.push(replaceAction) : actions[actionIndex] = replaceAction;
+<<<<<<< HEAD
         this.defineProperty(binding, calculator_constant_1.COVERT, this.covertIntercept.getCovertObj(covert, this.builder, builderField));
+=======
+>>>>>>> b725ec0019f64741ea9b3bccd3f6d0ae3ad37680
     };
     FormExtension.prototype.addControl = function (jsonField, builderField) {
         var binding = jsonField.binding;
@@ -88,7 +103,11 @@ var FormExtension = /** @class */ (function (_super) {
     };
     FormExtension.prototype.changeVisibility = function (builderField, binding, visibility) {
         if (visibility === void 0) { visibility = builder_1.Visibility.visible; }
+<<<<<<< HEAD
         var control = builderField.control, _a = builderField.visibility, v = _a === void 0 ? builder_1.Visibility.visible : _a;
+=======
+        var control = builderField.control, v = builderField.visibility;
+>>>>>>> b725ec0019f64741ea9b3bccd3f6d0ae3ad37680
         if (control && v !== visibility) {
             var none = builder_1.Visibility.none, disabled = builder_1.Visibility.disabled, hidden = builder_1.Visibility.hidden, readonly = builder_1.Visibility.readonly;
             var isDisabled = [none, hidden, disabled, readonly].includes(visibility);
@@ -115,11 +134,17 @@ var FormExtension = /** @class */ (function (_super) {
         return changeType;
     };
     FormExtension.prototype.getValueToModel = function (binding) {
+<<<<<<< HEAD
         var value = this.cache.viewModel.getBindValue(binding);
         return this.covertIntercept.covertToView(binding.covert, value);
     };
     FormExtension.prototype.setValueToModel = function (binding, value) {
         value = this.covertIntercept.covertToModel(binding.covert, value);
+=======
+        return this.cache.viewModel.getBindValue(binding);
+    };
+    FormExtension.prototype.setValueToModel = function (binding, value) {
+>>>>>>> b725ec0019f64741ea9b3bccd3f6d0ae3ad37680
         this.cache.viewModel.setBindValue(binding, value);
     };
     FormExtension.prototype.deleteValueToModel = function (binding) {

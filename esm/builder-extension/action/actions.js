@@ -1,11 +1,15 @@
-import { __decorate, __metadata, __param } from "tslib";
+import { __decorate, __metadata, __param, __rest } from "tslib";
 /* eslint-disable max-lines-per-function */
 import { Inject, Injector } from '@fm/di';
 import { flatMap, groupBy, isEmpty, toArray } from 'lodash';
 import { forkJoin, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ACTIONS_CONFIG } from '../../token';
+<<<<<<< HEAD
 import { observableMap, observableTap, toForkJoin, transformObservable } from '../../utility';
+=======
+import { observableMap, observableTap, transformObservable } from '../../utility';
+>>>>>>> b725ec0019f64741ea9b3bccd3f6d0ae3ad37680
 import { serializeAction } from '../basic/basic.extension';
 import { BaseAction } from './base.action';
 let Action = class Action {
@@ -57,6 +61,7 @@ let Action = class Action {
         return forkJoin(calculatorsInvokes.map((invokeCalculators) => invokeCalculators(value, ...otherEventParam)));
     }
     execute(action, props, event = null, ...otherEventParam) {
+<<<<<<< HEAD
         const { name, handler, stop } = action;
         const e = this.createEvent(event, otherEventParam);
         if (stop && !isEmpty(event) && (event === null || event === void 0 ? void 0 : event.stopPropagation)) {
@@ -73,6 +78,38 @@ let Action = class Action {
         }))), observableTap((result) => toForkJoin(_actions.map(({ after }, index) => {
             return after && this.invoke(after, props, typeof result[index] === 'undefined' ? event : result[index], ...otherEventParam);
         }))), map((result) => result.pop()));
+=======
+        const { name, handler, stop, type } = action;
+        if (stop && !isEmpty(event) && (event === null || event === void 0 ? void 0 : event.stopPropagation)) {
+            event.stopPropagation();
+        }
+        const e = this.createEvent(event, otherEventParam);
+        const actionSub = name || handler ? this.executeAction(action, this.getActionContext(props), e) : of(event);
+        const hasInvokeCalculators = !!props && action && type;
+        return hasInvokeCalculators ? this.invokeCalculators(action, actionSub, props) : actionSub;
+    }
+    invokeAction(action, props, event = null, ...otherEventParam) {
+        const { before, after } = action, current = __rest(action, ["before", "after"]);
+        const execute = () => this.execute(current, props, event, ...otherEventParam);
+        let actionSub = before ? this.invoke(before, props, event, ...otherEventParam).pipe(observableMap(() => execute())) : execute();
+        if (after) {
+            actionSub = actionSub.pipe(observableTap((value) => this.invoke(after, props, typeof value === 'undefined' ? event : value, ...otherEventParam)));
+        }
+        return actionSub;
+    }
+    invoke(actions, props, event = null, ...otherEventParam) {
+        let actionsSub;
+        if (Array.isArray(actions)) {
+            actionsSub = forkJoin((actions).map((a) => this.invokeAction(serializeAction(a), props, event, ...otherEventParam))).pipe(map((result) => result.pop()));
+        }
+        else {
+            actionsSub = this.invokeAction(serializeAction(actions), props, event, ...otherEventParam);
+        }
+        return actionsSub;
+    }
+    callAction(actionName, context, ...events) {
+        return this.invoke(serializeAction(actionName), context, ...events);
+>>>>>>> b725ec0019f64741ea9b3bccd3f6d0ae3ad37680
     }
     callAction(actionName, context, ...events) {
         return this.invoke(serializeAction(actionName), context, ...events);
@@ -85,8 +122,14 @@ let Action = class Action {
         let executeHandler = handler;
         let action = new BaseAction(this.injector, context);
         let builder = action.builder;
+<<<<<<< HEAD
         if (!executeHandler && (ActionType = this.getAction(actionName))) {
             action = this.getCacheAction(ActionType, context, action);
+=======
+        let ActionType = null;
+        if (!executeHandler && (ActionType = this.getAction(actionName))) {
+            action = ActionType && new ActionType(this.injector, context);
+>>>>>>> b725ec0019f64741ea9b3bccd3f6d0ae3ad37680
             executeHandler = action && action[execute].bind(action);
         }
         if (!executeHandler && builder) {

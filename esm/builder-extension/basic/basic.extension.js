@@ -54,7 +54,10 @@ export class BasicExtension {
     bindCalculatorAction(handler) {
         const action = this.serializeAction(handler);
         action.type = CALCULATOR;
+<<<<<<< HEAD
         this.cache.bindFn.push(() => delete action.handler);
+=======
+>>>>>>> b725ec0019f64741ea9b3bccd3f6d0ae3ad37680
         return action;
     }
     pushCalculators(fieldConfig, calculator) {
@@ -68,6 +71,12 @@ export class BasicExtension {
             const findAction = defaultAction.find(({ type: defaultType }) => pushAction.type === defaultType);
             !findAction ? defaultAction.push(pushAction) : Object.assign(findAction, pushAction);
         });
+    }
+    pushActionToMethod(actions) {
+        const props = { builder: this.builder, id: this.builder.id };
+        const _actions = this.toArray(actions).map(this.serializeAction);
+        const events = this.createActions(_actions, props, { injector: this.injector });
+        _actions.forEach((action) => this.defineProperty(this.builder, action.type, events[this.getEventType(action.type)]));
     }
     toArray(obj) {
         return Array.isArray(obj) ? obj : [obj];

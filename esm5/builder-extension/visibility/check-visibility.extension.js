@@ -1,7 +1,11 @@
 import { __extends } from "tslib";
 import { isEmpty, isUndefined } from 'lodash';
 import { BasicExtension } from '../basic/basic.extension';
+<<<<<<< HEAD
 import { CHANGE, CHECK_VISIBILITY, LOAD, LOAD_ACTION, REFRESH_VISIBILITY } from '../constant/calculator.constant';
+=======
+import { CHANGE, CHECK_VISIBILITY, LOAD, REFRESH_VISIBILITY } from '../constant/calculator.constant';
+>>>>>>> b725ec0019f64741ea9b3bccd3f6d0ae3ad37680
 var CheckVisibilityExtension = /** @class */ (function (_super) {
     __extends(CheckVisibilityExtension, _super);
     function CheckVisibilityExtension() {
@@ -17,7 +21,7 @@ var CheckVisibilityExtension = /** @class */ (function (_super) {
                     dependents: this.createDependents([LOAD, CHANGE])
                 }, {
                     action: this.bindCalculatorAction(this.removeOnEvent.bind(this)),
-                    dependents: { type: LOAD_ACTION, fieldId: this.builder.id }
+                    dependents: { type: LOAD, fieldId: this.builder.id }
                 }]);
         }
     };

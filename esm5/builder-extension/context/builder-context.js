@@ -1,7 +1,11 @@
 import { __extends, __spreadArray } from "tslib";
 import { Injector } from '@fm/di';
 import { BuilderContext as BasicBuilderContext } from '../../builder/builder-context';
+<<<<<<< HEAD
 import { ACTION_INTERCEPT, ACTIONS_CONFIG, BUILDER_EXTENSION, COVERT_CONFIG, COVERT_INTERCEPT, FORM_CONTROL, GET_JSON_CONFIG, LAYOUT_ELEMENT, LOAD_BUILDER_CONFIG, VALIDATOR_SERVICE } from '../../token';
+=======
+import { ACTION_INTERCEPT, BUILDER_EXTENSION, FORM_CONTROL, GET_JSON_CONFIG, LAYOUT_ELEMENT, LOAD_BUILDER_CONFIG, VALIDATOR_SERVICE } from '../../token';
+>>>>>>> b725ec0019f64741ea9b3bccd3f6d0ae3ad37680
 import { Action } from '../action/actions';
 import { ActionExtension } from '../action/actions.extension';
 import { DataSourceExtension } from '../datasource/datasource.extension';
