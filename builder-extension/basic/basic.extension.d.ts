@@ -30,7 +30,6 @@ export declare abstract class BasicExtension {
     protected bindCalculatorAction(handler: (baseAction: BaseAction) => any): Action;
     protected pushCalculators(fieldConfig: BuilderFieldExtensions, calculator: Calculators | Calculators[]): void;
     protected pushAction(fieldConfig: BuilderFieldExtensions, actions: Action | Action[]): void;
-    protected pushActionToMethod(actions: Action | Action[]): void;
     protected toArray<T = any>(obj: any): T[];
     protected defineProperty(object: any, prototypeName: string, value: any): void;
     protected definePropertys(object: any, prototype: {

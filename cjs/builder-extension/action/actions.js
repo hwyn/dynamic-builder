@@ -90,48 +90,17 @@ var Action = /** @class */ (function () {
         return (0, rxjs_1.forkJoin)(calculatorsInvokes.map(function (invokeCalculators) { return invokeCalculators.apply(void 0, tslib_1.__spreadArray([value], otherEventParam, false)); }));
     };
     Action.prototype.execute = function (action, props, event) {
-<<<<<<< HEAD
-=======
         if (event === void 0) { event = null; }
         var otherEventParam = [];
         for (var _i = 3; _i < arguments.length; _i++) {
             otherEventParam[_i - 3] = arguments[_i];
         }
-        var name = action.name, handler = action.handler, stop = action.stop, type = action.type;
-        if (stop && !(0, lodash_1.isEmpty)(event) && (event === null || event === void 0 ? void 0 : event.stopPropagation)) {
-            event.stopPropagation();
-        }
-        var e = this.createEvent(event, otherEventParam);
-        var actionSub = name || handler ? this.executeAction(action, this.getActionContext(props), e) : (0, rxjs_1.of)(event);
-        var hasInvokeCalculators = !!props && action && type;
-        return hasInvokeCalculators ? this.invokeCalculators(action, actionSub, props) : actionSub;
-    };
-    Action.prototype.invokeAction = function (action, props, event) {
-        var _this = this;
->>>>>>> b725ec0019f64741ea9b3bccd3f6d0ae3ad37680
-        if (event === void 0) { event = null; }
-        var otherEventParam = [];
-        for (var _i = 3; _i < arguments.length; _i++) {
-            otherEventParam[_i - 3] = arguments[_i];
-        }
-<<<<<<< HEAD
         var name = action.name, handler = action.handler, stop = action.stop;
         var e = this.createEvent(event, otherEventParam);
         if (stop && !(0, lodash_1.isEmpty)(event) && (event === null || event === void 0 ? void 0 : event.stopPropagation)) {
             event.stopPropagation();
         }
         return name || handler ? this.executeAction(action, this.getActionContext(props), e) : (0, rxjs_1.of)(event);
-=======
-        var before = action.before, after = action.after, current = tslib_1.__rest(action, ["before", "after"]);
-        var execute = function () { return _this.execute.apply(_this, tslib_1.__spreadArray([current, props, event], otherEventParam, false)); };
-        var actionSub = before ? this.invoke.apply(this, tslib_1.__spreadArray([before, props, event], otherEventParam, false)).pipe((0, utility_1.observableMap)(function () { return execute(); })) : execute();
-        if (after) {
-            actionSub = actionSub.pipe((0, utility_1.observableTap)(function (value) {
-                return _this.invoke.apply(_this, tslib_1.__spreadArray([after, props, typeof value === 'undefined' ? event : value], otherEventParam, false));
-            }));
-        }
-        return actionSub;
->>>>>>> b725ec0019f64741ea9b3bccd3f6d0ae3ad37680
     };
     Action.prototype.invoke = function (actions, props, event) {
         var _this = this;
@@ -140,7 +109,6 @@ var Action = /** @class */ (function () {
         for (var _i = 3; _i < arguments.length; _i++) {
             otherEventParam[_i - 3] = arguments[_i];
         }
-<<<<<<< HEAD
         var _actions = (Array.isArray(actions) ? actions : [actions]).map(basic_extension_1.serializeAction);
         return (0, utility_1.toForkJoin)(_actions.map(function (_a) {
             var before = _a.before;
@@ -153,23 +121,6 @@ var Action = /** @class */ (function () {
             var after = _a.after;
             return after && _this.invoke.apply(_this, tslib_1.__spreadArray([after, props, typeof result[index] === 'undefined' ? event : result[index]], otherEventParam, false));
         })); }), (0, operators_1.map)(function (result) { return result.pop(); }));
-=======
-        var actionsSub;
-        if (Array.isArray(actions)) {
-            actionsSub = (0, rxjs_1.forkJoin)((actions).map(function (a) { return _this.invokeAction.apply(_this, tslib_1.__spreadArray([(0, basic_extension_1.serializeAction)(a), props, event], otherEventParam, false)); })).pipe((0, operators_1.map)(function (result) { return result.pop(); }));
-        }
-        else {
-            actionsSub = this.invokeAction.apply(this, tslib_1.__spreadArray([(0, basic_extension_1.serializeAction)(actions), props, event], otherEventParam, false));
-        }
-        return actionsSub;
-    };
-    Action.prototype.callAction = function (actionName, context) {
-        var events = [];
-        for (var _i = 2; _i < arguments.length; _i++) {
-            events[_i - 2] = arguments[_i];
-        }
-        return this.invoke.apply(this, tslib_1.__spreadArray([(0, basic_extension_1.serializeAction)(actionName), context], events, false));
->>>>>>> b725ec0019f64741ea9b3bccd3f6d0ae3ad37680
     };
     Action.prototype.callAction = function (actionName, context) {
         var events = [];
@@ -187,14 +138,8 @@ var Action = /** @class */ (function () {
         var executeHandler = handler;
         var action = new base_action_1.BaseAction(this.injector, context);
         var builder = action.builder;
-<<<<<<< HEAD
         if (!executeHandler && (ActionType = this.getAction(actionName))) {
             action = this.getCacheAction(ActionType, context, action);
-=======
-        var ActionType = null;
-        if (!executeHandler && (ActionType = this.getAction(actionName))) {
-            action = ActionType && new ActionType(this.injector, context);
->>>>>>> b725ec0019f64741ea9b3bccd3f6d0ae3ad37680
             executeHandler = action && action[execute].bind(action);
         }
         if (!executeHandler && builder) {

@@ -19,7 +19,7 @@ var DataSourceExtension = /** @class */ (function (_super) {
             this.builderFields = this.mapFields(jsonFields, this.addFieldCalculators.bind(this));
             this.pushCalculators(this.json, [{
                     action: this.bindCalculatorAction(this.createOnDataSourceConfig.bind(this)),
-                    dependents: { type: calculator_constant_1.LOAD, fieldId: this.builder.id }
+                    dependents: { type: calculator_constant_1.LOAD_ACTION, fieldId: this.builder.id }
                 }]);
         }
     };
@@ -43,7 +43,7 @@ var DataSourceExtension = /** @class */ (function (_super) {
     };
     DataSourceExtension.prototype.serializeDataSourceConfig = function (jsonField) {
         var jsonDataSource = jsonField.dataSource;
-        var defaultDependents = { type: calculator_constant_1.LOAD, fieldId: this.builder.id };
+        var defaultDependents = { type: calculator_constant_1.LOAD_VIEW_MODEL, fieldId: this.builder.id };
         var dataSource = this.serializeCalculatorConfig(jsonDataSource, calculator_constant_1.DATD_SOURCE, defaultDependents);
         var action = dataSource.action, source = dataSource.source;
         if (!(0, lodash_1.isEmpty)(source) && !action.handler) {

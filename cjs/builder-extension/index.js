@@ -1,10 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-<<<<<<< HEAD
 exports.serializeAction = exports.BuilderModel = exports.Grid = exports.BaseCovert = exports.useBuilderContext = exports.BuilderContext = void 0;
-=======
-exports.serializeAction = exports.BuilderModel = exports.Grid = exports.useBuilderContext = void 0;
->>>>>>> b725ec0019f64741ea9b3bccd3f6d0ae3ad37680
 var tslib_1 = require("tslib");
 var basic_extension_1 = require("./basic/basic.extension");
 Object.defineProperty(exports, "serializeAction", { enumerable: true, get: function () { return basic_extension_1.serializeAction; } });

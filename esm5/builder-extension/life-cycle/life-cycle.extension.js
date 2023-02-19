@@ -1,9 +1,5 @@
 import { __assign, __extends, __spreadArray } from "tslib";
-<<<<<<< HEAD
 import { flatMap, isEmpty } from 'lodash';
-=======
-import { cloneDeep, flatMap, isEmpty } from 'lodash';
->>>>>>> b725ec0019f64741ea9b3bccd3f6d0ae3ad37680
 import { of } from 'rxjs';
 import { filter, tap } from 'rxjs/operators';
 import { observableMap, transformObservable } from '../../utility';
@@ -15,11 +11,7 @@ var LifeCycleExtension = /** @class */ (function (_super) {
     function LifeCycleExtension() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.hasChange = false;
-<<<<<<< HEAD
         _this.lifeEvent = [LOAD, CHANGE, DESTORY];
-=======
-        _this.lifeEvent = [LOAD, CHANGE];
->>>>>>> b725ec0019f64741ea9b3bccd3f6d0ae3ad37680
         _this.calculators = [];
         _this.nonSelfCalculators = [];
         _this.detectChanges = _this.cache.detectChanges.pipe(filter(function () { return !_this.hasChange; }));

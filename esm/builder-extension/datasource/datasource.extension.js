@@ -1,6 +1,6 @@
 import { isEmpty, isUndefined } from 'lodash';
 import { BasicExtension } from '../basic/basic.extension';
-import { DATD_SOURCE, LOAD } from '../constant/calculator.constant';
+import { DATD_SOURCE, LOAD_ACTION, LOAD_VIEW_MODEL } from '../constant/calculator.constant';
 export class DataSourceExtension extends BasicExtension {
     extension() {
         const jsonFields = this.jsonFields.filter(({ dataSource }) => !isUndefined(dataSource));
@@ -8,7 +8,7 @@ export class DataSourceExtension extends BasicExtension {
             this.builderFields = this.mapFields(jsonFields, this.addFieldCalculators.bind(this));
             this.pushCalculators(this.json, [{
                     action: this.bindCalculatorAction(this.createOnDataSourceConfig.bind(this)),
-                    dependents: { type: LOAD, fieldId: this.builder.id }
+                    dependents: { type: LOAD_ACTION, fieldId: this.builder.id }
                 }]);
         }
     }
@@ -27,7 +27,7 @@ export class DataSourceExtension extends BasicExtension {
     }
     serializeDataSourceConfig(jsonField) {
         const { dataSource: jsonDataSource } = jsonField;
-        const defaultDependents = { type: LOAD, fieldId: this.builder.id };
+        const defaultDependents = { type: LOAD_VIEW_MODEL, fieldId: this.builder.id };
         const dataSource = this.serializeCalculatorConfig(jsonDataSource, DATD_SOURCE, defaultDependents);
         const { action, source } = dataSource;
         if (!isEmpty(source) && !action.handler) {

@@ -1,7 +1,7 @@
 import { __extends } from "tslib";
 import { isEmpty, isUndefined } from 'lodash';
 import { BasicExtension } from '../basic/basic.extension';
-import { DATD_SOURCE, LOAD } from '../constant/calculator.constant';
+import { DATD_SOURCE, LOAD_ACTION, LOAD_VIEW_MODEL } from '../constant/calculator.constant';
 var DataSourceExtension = /** @class */ (function (_super) {
     __extends(DataSourceExtension, _super);
     function DataSourceExtension() {
@@ -16,7 +16,7 @@ var DataSourceExtension = /** @class */ (function (_super) {
             this.builderFields = this.mapFields(jsonFields, this.addFieldCalculators.bind(this));
             this.pushCalculators(this.json, [{
                     action: this.bindCalculatorAction(this.createOnDataSourceConfig.bind(this)),
-                    dependents: { type: LOAD, fieldId: this.builder.id }
+                    dependents: { type: LOAD_ACTION, fieldId: this.builder.id }
                 }]);
         }
     };
@@ -40,7 +40,7 @@ var DataSourceExtension = /** @class */ (function (_super) {
     };
     DataSourceExtension.prototype.serializeDataSourceConfig = function (jsonField) {
         var jsonDataSource = jsonField.dataSource;
-        var defaultDependents = { type: LOAD, fieldId: this.builder.id };
+        var defaultDependents = { type: LOAD_VIEW_MODEL, fieldId: this.builder.id };
         var dataSource = this.serializeCalculatorConfig(jsonDataSource, DATD_SOURCE, defaultDependents);
         var action = dataSource.action, source = dataSource.source;
         if (!isEmpty(source) && !action.handler) {

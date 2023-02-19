@@ -4,21 +4,14 @@ import { Visibility } from '../../builder';
 import { COVERT_INTERCEPT, FORM_CONTROL } from '../../token';
 import { transformObservable } from '../../utility';
 import { BasicExtension } from '../basic/basic.extension';
-<<<<<<< HEAD
 import { CHANGE, CHECK_VISIBILITY, CONTROL, COVERT, LOAD_ACTION, NOTIFY_MODEL_CHANGE } from '../constant/calculator.constant';
-=======
-import { CHANGE, CHECK_VISIBILITY, CONTROL, LOAD, NOTIFY_MODEL_CHANGE } from '../constant/calculator.constant';
->>>>>>> b725ec0019f64741ea9b3bccd3f6d0ae3ad37680
 export class FormExtension extends BasicExtension {
     constructor() {
         super(...arguments);
         this.builderFields = [];
         this.defaultChangeType = CHANGE;
         this.getControl = this.injector.get(FORM_CONTROL);
-<<<<<<< HEAD
         this.covertIntercept = this.injector.get(COVERT_INTERCEPT);
-=======
->>>>>>> b725ec0019f64741ea9b3bccd3f6d0ae3ad37680
     }
     extension() {
         this.builderFields = this.mapFields(this.jsonFields.filter(({ binding }) => !isEmpty(binding)), this.createMergeControl.bind(this));
@@ -30,7 +23,7 @@ export class FormExtension extends BasicExtension {
         this.addChangeAction(changeType, jsonField, builderField);
         this.pushCalculators(jsonField, [{
                 action: this.bindCalculatorAction(this.addControl.bind(this, jsonField, builderField)),
-                dependents: { type: LOAD, fieldId: builderId }
+                dependents: { type: LOAD_ACTION, fieldId: builderId }
             }, {
                 action: this.bindCalculatorAction(this.createNotifyChange.bind(this, jsonField)),
                 dependents: { type: NOTIFY_MODEL_CHANGE, fieldId: builderId }
@@ -44,27 +37,17 @@ export class FormExtension extends BasicExtension {
                     dependents: { type: updateOn || changeType, fieldId: id }
                 }] : []]);
     }
-<<<<<<< HEAD
     addChangeAction(changeType, jsonField, builderField) {
         const { id, actions = [], binding } = jsonField;
         const { covert, intercept = '' } = binding;
         const actionIndex = actions.findIndex(({ type }) => type === changeType);
         const changeAfter = this.bindCalculatorAction(this.detectChanges.bind(this, id));
         const replaceAction = { type: changeType, after: changeAfter };
-=======
-    addChangeAction(changeType, jsonField) {
-        const { actions = [], binding: { intercept = '' } } = jsonField;
-        const actionIndex = actions.findIndex(({ type }) => type === changeType);
-        const replaceAction = { type: changeType };
->>>>>>> b725ec0019f64741ea9b3bccd3f6d0ae3ad37680
         const bindingViewModel = Object.assign(Object.assign({}, this.bindCalculatorAction(this.createChange.bind(this, jsonField))), actions[actionIndex] ? { after: this.bindCalculatorAction(actions[actionIndex]) } : {});
         jsonField.actions = actions;
         replaceAction.before = intercept ? Object.assign(Object.assign({}, this.bindCalculatorAction(intercept)), { after: bindingViewModel }) : bindingViewModel;
         actionIndex === -1 ? actions.push(replaceAction) : actions[actionIndex] = replaceAction;
-<<<<<<< HEAD
         this.defineProperty(binding, COVERT, this.covertIntercept.getCovertObj(covert, this.builder, builderField));
-=======
->>>>>>> b725ec0019f64741ea9b3bccd3f6d0ae3ad37680
     }
     addControl(jsonField, builderField) {
         const { binding } = jsonField;
@@ -88,11 +71,7 @@ export class FormExtension extends BasicExtension {
         this.changeVisibility(builderField, binding, actionEvent);
     }
     changeVisibility(builderField, binding, visibility = Visibility.visible) {
-<<<<<<< HEAD
         const { control, visibility: v = Visibility.visible } = builderField;
-=======
-        const { control, visibility: v } = builderField;
->>>>>>> b725ec0019f64741ea9b3bccd3f6d0ae3ad37680
         if (control && v !== visibility) {
             const { none, disabled, hidden, readonly } = Visibility;
             const isDisabled = [none, hidden, disabled, readonly].includes(visibility);
@@ -118,17 +97,11 @@ export class FormExtension extends BasicExtension {
         return changeType;
     }
     getValueToModel(binding) {
-<<<<<<< HEAD
         const value = this.cache.viewModel.getBindValue(binding);
         return this.covertIntercept.covertToView(binding.covert, value);
     }
     setValueToModel(binding, value) {
         value = this.covertIntercept.covertToModel(binding.covert, value);
-=======
-        return this.cache.viewModel.getBindValue(binding);
-    }
-    setValueToModel(binding, value) {
->>>>>>> b725ec0019f64741ea9b3bccd3f6d0ae3ad37680
         this.cache.viewModel.setBindValue(binding, value);
     }
     deleteValueToModel(binding) {
