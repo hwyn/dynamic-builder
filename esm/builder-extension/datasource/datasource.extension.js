@@ -12,24 +12,18 @@ export class DataSourceExtension extends BasicExtension {
                 }]);
         }
     }
-    addFieldCalculators([jsonField]) {
+    addFieldCalculators([jsonField, { field }]) {
         const { action, dependents, metadata } = this.serializeDataSourceConfig(jsonField);
         action.after = this.bindCalculatorAction(this.createSourceConfig.bind(this, metadata));
         this.pushCalculators(jsonField, { action, dependents });
+        delete field.dataSource;
     }
     createSourceConfig(metadata, { actionEvent, builderField, builderField: { instance } }) {
         builderField.source = this.sourceToMetadata(actionEvent, metadata);
         instance.detectChanges();
     }
     createOnDataSourceConfig() {
-        this.builderFields.forEach((builderField) => {
-            const { events = {}, field } = builderField;
-            if (events.onDataSource) {
-                events.onDataSource && this.defineProperty(builderField, this.getEventType(DATD_SOURCE), events.onDataSource);
-                delete events.onDataSource;
-            }
-            delete field.dataSource;
-        });
+        this.builderFields.forEach(({ events = {} }) => delete events.onDataSource);
     }
     serializeDataSourceConfig(jsonField) {
         const { dataSource: jsonDataSource } = jsonField;

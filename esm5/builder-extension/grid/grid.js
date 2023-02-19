@@ -1,5 +1,6 @@
 import { __assign, __rest } from "tslib";
-import { cloneDeep, groupBy, merge, toArray } from 'lodash';
+import { groupBy, merge, toArray } from 'lodash';
+import { cloneDeepPlain } from '../../utility';
 import { LATOUT_ID } from '../constant/calculator.constant';
 var defaultGrid = {
     spacing: 0,
@@ -25,7 +26,7 @@ var Grid = /** @class */ (function () {
         this.config = this.serializationConfig(json.grid);
     }
     Grid.prototype.serializationConfig = function (gridConfig) {
-        var _a = merge(cloneDeep(defaultGrid), gridConfig), _b = _a.id, id = _b === void 0 ? LATOUT_ID : _b, groups = _a.groups, _c = _a.additional, additional = _c === void 0 ? [] : _c, other = __rest(_a, ["id", "groups", "additional"]);
+        var _a = merge(cloneDeepPlain(defaultGrid), gridConfig), _b = _a.id, id = _b === void 0 ? LATOUT_ID : _b, groups = _a.groups, _c = _a.additional, additional = _c === void 0 ? [] : _c, other = __rest(_a, ["id", "groups", "additional"]);
         var justify = other.justify, alignItems = other.alignItems, spacing = other.spacing;
         var groupLayout = groupBy(additional, function (_a) {
             var group = _a.group;
@@ -39,11 +40,14 @@ var Grid = /** @class */ (function () {
         return __assign(__assign({ id: id }, other), { additional: groupAdditional });
     };
     Grid.prototype.getViewGrip = function (props) {
-        var config = cloneDeep(this.config);
+        var config = cloneDeepPlain(this.config);
         var _a = config.additional, additional = _a === void 0 ? [] : _a, _b = config.className, className = _b === void 0 ? '' : _b, style = config.style;
         var _c = props.className, propsClassName = _c === void 0 ? '' : _c, propsStyle = props.style;
         var groupLayout = groupByFields(this.builder.fields);
-        additional.forEach(function (item, group) { return item.fieldRows = groupFieldsToArray(groupLayout[group + 1]); });
+        config.additional = additional.filter(function (item, group) {
+            item.fieldRows = groupFieldsToArray(groupLayout[group + 1]);
+            return !!item.fieldRows.length;
+        });
         if (className || propsClassName) {
             config.className = [className, propsClassName].join(' ');
         }

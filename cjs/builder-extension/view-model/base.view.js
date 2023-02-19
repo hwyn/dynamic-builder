@@ -3,22 +3,26 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.BaseView = void 0;
 var lodash_1 = require("lodash");
 var BaseView = /** @class */ (function () {
-    function BaseView(injector, store) {
+    function BaseView(injector, _store) {
         this.injector = injector;
-        this.store = store;
+        this._store = _store;
     }
-    BaseView.prototype.setBindValue = function (binding, value) {
-        (0, lodash_1.set)(this.store, binding.path, value);
+    BaseView.prototype.getBindValue = function (_a) {
+        var path = _a.path, value = _a.default;
+        return (0, lodash_1.get)(this._store, path, value);
     };
-    BaseView.prototype.getBindValue = function (binding) {
-        return (0, lodash_1.get)(this.store, binding.path, binding.default);
+    BaseView.prototype.setBindValue = function (binding, value) {
+        (0, lodash_1.set)(this._store, binding.path, value);
+    };
+    BaseView.prototype.deleteBindValue = function (binding) {
+        (0, lodash_1.omit)(this._store, [binding.path]);
     };
     BaseView.prototype.refreshData = function (model) {
-        this.store = model;
+        this._store = model;
     };
     Object.defineProperty(BaseView.prototype, "model", {
         get: function () {
-            return this.store;
+            return this._store;
         },
         enumerable: false,
         configurable: true

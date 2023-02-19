@@ -1,13 +1,15 @@
-import { cloneDeep, flatMap, isEmpty } from 'lodash';
+import { flatMap, isEmpty } from 'lodash';
 import { of } from 'rxjs';
 import { filter, tap } from 'rxjs/operators';
 import { observableMap, transformObservable } from '../../utility';
 import { BasicExtension } from '../basic/basic.extension';
-import { CHANGE, DESTORY, LOAD, NON_SELF_BUILSERS, ORIGIN_CALCULATORS, ORIGIN_NON_SELF_CALCULATORS } from '../constant/calculator.constant';
+// eslint-disable-next-line max-len
+import { CHANGE, DESTORY, LOAD, LOAD_SOURCE, NON_SELF_BUILSERS, ORIGIN_CALCULATORS, ORIGIN_NON_SELF_CALCULATORS } from '../constant/calculator.constant';
 export class LifeCycleExtension extends BasicExtension {
     constructor() {
         super(...arguments);
         this.hasChange = false;
+        this.lifeEvent = [LOAD, CHANGE, DESTORY];
         this.calculators = [];
         this.nonSelfCalculators = [];
         this.detectChanges = this.cache.detectChanges.pipe(filter(() => !this.hasChange));
@@ -20,13 +22,18 @@ export class LifeCycleExtension extends BasicExtension {
         this.serializeCalculators();
         return this.createLife();
     }
+    createLoadAction(json) {
+        const { actions = [] } = json;
+        const loadIndex = actions.findIndex(({ type }) => type === LOAD);
+        const loadAction = { before: Object.assign(Object.assign({}, actions[loadIndex]), { type: LOAD_SOURCE }), type: LOAD };
+        loadIndex === -1 ? actions.push(loadAction) : actions[loadIndex] = loadAction;
+        return json;
+    }
     createLife() {
-        const { actions = [] } = this.json;
-        const lifeEvent = [LOAD, CHANGE];
-        const lifeActionsType = actions.filter(({ type }) => lifeEvent.includes(type));
-        const props = { builder: this.builder, id: this.builder.id };
+        const { actions } = this.createLoadAction(this.json);
+        const lifeActionsType = actions.filter(({ type }) => this.lifeEvent.includes(type));
         lifeActionsType.forEach((action) => action.runObservable = true);
-        this.lifeActions = this.createActions(lifeActionsType, props, { injector: this.injector });
+        this.lifeActions = this.createLifeActions(lifeActionsType);
         this.defineProperty(this.builder, this.getEventType(CHANGE), this.onLifeChange.bind(this));
         return this.invokeLifeCycle(this.getEventType(LOAD), this.props);
     }
@@ -36,8 +43,7 @@ export class LifeCycleExtension extends BasicExtension {
         this.hasChange = false;
     }
     invokeLifeCycle(type, event, otherEvent) {
-        const lifeActions = this.lifeActions;
-        return lifeActions[type] ? lifeActions[type](event, otherEvent) : of(event);
+        return this.lifeActions[type] ? this.lifeActions[type](event, otherEvent) : of(event);
     }
     serializeCalculators() {
         this.createCalculators();
@@ -45,20 +51,24 @@ export class LifeCycleExtension extends BasicExtension {
         this.bindCalculator();
     }
     linkCalculators() {
+        this.cache.lifeType = [...this.lifeEvent, ...this.cache.lifeType || []];
         this.calculators.forEach((calculator) => this.linkCalculator(calculator));
         this.getNonSelfCalculators().forEach((calculator) => this.linkCalculator(calculator, true));
+        this.calculators = this.calculators.filter((c) => !this.nonSelfCalculators.includes(c));
     }
+    // eslint-disable-next-line complexity
     linkCalculator(calculator, nonSelfCalculator) {
         const { type, fieldId } = calculator.dependent;
         const sourceField = this.getJsonFieldById(fieldId) || this.json;
         sourceField.actions = this.toArray(sourceField.actions || []);
         const { actions = [], id: sourceId } = sourceField;
         const nonSource = fieldId !== sourceId;
-        if (nonSource && !nonSelfCalculator) {
+        const isBuildCalculator = this.isBuildField(sourceField) && this.cache.lifeType.includes(type);
+        if ((isBuildCalculator || nonSource) && !nonSelfCalculator) {
             this.nonSelfCalculators.push(calculator);
-            this.linkOtherCalculator(calculator);
+            !isBuildCalculator && this.linkOtherCalculator(calculator);
         }
-        if (!nonSource && !actions.some((action) => action.type === type)) {
+        if (!nonSource && !actions.some((action) => action.type === type) && !isBuildCalculator) {
             sourceField.actions.unshift({ type });
         }
     }
@@ -66,12 +76,12 @@ export class LifeCycleExtension extends BasicExtension {
         const { type, fieldId = '' } = calculator.dependent;
         const otherFields = this.builder.root.getAllFieldById(fieldId);
         if (!isEmpty(otherFields)) {
-            otherFields.forEach((otherField) => otherField.addEventListener({ type }));
+            otherFields.forEach((otherField) => otherField.addEventListener && otherField.addEventListener({ type }));
         }
     }
     createCalculators() {
         const fields = [...this.jsonFields, this.json];
-        const fieldsCalculators = cloneDeep(fields.filter(({ calculators }) => !isEmpty(calculators)));
+        const fieldsCalculators = this.cloneDeepPlain(fields.filter(({ calculators }) => !isEmpty(calculators)));
         this.calculators = [];
         fieldsCalculators.forEach(({ id: targetId, calculators = [] }) => {
             var _a;
@@ -94,22 +104,23 @@ export class LifeCycleExtension extends BasicExtension {
         this.builder.nonSelfCalculators = this.nonSelfCalculators;
         this.defineProperty(this.cache, ORIGIN_CALCULATORS, this.calculators);
         this.defineProperty(this.cache, ORIGIN_NON_SELF_CALCULATORS, this.nonSelfCalculators);
-        if (this.nonSelfCalculators.length) {
-            this.nonSelfBuilders.push(this.builder);
-        }
+        this.nonSelfCalculators.length && this.nonSelfBuilders.push(this.builder);
     }
     beforeDestory() {
         return this.invokeLifeCycle(this.getEventType(DESTORY)).pipe(observableMap(() => transformObservable(super.beforeDestory())));
     }
     destory() {
-        var _a;
         if (this.nonSelfCalculators.length) {
             this.nonSelfBuilders.splice(this.nonSelfBuilders.indexOf(this.builder), 1);
         }
         this.unDefineProperty(this.builder, ['calculators', 'nonSelfCalculators', this.getEventType(CHANGE)]);
-        this.unDefineProperty(this.cache, [ORIGIN_CALCULATORS, ORIGIN_NON_SELF_CALCULATORS, NON_SELF_BUILSERS]);
+        this.unDefineProperty(this.cache, ['lifeType', ORIGIN_CALCULATORS, ORIGIN_NON_SELF_CALCULATORS, NON_SELF_BUILSERS]);
         this.unDefineProperty(this, ['detectChanges', 'lifeActions']);
-        const parentField = (_a = this.builder.parent) === null || _a === void 0 ? void 0 : _a.getFieldById(this.builder.id);
-        return transformObservable(super.destory()).pipe(tap(() => { var _a; return parentField && ((_a = parentField.instance) === null || _a === void 0 ? void 0 : _a.destory.next(this.builder.id)); }));
+        return transformObservable(super.destory()).pipe(tap(() => {
+            var _a, _b;
+            const parentField = (_a = this.builder.parent) === null || _a === void 0 ? void 0 : _a.getFieldById(this.builder.id);
+            const instance = (parentField || this.props).instance;
+            instance && ((_b = instance.destory) === null || _b === void 0 ? void 0 : _b.next(this.props.id || this.builder.id));
+        }));
     }
 }

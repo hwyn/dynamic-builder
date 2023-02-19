@@ -1,16 +1,19 @@
-import { __extends, __spreadArray } from "tslib";
+import { __assign, __extends, __spreadArray } from "tslib";
 import { isEmpty } from 'lodash';
+import { tap } from 'rxjs';
 import { Visibility } from '../../builder';
-import { FORM_CONTROL } from '../../token';
+import { COVERT_INTERCEPT, FORM_CONTROL } from '../../token';
 import { transformObservable } from '../../utility';
 import { BasicExtension } from '../basic/basic.extension';
-import { CHANGE, CHECK_VISIBILITY, CONTROL, LOAD_ACTION, NOTIFY_VIEW_MODEL_CHANGE } from '../constant/calculator.constant';
+import { CHANGE, CHECK_VISIBILITY, CONTROL, COVERT, LOAD_ACTION, NOTIFY_MODEL_CHANGE } from '../constant/calculator.constant';
 var FormExtension = /** @class */ (function (_super) {
     __extends(FormExtension, _super);
     function FormExtension() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.builderFields = [];
         _this.defaultChangeType = CHANGE;
+        _this.getControl = _this.injector.get(FORM_CONTROL);
+        _this.covertIntercept = _this.injector.get(COVERT_INTERCEPT);
         return _this;
     }
     FormExtension.prototype.extension = function () {
@@ -24,63 +27,70 @@ var FormExtension = /** @class */ (function (_super) {
         var id = jsonField.id, updateOn = jsonField.updateOn, checkVisibility = jsonField.checkVisibility, validators = jsonField.validators;
         var changeType = this.getChangeType(jsonField);
         var builderId = this.builder.id;
-        this.addChangeAction(changeType, jsonField);
+        this.addChangeAction(changeType, jsonField, builderField);
         this.pushCalculators(jsonField, __spreadArray(__spreadArray([{
                 action: this.bindCalculatorAction(this.addControl.bind(this, jsonField, builderField)),
                 dependents: { type: LOAD_ACTION, fieldId: builderId }
             }, {
                 action: this.bindCalculatorAction(this.createNotifyChange.bind(this, jsonField)),
-                dependents: { type: NOTIFY_VIEW_MODEL_CHANGE, fieldId: builderId }
+                dependents: { type: NOTIFY_MODEL_CHANGE, fieldId: builderId }
             }], checkVisibility ? [{
-                action: this.bindCalculatorAction(this.createVisibility.bind(this)),
+                action: this.bindCalculatorAction(this.createVisibility.bind(this, jsonField)),
                 dependents: { type: CHECK_VISIBILITY, fieldId: id }
-            }] : [], true), validators ? [{
+            }] : [], true), validators && !validators.length ? [{
                 action: this.bindCalculatorAction(this.createValidaity.bind(this)),
                 dependents: { type: updateOn || changeType, fieldId: id }
             }] : [], true));
     };
-    FormExtension.prototype.addChangeAction = function (changeType, jsonField) {
-        var _a = jsonField.actions, actions = _a === void 0 ? [] : _a;
-        var changeAction = actions.find(function (_a) {
+    FormExtension.prototype.addChangeAction = function (changeType, jsonField, builderField) {
+        var id = jsonField.id, _a = jsonField.actions, actions = _a === void 0 ? [] : _a, binding = jsonField.binding;
+        var covert = binding.covert, _b = binding.intercept, intercept = _b === void 0 ? '' : _b;
+        var actionIndex = actions.findIndex(function (_a) {
             var type = _a.type;
             return type === changeType;
         });
+        var changeAfter = this.bindCalculatorAction(this.detectChanges.bind(this, id));
+        var replaceAction = { type: changeType, after: changeAfter };
+        var bindingViewModel = __assign(__assign({}, this.bindCalculatorAction(this.createChange.bind(this, jsonField))), actions[actionIndex] ? { after: this.bindCalculatorAction(actions[actionIndex]) } : {});
         jsonField.actions = actions;
-        !changeAction && actions.push(changeAction = { type: changeType });
-        changeAction.after = this.bindCalculatorAction(this.createChange.bind(this, jsonField));
+        replaceAction.before = intercept ? __assign(__assign({}, this.bindCalculatorAction(intercept)), { after: bindingViewModel }) : bindingViewModel;
+        actionIndex === -1 ? actions.push(replaceAction) : actions[actionIndex] = replaceAction;
+        this.defineProperty(binding, COVERT, this.covertIntercept.getCovertObj(covert, this.builder, builderField));
     };
     FormExtension.prototype.addControl = function (jsonField, builderField) {
-        var value = this.getValueToModel(jsonField.binding, builderField);
-        var control = this.injector.get(FORM_CONTROL, value, { builder: this.builder, builderField: builderField });
+        var binding = jsonField.binding;
+        var value = this.getValueToModel(binding);
+        var control = this.getControl(value, { builder: this.builder, builderField: builderField });
         this.defineProperty(builderField, CONTROL, control);
-        delete builderField.field.binding;
         this.excuteChangeEvent(jsonField, value);
-        this.changeVisibility(builderField, builderField.visibility);
+        this.changeVisibility(builderField, binding, builderField.visibility);
+        delete builderField.field.binding;
     };
     FormExtension.prototype.createChange = function (_a, _b) {
-        var _c, _d;
+        var _c;
         var binding = _a.binding;
         var builderField = _b.builderField, actionEvent = _b.actionEvent;
         var value = this.isDomEvent(actionEvent) ? actionEvent.target.value : actionEvent;
-        this.setValueToModel(binding, value, builderField);
+        this.setValueToModel(binding, value);
         (_c = builderField.control) === null || _c === void 0 ? void 0 : _c.patchValue(value);
-        (_d = builderField.instance) === null || _d === void 0 ? void 0 : _d.detectChanges();
     };
     FormExtension.prototype.createValidaity = function (_a) {
-        var control = _a.builderField.control, ready = _a.builder.ready;
-        return ready && transformObservable(control === null || control === void 0 ? void 0 : control.updateValueAndValidity());
+        var _b = _a.builderField, control = _b.control, instance = _b.instance;
+        return transformObservable(control === null || control === void 0 ? void 0 : control.updateValueAndValidity()).pipe(tap(function () { return instance.detectChanges(); }));
     };
-    FormExtension.prototype.createVisibility = function (_a) {
-        var builderField = _a.builderField, ready = _a.builder.ready, actionEvent = _a.actionEvent;
-        ready && this.changeVisibility(builderField, actionEvent);
+    FormExtension.prototype.createVisibility = function (_a, _b) {
+        var binding = _a.binding;
+        var builderField = _b.builderField, actionEvent = _b.actionEvent;
+        this.changeVisibility(builderField, binding, actionEvent);
     };
-    FormExtension.prototype.changeVisibility = function (_a, visibility) {
-        var control = _a.control;
+    FormExtension.prototype.changeVisibility = function (builderField, binding, visibility) {
         if (visibility === void 0) { visibility = Visibility.visible; }
-        if (control) {
+        var control = builderField.control, _a = builderField.visibility, v = _a === void 0 ? Visibility.visible : _a;
+        if (control && v !== visibility) {
             var none = Visibility.none, disabled = Visibility.disabled, hidden = Visibility.hidden, readonly = Visibility.readonly;
             var isDisabled = [none, hidden, disabled, readonly].includes(visibility);
             isDisabled ? control.disable() : control.enable();
+            visibility === none ? this.deleteValueToModel(binding) : this.setValueToModel(binding, control.value);
         }
     };
     FormExtension.prototype.excuteChangeEvent = function (jsonField, value) {
@@ -90,19 +100,27 @@ var FormExtension = /** @class */ (function (_super) {
     FormExtension.prototype.createNotifyChange = function (jsonField, _a) {
         var actionEvent = _a.actionEvent, builderField = _a.builderField;
         if (!actionEvent || actionEvent === builderField) {
-            var binding = jsonField.binding;
-            this.excuteChangeEvent(jsonField, this.getValueToModel(binding, builderField));
+            this.excuteChangeEvent(jsonField, this.getValueToModel(jsonField.binding));
         }
+    };
+    FormExtension.prototype.detectChanges = function (id) {
+        var instance = this.builder.getFieldById(id).instance;
+        instance === null || instance === void 0 ? void 0 : instance.detectChanges();
     };
     FormExtension.prototype.getChangeType = function (jsonField) {
         var _a = jsonField.binding.changeType, changeType = _a === void 0 ? this.defaultChangeType : _a;
         return changeType;
     };
-    FormExtension.prototype.getValueToModel = function (binding, builderField) {
-        return this.cache.viewModel.getBindValue(binding, builderField);
+    FormExtension.prototype.getValueToModel = function (binding) {
+        var value = this.cache.viewModel.getBindValue(binding);
+        return this.covertIntercept.covertToView(binding.covert, value);
     };
-    FormExtension.prototype.setValueToModel = function (binding, value, builderField) {
-        this.cache.viewModel.setBindValue(binding, value, builderField);
+    FormExtension.prototype.setValueToModel = function (binding, value) {
+        value = this.covertIntercept.covertToModel(binding.covert, value);
+        this.cache.viewModel.setBindValue(binding, value);
+    };
+    FormExtension.prototype.deleteValueToModel = function (binding) {
+        this.cache.viewModel.deleteBindValue(binding);
     };
     FormExtension.prototype.isDomEvent = function (actionResult) {
         return actionResult && actionResult.target && !!actionResult.target.nodeType;
@@ -112,7 +130,8 @@ var FormExtension = /** @class */ (function (_super) {
         this.builderFields.forEach(function (builderField) {
             var _a;
             (_a = builderField.control) === null || _a === void 0 ? void 0 : _a.destory();
-            _this.defineProperty(builderField, CONTROL, null);
+            _this.unDefineProperty(builderField, [CONTROL]);
+            _this.unDefineProperty(_this.getJsonFieldById(builderField.id).binding, [COVERT]);
         });
         return _super.prototype.destory.call(this);
     };

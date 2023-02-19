@@ -8,5 +8,6 @@ declare type Actions = {
     [key: string]: (event?: Event, ...arg: any[]) => any;
 };
 export declare function getEventType(type: string): string;
+export declare function getActionType(type: string): string;
 export declare const createActions: (actions: Action[], props: ActionInterceptProps, options: CreateOptions) => Actions;
 export {};

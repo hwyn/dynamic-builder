@@ -40,4 +40,8 @@ export declare interface ControlOptions {
 export declare interface ValidatorService {
     getValidators(options: FormOptions): ControlOptions;
 }
+export declare interface BaseCovertImpl {
+    covertToModel(value: any): any;
+    covertToView(value: any): any;
+}
 export {};

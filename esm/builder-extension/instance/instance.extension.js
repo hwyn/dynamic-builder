@@ -1,5 +1,5 @@
 import { isEmpty } from 'lodash';
-import { Observable, Subject } from 'rxjs';
+import { Observable, shareReplay, Subject } from 'rxjs';
 import { BuilderModel } from '../../builder/builder-model';
 import { observableMap, toForkJoin, transformObservable } from '../../utility';
 import { BasicExtension } from '../basic/basic.extension';
@@ -12,10 +12,10 @@ export class InstanceExtension extends BasicExtension {
     static createInstance() {
         return {
             current: null,
-            destory: new Subject(),
             onMounted: () => void (0),
             onDestory: () => void (0),
-            detectChanges: () => undefined
+            detectChanges: () => undefined,
+            destory: new Subject().pipe(shareReplay(1))
         };
     }
     extension() {
@@ -45,16 +45,18 @@ export class InstanceExtension extends BasicExtension {
             if (hasMounted) {
                 instance.onMounted(id);
             }
-            if (current instanceof BuilderModel && !current.id) {
-                console.error(`Builder needs to set the ID property: ${id}`);
+            if (current instanceof BuilderModel && current.id !== id) {
+                console.info(`Builder needs to set the id property: ${id}`);
             }
         };
         return { get, set };
     }
     addInstance([jsonField, builderField]) {
         const destory = { type: DESTORY, after: this.bindCalculatorAction(this.instanceDestory.bind(this)) };
+        const instance = InstanceExtension.createInstance();
         this.pushAction(jsonField, [destory, { type: MOUNTED }]);
-        this.defineProperty(builderField, INSTANCE, InstanceExtension.createInstance());
+        this.defineProperty(builderField, INSTANCE, instance);
+        instance.destory.subscribe();
     }
     instanceDestory({ actionEvent, builderField: { instance } }) {
         const currentIsBuildModel = instance.current instanceof BuilderModel;
@@ -63,8 +65,9 @@ export class InstanceExtension extends BasicExtension {
         return !currentIsBuildModel && instance.destory.next(actionEvent);
     }
     beforeDestory() {
-        if (!isEmpty(this.buildFieldList)) {
-            return toForkJoin(this.buildFieldList.map(({ id, instance }) => new Observable((subscribe) => {
+        const showFields = this.buildFieldList.filter(({ visibility }) => this.builder.showField(visibility));
+        if (!isEmpty(showFields)) {
+            return toForkJoin(showFields.map(({ id, instance }) => new Observable((subscribe) => {
                 instance.destory.subscribe(() => {
                     subscribe.next(id);
                     subscribe.complete();

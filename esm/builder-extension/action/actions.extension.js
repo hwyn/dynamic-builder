@@ -1,14 +1,14 @@
 import { isEmpty } from 'lodash';
 import { BasicExtension } from '../basic/basic.extension';
 import { ADD_EVENT_LISTENER, EVENTS, LOAD_ACTION, LOAD_VIEW_MODEL } from '../constant/calculator.constant';
+const CACHE_ACTION = 'cacheAction';
 export class ActionExtension extends BasicExtension {
     constructor() {
         super(...arguments);
         this.fields = [];
     }
     extension() {
-        const eachCallback = this.create.bind(this);
-        const handler = this.eachFields.bind(this, this.jsonFields, eachCallback);
+        const handler = this.eachFields.bind(this, this.jsonFields, this.create.bind(this));
         this.pushCalculators(this.json, {
             action: { type: LOAD_ACTION, handler },
             dependents: { type: LOAD_VIEW_MODEL, fieldId: this.builder.id }
@@ -20,6 +20,7 @@ export class ActionExtension extends BasicExtension {
         if (!isEmpty(actions))
             builderField.addEventListener(actions);
         this.fields.push(builderField);
+        this.defineProperty(builderField, CACHE_ACTION, []);
         delete builderField.field.actions;
     }
     addFieldEvent(builderField, actions) {
@@ -32,7 +33,7 @@ export class ActionExtension extends BasicExtension {
         }
     }
     destory() {
-        this.fields.forEach((field) => this.unDefineProperty(field, [EVENTS, ADD_EVENT_LISTENER]));
+        this.fields.forEach((field) => this.unDefineProperty(field, [CACHE_ACTION, EVENTS, ADD_EVENT_LISTENER]));
         super.destory();
     }
 }

@@ -1,21 +1,22 @@
 import { __rest, __spreadArray } from "tslib";
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-use-before-define */
-import { isEmpty } from 'lodash';
+import { flatMap, isEmpty } from 'lodash';
 import { Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { BUILDER_EXTENSION, LOAD_BUILDER_CONFIG } from '../token';
 import { observableMap, toForkJoin, transformObservable, withValue } from '../utility';
 import { BuilderEngine } from './builder-engine.service';
+var CACHE = "$$cache";
 export function init() {
     var _this = this;
-    Object.defineProperty(this, '$$cache', withValue(getCacheObj.call(this, {})));
+    Object.defineProperty(this, CACHE, withValue(getCacheObj.call(this, {})));
     Object.defineProperties(this, {
         onChange: withValue(function () { }),
         onDestory: withValue(this.$$cache.destory.bind(this)),
         loadForBuild: withValue(function (props) {
             delete _this.loadForBuild;
-            Object.defineProperty(_this, 'privateExtension', withValue(props.privateExtension || []));
+            Object.defineProperty(_this, 'privateExtension', withValue(parseExtension(props.privateExtension || [])));
             props.builder && addChild.call(props.builder, _this);
             loadForBuild.call(_this, props).subscribe(function () { return _this.detectChanges(); });
             return _this;
@@ -29,10 +30,12 @@ function loadForBuild(props) {
         var extension = _a.extension;
         return extension;
     });
-    var Extensions = __spreadArray(__spreadArray([], this.injector.get(BUILDER_EXTENSION), true), privateExtension, true);
+    var Extensions = __spreadArray(__spreadArray([], flatMap(this.injector.get(BUILDER_EXTENSION)), true), privateExtension, true);
     return new LoadConfig(this, props, this.$$cache).init().pipe(observableMap(function (loadExample) {
-        Object.defineProperty(_this, '$$cache', withValue(getCacheObj.call(_this, props)));
-        var beforeInits = Extensions.map(function (Extension) { return new Extension(_this, props, _this.$$cache, props.config).init(); });
+        Object.defineProperty(_this, CACHE, withValue(getCacheObj.call(_this, props)));
+        var beforeInits = Extensions
+            .map(function (Extension) { return new Extension(_this, props, _this.$$cache, props.config); })
+            .map(function (extension) { return extension.init(); });
         return toForkJoin(__spreadArray([loadExample], beforeInits, true));
     }), observableMap(function (examples) { return toForkJoin(examples.map(function (example) { return example.afterInit(); })); }), tap(function (beforeDestorys) {
         _this.$$cache.ready = true;
@@ -42,9 +45,10 @@ function loadForBuild(props) {
 }
 function getCacheObj(props) {
     var _a = props.config, _b = _a === void 0 ? {} : _a, _c = _b.fields, fields = _c === void 0 ? [] : _c;
-    var _d = this.$$cache || {}, _e = _d.ready, ready = _e === void 0 ? false : _e, _f = _d.destoryed, destoryed = _f === void 0 ? false : _f, _g = _d.detectChanges, detectChanges = _g === void 0 ? new Subject() : _g, _h = _d.destory, modelDestory = _h === void 0 ? destory.bind(this) : _h, _j = _d.addChild, modelAddChild = _j === void 0 ? addChild.bind(this) : _j, _k = _d.removeChild, modelRemoveChild = _k === void 0 ? removeChild.bind(this) : _k;
+    var _d = this.$$cache || {}, _e = _d.bindFn, bindFn = _e === void 0 ? [] : _e, _f = _d.ready, ready = _f === void 0 ? false : _f, _g = _d.destoryed, destoryed = _g === void 0 ? false : _g, _h = _d.detectChanges, detectChanges = _h === void 0 ? new Subject() : _h, _j = _d.destory, modelDestory = _j === void 0 ? destory.bind(this) : _j, _k = _d.addChild, modelAddChild = _k === void 0 ? addChild.bind(this) : _k, _l = _d.removeChild, modelRemoveChild = _l === void 0 ? removeChild.bind(this) : _l;
     return {
         ready: ready,
+        bindFn: bindFn,
         destoryed: destoryed,
         detectChanges: detectChanges,
         destory: modelDestory,
@@ -54,9 +58,8 @@ function getCacheObj(props) {
     };
 }
 function createField(field) {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     var id = field.id, type = field.type, visibility = field.visibility, other = __rest(field, ["id", "type", "visibility"]);
-    var element = field.element || this.injector.get(BuilderEngine).getUiComponent(type);
+    var element = field.element || (typeof type !== 'string' ? type : this.injector.get(BuilderEngine).getUiComponent(type));
     var _field = { id: id, type: type, element: element, visibility: visibility, field: other };
     Object.keys(_field).forEach(function (key) { return _field[key] === undefined && delete _field[key]; });
     return _field;
@@ -78,6 +81,7 @@ function destory() {
                     _this.children.splice(0);
                     (_a = _this.privateExtension) === null || _a === void 0 ? void 0 : _a.splice(0);
                     _this.parent && removeChild.call(_this.parent, _this);
+                    cacheObj.bindFn.forEach(function (fn) { return fn(); });
                 },
                 error: function (e) {
                     console.error(e);
@@ -88,6 +92,9 @@ function destory() {
             console.error(e);
         }
     }
+}
+function parseExtension(privateExtension) {
+    return privateExtension.map(function (item) { return item.extension ? item : { extension: item }; });
 }
 function extendsProviders(child) {
     var _a;

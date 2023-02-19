@@ -1,7 +1,7 @@
 import { Injector, Type } from '@fm/di';
 import { Observable, Subject } from 'rxjs';
 import { GridType } from '../builder-extension';
-import { Action } from '../builder-extension/action';
+import { Action, ExecuteHandler } from '../builder-extension/action';
 import { Visibility } from './consts';
 export interface CacheObj {
     [x: string]: any;
@@ -10,6 +10,7 @@ export interface CacheObj {
     };
     fields: BuilderField[];
     destoryed: boolean;
+    bindFn: any[];
     ready: boolean;
     destory: () => void;
     addChild: (child: BuilderModelImplements) => void;
@@ -40,11 +41,11 @@ export interface BuilderField extends Field {
 }
 export interface BuilderJsonField {
     id: string;
-    type: string;
+    type: string | any;
     actions?: Action[];
     [key: string]: any;
 }
-export declare type privateExtension = {
+export declare type PrivateExtension = {
     extension: any;
     needExtends?: boolean;
 };
@@ -53,14 +54,14 @@ export interface BuilderProps extends BuilderElement {
     className?: string;
     builder?: BuilderModelImplements;
     BuilderModel?: Type<BuilderModelImplements>;
-    privateExtension?: privateExtension[];
+    privateExtension?: (PrivateExtension | Type)[];
     events?: {
         [key: string]: (params?: any) => Observable<any>;
     };
     children?: any;
-    jsonName?: string;
-    jsonNameAction?: string;
-    configAction?: string;
+    jsonName?: string | Action | ExecuteHandler;
+    jsonNameAction?: string | Action | ExecuteHandler;
+    configAction?: string | Action | ExecuteHandler;
     style?: {
         [key: string]: string;
     };
@@ -87,7 +88,7 @@ export declare interface BuilderModelInterface {
     readonly grid?: GridType;
     readonly Element: any;
     readonly injector: Injector;
-    readonly privateExtension?: privateExtension[];
+    readonly privateExtension?: PrivateExtension[];
     showField(visibility: Visibility | undefined): boolean;
     detectChanges(): void;
 }

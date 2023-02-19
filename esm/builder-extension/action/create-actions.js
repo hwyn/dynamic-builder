@@ -16,6 +16,9 @@ function mergeHandler(actions, props, options) {
 export function getEventType(type) {
     return `on${type[0].toUpperCase()}${type.slice(1)}`;
 }
+export function getActionType(type) {
+    return type[2].toLowerCase() + type.slice(3);
+}
 export const createActions = (actions, props, options) => {
     const events = groupBy(actions, 'type');
     return Object.keys(events).reduce((obj, type) => (Object.assign(Object.assign({}, obj), { [getEventType(type)]: mergeHandler(events[type], props, options) })), {});

@@ -18,10 +18,10 @@ var InstanceExtension = /** @class */ (function (_super) {
     InstanceExtension.createInstance = function () {
         return {
             current: null,
-            destory: new rxjs_1.Subject(),
             onMounted: function () { return void (0); },
             onDestory: function () { return void (0); },
-            detectChanges: function () { return undefined; }
+            detectChanges: function () { return undefined; },
+            destory: new rxjs_1.Subject().pipe((0, rxjs_1.shareReplay)(1))
         };
     };
     InstanceExtension.prototype.extension = function () {
@@ -54,8 +54,8 @@ var InstanceExtension = /** @class */ (function (_super) {
             if (hasMounted) {
                 instance.onMounted(id);
             }
-            if (current instanceof builder_model_1.BuilderModel && !current.id) {
-                console.error("Builder needs to set the ID property: ".concat(id));
+            if (current instanceof builder_model_1.BuilderModel && current.id !== id) {
+                console.info("Builder needs to set the id property: ".concat(id));
             }
         };
         return { get: get, set: set };
@@ -63,8 +63,10 @@ var InstanceExtension = /** @class */ (function (_super) {
     InstanceExtension.prototype.addInstance = function (_a) {
         var jsonField = _a[0], builderField = _a[1];
         var destory = { type: calculator_constant_1.DESTORY, after: this.bindCalculatorAction(this.instanceDestory.bind(this)) };
+        var instance = InstanceExtension.createInstance();
         this.pushAction(jsonField, [destory, { type: calculator_constant_1.MOUNTED }]);
-        this.defineProperty(builderField, calculator_constant_1.INSTANCE, InstanceExtension.createInstance());
+        this.defineProperty(builderField, calculator_constant_1.INSTANCE, instance);
+        instance.destory.subscribe();
     };
     InstanceExtension.prototype.instanceDestory = function (_a) {
         var actionEvent = _a.actionEvent, instance = _a.builderField.instance;
@@ -75,8 +77,12 @@ var InstanceExtension = /** @class */ (function (_super) {
     };
     InstanceExtension.prototype.beforeDestory = function () {
         var _this = this;
-        if (!(0, lodash_1.isEmpty)(this.buildFieldList)) {
-            return (0, utility_1.toForkJoin)(this.buildFieldList.map(function (_a) {
+        var showFields = this.buildFieldList.filter(function (_a) {
+            var visibility = _a.visibility;
+            return _this.builder.showField(visibility);
+        });
+        if (!(0, lodash_1.isEmpty)(showFields)) {
+            return (0, utility_1.toForkJoin)(showFields.map(function (_a) {
                 var id = _a.id, instance = _a.instance;
                 return new rxjs_1.Observable(function (subscribe) {
                     instance.destory.subscribe(function () {

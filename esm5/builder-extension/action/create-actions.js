@@ -24,6 +24,9 @@ function mergeHandler(actions, props, options) {
 export function getEventType(type) {
     return "on".concat(type[0].toUpperCase()).concat(type.slice(1));
 }
+export function getActionType(type) {
+    return type[2].toLowerCase() + type.slice(3);
+}
 export var createActions = function (actions, props, options) {
     var events = groupBy(actions, 'type');
     return Object.keys(events).reduce(function (obj, type) {

@@ -1,7 +1,9 @@
 import { InjectorToken } from '@fm/di';
 export var UI_ELEMENT = InjectorToken.get('UI_ELEMENT');
 export var ACTIONS_CONFIG = InjectorToken.get('ACTION_CONFIG');
+export var COVERT_CONFIG = InjectorToken.get('COVERT_CONFIG');
 export var ACTION_INTERCEPT = InjectorToken.get('ACTION_INTERCEPT');
+export var COVERT_INTERCEPT = InjectorToken.get('COVERT_INTERCEPT');
 export var BUILDER_EXTENSION = InjectorToken.get('BUILDER_EXTENSION');
 export var LOAD_BUILDER_CONFIG = InjectorToken.get('LOAD_BUILDER_CONFIG');
 export var FACTORY_BUILDER = InjectorToken.get('FACTORY_BUILDER');

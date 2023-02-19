@@ -5,6 +5,7 @@ var tslib_1 = require("tslib");
 var lodash_1 = require("lodash");
 var basic_extension_1 = require("../basic/basic.extension");
 var calculator_constant_1 = require("../constant/calculator.constant");
+var CACHE_ACTION = 'cacheAction';
 var ActionExtension = /** @class */ (function (_super) {
     tslib_1.__extends(ActionExtension, _super);
     function ActionExtension() {
@@ -13,8 +14,7 @@ var ActionExtension = /** @class */ (function (_super) {
         return _this;
     }
     ActionExtension.prototype.extension = function () {
-        var eachCallback = this.create.bind(this);
-        var handler = this.eachFields.bind(this, this.jsonFields, eachCallback);
+        var handler = this.eachFields.bind(this, this.jsonFields, this.create.bind(this));
         this.pushCalculators(this.json, {
             action: { type: calculator_constant_1.LOAD_ACTION, handler: handler },
             dependents: { type: calculator_constant_1.LOAD_VIEW_MODEL, fieldId: this.builder.id }
@@ -27,6 +27,7 @@ var ActionExtension = /** @class */ (function (_super) {
         if (!(0, lodash_1.isEmpty)(actions))
             builderField.addEventListener(actions);
         this.fields.push(builderField);
+        this.defineProperty(builderField, CACHE_ACTION, []);
         delete builderField.field.actions;
     };
     ActionExtension.prototype.addFieldEvent = function (builderField, actions) {
@@ -44,7 +45,7 @@ var ActionExtension = /** @class */ (function (_super) {
     };
     ActionExtension.prototype.destory = function () {
         var _this = this;
-        this.fields.forEach(function (field) { return _this.unDefineProperty(field, [calculator_constant_1.EVENTS, calculator_constant_1.ADD_EVENT_LISTENER]); });
+        this.fields.forEach(function (field) { return _this.unDefineProperty(field, [CACHE_ACTION, calculator_constant_1.EVENTS, calculator_constant_1.ADD_EVENT_LISTENER]); });
         _super.prototype.destory.call(this);
     };
     return ActionExtension;

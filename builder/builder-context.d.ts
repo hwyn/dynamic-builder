@@ -5,8 +5,8 @@ export declare type UiElement = {
     component: any;
 };
 export declare class BuilderContext {
-    private uiElements;
+    protected uiElements: UiElement[];
     forwardUiElement(name: string, Element: any): any;
-    factoryBuilder(injector: Injector, { BuilderModel: NewBuilderModel, ...props }: BuilderProps): any;
+    factoryBuilder(injector: Injector): ({ BuilderModel: NB, ...props }: BuilderProps) => any;
     registryInjector(injector: Injector): void;
 }

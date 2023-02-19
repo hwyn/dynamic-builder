@@ -23,6 +23,23 @@ var Action = /** @class */ (function () {
         })[0], _b = _a === void 0 ? {} : _a, _c = _b.action, action = _c === void 0 ? null : _c;
         return action;
     };
+    Action.prototype.getCacheAction = function (ActionType, context, baseAction) {
+        var _a;
+        var builder = baseAction.builder, _uid = baseAction.actionPropos._uid, builderField = baseAction.builderField;
+        var _b = (builderField || {}).cacheAction, cacheAction = _b === void 0 ? [] : _b;
+        var cacheType = (_a = cacheAction.find(function (_a) {
+            var uid = _a.uid;
+            return _uid === uid;
+        })) === null || _a === void 0 ? void 0 : _a.action;
+        if (!cacheType) {
+            cacheType = new ActionType((builder === null || builder === void 0 ? void 0 : builder.injector) || this.injector, context);
+            if (!ActionType.cache || !builderField || !_uid)
+                return cacheType;
+        }
+        cacheType.context = context;
+        builderField.cacheAction && cacheAction.push({ uid: _uid, action: cacheType });
+        return cacheType;
+    };
     Action.prototype.createEvent = function (event, otherEventParam) {
         if (otherEventParam === void 0) { otherEventParam = []; }
         return tslib_1.__spreadArray([event], otherEventParam, true);
@@ -34,51 +51,56 @@ var Action = /** @class */ (function () {
     Action.prototype.call = function (calculators, builder, callLink) {
         var _this = this;
         if (callLink === void 0) { callLink = []; }
-        return function (value) { return (0, rxjs_1.forkJoin)(calculators.map(function (_a) {
-            var id = _a.targetId, action = _a.action;
-            return _this.invoke(tslib_1.__assign(tslib_1.__assign({}, action), { callLink: callLink }), { builder: builder, id: id }, value);
-        })); };
+        var groupList = (0, lodash_1.toArray)((0, lodash_1.groupBy)(calculators, 'targetId'));
+        return function (value) {
+            var other = [];
+            for (var _i = 1; _i < arguments.length; _i++) {
+                other[_i - 1] = arguments[_i];
+            }
+            return (0, rxjs_1.forkJoin)(groupList.map(function (links) {
+                return _this.invoke.apply(_this, tslib_1.__spreadArray([links.map(function (_a) {
+                        var action = _a.action;
+                        return (tslib_1.__assign(tslib_1.__assign({}, action), { callLink: callLink }));
+                    }), { builder: builder, id: links[0].targetId }, value], other, false));
+            }));
+        };
     };
     Action.prototype.invokeCallCalculators = function (calculators, _a, props) {
         var type = _a.type, callLink = _a.callLink;
         var builder = props.builder, id = props.id;
-        var link = tslib_1.__spreadArray(tslib_1.__spreadArray([], callLink || [], true), [{ fieldId: id, type: type }], false);
         var filterCalculators = calculators.filter(function (_a) {
             var _b = _a.dependent, fieldId = _b.fieldId, cType = _b.type;
             return fieldId === id && cType === type;
         });
+        var link = tslib_1.__spreadArray(tslib_1.__spreadArray([], (callLink || []), true), [{ fieldId: id, type: type, count: filterCalculators.length }], false);
         return !(0, lodash_1.isEmpty)(filterCalculators) ? this.call(filterCalculators, builder, link) : function (value) { return (0, rxjs_1.of)(value); };
     };
-    Action.prototype.invokeCalculators = function (actionProps, actionSub, props) {
+    Action.prototype.invokeCalculators = function (actionProps, props, value) {
         var _this = this;
+        var otherEventParam = [];
+        for (var _i = 3; _i < arguments.length; _i++) {
+            otherEventParam[_i - 3] = arguments[_i];
+        }
         var builder = props.builder, id = props.id;
-        var calculators = builder.calculators;
         var nonSelfBuilders = builder.$$cache.nonSelfBuilders || [];
         var calculatorsInvokes = nonSelfBuilders.map(function (nonBuild) {
             return _this.invokeCallCalculators(nonBuild.nonSelfCalculators, actionProps, { builder: nonBuild, id: id });
         });
-        calculatorsInvokes.push(this.invokeCallCalculators(calculators || [], actionProps, props));
-        return actionSub.pipe((0, utility_1.observableTap)(function (value) { return (0, rxjs_1.forkJoin)(calculatorsInvokes.map(function (invokeCalculators) { return invokeCalculators(value); })); }));
+        calculatorsInvokes.push(this.invokeCallCalculators(builder.calculators || [], actionProps, props));
+        return (0, rxjs_1.forkJoin)(calculatorsInvokes.map(function (invokeCalculators) { return invokeCalculators.apply(void 0, tslib_1.__spreadArray([value], otherEventParam, false)); }));
     };
-    Action.prototype.invokeAction = function (action, props, event) {
-        var _this = this;
+    Action.prototype.execute = function (action, props, event) {
         if (event === void 0) { event = null; }
         var otherEventParam = [];
         for (var _i = 3; _i < arguments.length; _i++) {
             otherEventParam[_i - 3] = arguments[_i];
         }
         var name = action.name, handler = action.handler, stop = action.stop;
+        var e = this.createEvent(event, otherEventParam);
         if (stop && !(0, lodash_1.isEmpty)(event) && (event === null || event === void 0 ? void 0 : event.stopPropagation)) {
             event.stopPropagation();
         }
-        var after = action.after, before = action.before;
-        var e = this.createEvent(event, otherEventParam);
-        var executeAction = function () { return name || handler ? _this.executeAction(action, _this.getActionContext(props), e) : (0, rxjs_1.of)(event); };
-        var actionSub = before ? this.invoke(before, props, event, otherEventParam).pipe(function () { return executeAction(); }) : executeAction();
-        if (after) {
-            actionSub = actionSub.pipe((0, utility_1.observableTap)(function (value) { return _this.invoke.apply(_this, tslib_1.__spreadArray([after, props, value], otherEventParam, false)); }));
-        }
-        return actionSub;
+        return name || handler ? this.executeAction(action, this.getActionContext(props), e) : (0, rxjs_1.of)(event);
     };
     Action.prototype.invoke = function (actions, props, event) {
         var _this = this;
@@ -87,42 +109,44 @@ var Action = /** @class */ (function () {
         for (var _i = 3; _i < arguments.length; _i++) {
             otherEventParam[_i - 3] = arguments[_i];
         }
-        var actionsSub;
-        var action;
-        if (Array.isArray(actions)) {
-            action = (0, basic_extension_1.serializeAction)(actions.filter(function (a) { return !!(0, basic_extension_1.serializeAction)(a).type; })[0]);
-            actionsSub = (0, rxjs_1.forkJoin)((actions).map(function (a) { return (_this.invokeAction.apply(_this, tslib_1.__spreadArray([(0, basic_extension_1.serializeAction)(a), props, event], otherEventParam, false))); })).pipe((0, operators_1.map)(function (result) { return result.pop(); }));
-        }
-        else {
-            action = (0, basic_extension_1.serializeAction)(actions);
-            actionsSub = this.invokeAction.apply(this, tslib_1.__spreadArray([action, props, event], otherEventParam, false));
-        }
-        var hasInvokeCalculators = !(0, lodash_1.isEmpty)(props) && action && action.type;
-        return hasInvokeCalculators ? this.invokeCalculators(action, actionsSub, props) : actionsSub;
+        var _actions = (Array.isArray(actions) ? actions : [actions]).map(basic_extension_1.serializeAction);
+        return (0, utility_1.toForkJoin)(_actions.map(function (_a) {
+            var before = _a.before;
+            return before && _this.invoke.apply(_this, tslib_1.__spreadArray([before, props, event], otherEventParam, false));
+        })).pipe((0, utility_1.observableMap)(function () { return (0, rxjs_1.forkJoin)(_actions.map(function (action) {
+            return _this.execute.apply(_this, tslib_1.__spreadArray([action, props, event], otherEventParam, false));
+        })); }), (0, utility_1.observableTap)(function (result) { return !props ? (0, rxjs_1.of)(null) : (0, utility_1.toForkJoin)(_actions.map(function (action, index) {
+            return action.type && _this.invokeCalculators.apply(_this, tslib_1.__spreadArray([action, props, result[index]], otherEventParam, false));
+        })); }), (0, utility_1.observableTap)(function (result) { return (0, utility_1.toForkJoin)(_actions.map(function (_a, index) {
+            var after = _a.after;
+            return after && _this.invoke.apply(_this, tslib_1.__spreadArray([after, props, typeof result[index] === 'undefined' ? event : result[index]], otherEventParam, false));
+        })); }), (0, operators_1.map)(function (result) { return result.pop(); }));
     };
-    // eslint-disable-next-line complexity
-    Action.prototype.executeAction = function (actionPropos, actionContext, event) {
-        if (event === void 0) { event = this.createEvent(void (0)); }
-        var actionEvent = event[0], otherEvent = event.slice(1);
-        var _a = (0, basic_extension_1.serializeAction)(actionPropos), _b = _a.name, name = _b === void 0 ? "" : _b, handler = _a.handler;
-        var _c = name.match(/([^.]+)/ig) || [name], actionName = _c[0], _d = _c[1], execute = _d === void 0 ? 'execute' : _d;
+    Action.prototype.callAction = function (actionName, context) {
+        var events = [];
+        for (var _i = 2; _i < arguments.length; _i++) {
+            events[_i - 2] = arguments[_i];
+        }
+        return this.invoke.apply(this, tslib_1.__spreadArray([(0, basic_extension_1.serializeAction)(actionName), context], events, false));
+    };
+    Action.prototype.executeAction = function (actionPropos, actionContext, _a) {
+        var _b = _a === void 0 ? this.createEvent(void (0)) : _a, actionEvent = _b[0], otherEvent = _b.slice(1);
+        var _c = (0, basic_extension_1.serializeAction)(actionPropos), _d = _c.name, name = _d === void 0 ? "" : _d, handler = _c.handler;
+        var _e = name.match(/([^.]+)/ig) || [name], actionName = _e[0], _f = _e[1], execute = _f === void 0 ? 'execute' : _f;
         var context = tslib_1.__assign(tslib_1.__assign({}, actionContext), { actionPropos: actionPropos, actionEvent: actionEvent });
-        var action = new base_action_1.BaseAction(this.injector, context);
+        var ActionType = null;
         var executeHandler = handler;
+        var action = new base_action_1.BaseAction(this.injector, context);
         var builder = action.builder;
+        if (!executeHandler && (ActionType = this.getAction(actionName))) {
+            action = this.getCacheAction(ActionType, context, action);
+            executeHandler = action && action[execute].bind(action);
+        }
         if (!executeHandler && builder) {
             while (builder) {
                 executeHandler = builder.getExecuteHandler(name) || executeHandler;
-                if (builder === builder.root) {
-                    break;
-                }
                 builder = builder.parent;
             }
-        }
-        if (!executeHandler) {
-            var ActionType = this.getAction(actionName);
-            action = ActionType && new ActionType(this.injector, context);
-            executeHandler = action && action[execute].bind(action);
         }
         if (!executeHandler) {
             throw new Error("".concat(name, " not defined!"));

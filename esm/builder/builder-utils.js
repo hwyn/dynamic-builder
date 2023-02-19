@@ -1,20 +1,21 @@
 import { __rest } from "tslib";
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-use-before-define */
-import { isEmpty } from 'lodash';
+import { flatMap, isEmpty } from 'lodash';
 import { Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { BUILDER_EXTENSION, LOAD_BUILDER_CONFIG } from '../token';
 import { observableMap, toForkJoin, transformObservable, withValue } from '../utility';
 import { BuilderEngine } from './builder-engine.service';
+const CACHE = `$$cache`;
 export function init() {
-    Object.defineProperty(this, '$$cache', withValue(getCacheObj.call(this, {})));
+    Object.defineProperty(this, CACHE, withValue(getCacheObj.call(this, {})));
     Object.defineProperties(this, {
         onChange: withValue(() => { }),
         onDestory: withValue(this.$$cache.destory.bind(this)),
         loadForBuild: withValue((props) => {
             delete this.loadForBuild;
-            Object.defineProperty(this, 'privateExtension', withValue(props.privateExtension || []));
+            Object.defineProperty(this, 'privateExtension', withValue(parseExtension(props.privateExtension || [])));
             props.builder && addChild.call(props.builder, this);
             loadForBuild.call(this, props).subscribe(() => this.detectChanges());
             return this;
@@ -24,10 +25,12 @@ export function init() {
 function loadForBuild(props) {
     const LoadConfig = this.injector.get(LOAD_BUILDER_CONFIG);
     const privateExtension = this.privateExtension.map(({ extension }) => extension);
-    const Extensions = [...this.injector.get(BUILDER_EXTENSION), ...privateExtension];
+    const Extensions = [...flatMap(this.injector.get(BUILDER_EXTENSION)), ...privateExtension];
     return new LoadConfig(this, props, this.$$cache).init().pipe(observableMap((loadExample) => {
-        Object.defineProperty(this, '$$cache', withValue(getCacheObj.call(this, props)));
-        const beforeInits = Extensions.map((Extension) => new Extension(this, props, this.$$cache, props.config).init());
+        Object.defineProperty(this, CACHE, withValue(getCacheObj.call(this, props)));
+        const beforeInits = Extensions
+            .map((Extension) => new Extension(this, props, this.$$cache, props.config))
+            .map((extension) => extension.init());
         return toForkJoin([loadExample, ...beforeInits]);
     }), observableMap((examples) => toForkJoin(examples.map((example) => example.afterInit()))), tap((beforeDestorys) => {
         this.$$cache.ready = true;
@@ -37,9 +40,10 @@ function loadForBuild(props) {
 }
 function getCacheObj(props) {
     const { config: { fields = [] } = {} } = props;
-    const { ready = false, destoryed = false, detectChanges = new Subject(), destory: modelDestory = destory.bind(this), addChild: modelAddChild = addChild.bind(this), removeChild: modelRemoveChild = removeChild.bind(this) } = this.$$cache || {};
+    const { bindFn = [], ready = false, destoryed = false, detectChanges = new Subject(), destory: modelDestory = destory.bind(this), addChild: modelAddChild = addChild.bind(this), removeChild: modelRemoveChild = removeChild.bind(this) } = this.$$cache || {};
     return {
         ready,
+        bindFn,
         destoryed,
         detectChanges,
         destory: modelDestory,
@@ -49,9 +53,8 @@ function getCacheObj(props) {
     };
 }
 function createField(field) {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { id, type, visibility } = field, other = __rest(field, ["id", "type", "visibility"]);
-    const element = field.element || this.injector.get(BuilderEngine).getUiComponent(type);
+    const element = field.element || (typeof type !== 'string' ? type : this.injector.get(BuilderEngine).getUiComponent(type));
     const _field = { id, type, element, visibility, field: other };
     Object.keys(_field).forEach((key) => _field[key] === undefined && delete _field[key]);
     return _field;
@@ -72,6 +75,7 @@ function destory() {
                     this.children.splice(0);
                     (_a = this.privateExtension) === null || _a === void 0 ? void 0 : _a.splice(0);
                     this.parent && removeChild.call(this.parent, this);
+                    cacheObj.bindFn.forEach((fn) => fn());
                 },
                 error: (e) => {
                     console.error(e);
@@ -82,6 +86,9 @@ function destory() {
             console.error(e);
         }
     }
+}
+function parseExtension(privateExtension) {
+    return privateExtension.map((item) => item.extension ? item : { extension: item });
 }
 function extendsProviders(child) {
     var _a;

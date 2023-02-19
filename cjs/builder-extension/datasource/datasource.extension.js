@@ -24,10 +24,11 @@ var DataSourceExtension = /** @class */ (function (_super) {
         }
     };
     DataSourceExtension.prototype.addFieldCalculators = function (_a) {
-        var jsonField = _a[0];
+        var jsonField = _a[0], field = _a[1].field;
         var _b = this.serializeDataSourceConfig(jsonField), action = _b.action, dependents = _b.dependents, metadata = _b.metadata;
         action.after = this.bindCalculatorAction(this.createSourceConfig.bind(this, metadata));
         this.pushCalculators(jsonField, { action: action, dependents: dependents });
+        delete field.dataSource;
     };
     DataSourceExtension.prototype.createSourceConfig = function (metadata, _a) {
         var actionEvent = _a.actionEvent, builderField = _a.builderField, instance = _a.builderField.instance;
@@ -35,14 +36,9 @@ var DataSourceExtension = /** @class */ (function (_super) {
         instance.detectChanges();
     };
     DataSourceExtension.prototype.createOnDataSourceConfig = function () {
-        var _this = this;
-        this.builderFields.forEach(function (builderField) {
-            var _a = builderField.events, events = _a === void 0 ? {} : _a, field = builderField.field;
-            if (events.onDataSource) {
-                events.onDataSource && _this.defineProperty(builderField, _this.getEventType(calculator_constant_1.DATD_SOURCE), events.onDataSource);
-                delete events.onDataSource;
-            }
-            delete field.dataSource;
+        this.builderFields.forEach(function (_a) {
+            var _b = _a.events, events = _b === void 0 ? {} : _b;
+            return delete events.onDataSource;
         });
     };
     DataSourceExtension.prototype.serializeDataSourceConfig = function (jsonField) {

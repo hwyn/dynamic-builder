@@ -39,7 +39,7 @@ var BuilderModel = /** @class */ (function () {
         return (0, lodash_1.uniq)(fields.filter(function (field) { return !(0, lodash_1.isEmpty)(field); }));
     };
     BuilderModel.prototype.detectChanges = function () {
-        if (!this.$$cache.destoryed) {
+        if (!this.$$cache.destoryed && this.ready) {
             this.$$cache.detectChanges.next(this);
         }
     };

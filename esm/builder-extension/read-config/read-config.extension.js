@@ -1,4 +1,4 @@
-import { cloneDeep, isEmpty, isFunction, isString, uniq } from 'lodash';
+import { isEmpty, isFunction, isString, uniq } from 'lodash';
 import { of } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { GET_JSON_CONFIG } from '../../token';
@@ -6,6 +6,10 @@ import { observableMap, observableTap, toForkJoin } from '../../utility';
 import { BasicExtension } from "../basic/basic.extension";
 import { LOAD_CONFIG_ACTION } from '../constant/calculator.constant';
 export class ReadConfigExtension extends BasicExtension {
+    constructor() {
+        super(...arguments);
+        this.getJsonConfig = this.injector.get(GET_JSON_CONFIG);
+    }
     extension() {
         this.definePropertys(this.builder, { id: this.props.id, getExecuteHandler: this.createGetExecuteHandler() });
         return this.getConfigJson(this.props).pipe(tap((jsonConfig) => this.props.config = jsonConfig));
@@ -29,7 +33,7 @@ export class ReadConfigExtension extends BasicExtension {
     preloadedBuildField(jsonField) {
         return this.getConfigJson(jsonField).pipe(tap((jsonConfig) => {
             jsonConfig.isPreloaded = true;
-            jsonField.config = cloneDeep(jsonConfig);
+            jsonField.config = this.cloneDeepPlain(jsonConfig);
         }));
     }
     getConfigJson(props) {
@@ -45,10 +49,10 @@ export class ReadConfigExtension extends BasicExtension {
         }
         if (isJsonName) {
             const getJsonName = jsonNameAction ? this.createLoadConfigAction(jsonNameAction, props) : of(jsonName);
-            configOb = getJsonName.pipe(observableMap((configName) => this.injector.get(GET_JSON_CONFIG, configName)));
+            configOb = getJsonName.pipe(observableMap((configName) => this.getJsonConfig(configName)));
         }
         else {
-            configOb = configAction ? this.createLoadConfigAction(configAction, props) : of(config);
+            configOb = (configAction ? this.createLoadConfigAction(configAction, props) : of(config)).pipe(map(this.cloneDeepPlain));
         }
         return configOb.pipe(map((_config = []) => Object.assign({ fields: [] }, Array.isArray(_config) ? { fields: _config } : _config, id ? { id } : {})));
     }
@@ -74,8 +78,7 @@ export class ReadConfigExtension extends BasicExtension {
     }
     eligiblePreloaded(props) {
         const { preloaded = true, config: { isPreloaded = false } = {} } = props;
-        const eligibleAttr = ['jsonName', 'configAction', 'jsonNameAction', 'config'];
-        return preloaded && !isPreloaded && eligibleAttr.some((key) => !!props[key]);
+        return preloaded && !isPreloaded && this.isBuildField(props);
     }
     createGetExecuteHandler() {
         const builder = this.builder;

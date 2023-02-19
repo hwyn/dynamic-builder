@@ -2,6 +2,7 @@ import { __assign, __extends } from "tslib";
 import { isEmpty } from 'lodash';
 import { BasicExtension } from '../basic/basic.extension';
 import { ADD_EVENT_LISTENER, EVENTS, LOAD_ACTION, LOAD_VIEW_MODEL } from '../constant/calculator.constant';
+var CACHE_ACTION = 'cacheAction';
 var ActionExtension = /** @class */ (function (_super) {
     __extends(ActionExtension, _super);
     function ActionExtension() {
@@ -10,8 +11,7 @@ var ActionExtension = /** @class */ (function (_super) {
         return _this;
     }
     ActionExtension.prototype.extension = function () {
-        var eachCallback = this.create.bind(this);
-        var handler = this.eachFields.bind(this, this.jsonFields, eachCallback);
+        var handler = this.eachFields.bind(this, this.jsonFields, this.create.bind(this));
         this.pushCalculators(this.json, {
             action: { type: LOAD_ACTION, handler: handler },
             dependents: { type: LOAD_VIEW_MODEL, fieldId: this.builder.id }
@@ -24,6 +24,7 @@ var ActionExtension = /** @class */ (function (_super) {
         if (!isEmpty(actions))
             builderField.addEventListener(actions);
         this.fields.push(builderField);
+        this.defineProperty(builderField, CACHE_ACTION, []);
         delete builderField.field.actions;
     };
     ActionExtension.prototype.addFieldEvent = function (builderField, actions) {
@@ -41,7 +42,7 @@ var ActionExtension = /** @class */ (function (_super) {
     };
     ActionExtension.prototype.destory = function () {
         var _this = this;
-        this.fields.forEach(function (field) { return _this.unDefineProperty(field, [EVENTS, ADD_EVENT_LISTENER]); });
+        this.fields.forEach(function (field) { return _this.unDefineProperty(field, [CACHE_ACTION, EVENTS, ADD_EVENT_LISTENER]); });
         _super.prototype.destory.call(this);
     };
     return ActionExtension;

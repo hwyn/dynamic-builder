@@ -1,10 +1,11 @@
-import { __assign } from "tslib";
-import { cloneDeep, isFunction, isString, merge } from 'lodash';
-import { transformObj, withGetOrSet, withValue } from '../../utility';
-import { createActions, getEventType } from '../action/create-actions';
+import { isFunction, isString, merge } from 'lodash';
+import { cloneDeepPlain, generateUUID, transformObj, withGetOrSet, withValue } from '../../utility';
+import { createActions, getActionType, getEventType } from '../action/create-actions';
 import { CALCULATOR } from '../constant/calculator.constant';
 export var serializeAction = function (action) {
-    return (isString(action) ? { name: action } : isFunction(action) ? { handler: action } : action);
+    var sAction = (isString(action) ? { name: action } : isFunction(action) ? { handler: action } : action);
+    sAction && !sAction._uid && (sAction._uid = generateUUID(5));
+    return sAction;
 };
 var BasicExtension = /** @class */ (function () {
     function BasicExtension(builder, props, cache, json) {
@@ -15,7 +16,9 @@ var BasicExtension = /** @class */ (function () {
         this.json = json;
         this.injector = this.builder.injector;
         this.jsonFields = (_a = this.json) === null || _a === void 0 ? void 0 : _a.fields;
+        this.beforeExtension();
     }
+    BasicExtension.prototype.beforeExtension = function () { };
     BasicExtension.prototype.afterExtension = function () { };
     BasicExtension.prototype.beforeDestory = function () { };
     BasicExtension.prototype.destory = function () { };
@@ -37,22 +40,30 @@ var BasicExtension = /** @class */ (function () {
             return callBack([jsonField, builderField]) || builderField;
         });
     };
+    BasicExtension.prototype.isBuildField = function (props) {
+        return ['jsonName', 'configAction', 'jsonNameAction', 'config'].some(function (key) { return !!props[key]; });
+    };
+    BasicExtension.prototype.cloneDeepPlain = function (value) {
+        return cloneDeepPlain(value);
+    };
     BasicExtension.prototype.serializeCalculatorConfig = function (jsonCalculator, actionType, defaultDependents) {
         var needSerialize = isString(jsonCalculator) || isFunction(jsonCalculator);
-        var calculatorConfig = needSerialize ? { action: this.serializeAction(jsonCalculator) } : cloneDeep(jsonCalculator);
+        var calculatorConfig = needSerialize ? { action: this.serializeAction(jsonCalculator) } : this.cloneDeepPlain(jsonCalculator);
         var action = calculatorConfig.action, _a = calculatorConfig.dependents, dependents = _a === void 0 ? defaultDependents : _a;
         calculatorConfig.action = merge({ type: actionType }, this.serializeAction(action));
         calculatorConfig.dependents = dependents;
         return calculatorConfig;
     };
     BasicExtension.prototype.bindCalculatorAction = function (handler) {
-        return { type: CALCULATOR, handler: handler };
+        var action = this.serializeAction(handler);
+        action.type = CALCULATOR;
+        this.cache.bindFn.push(function () { return delete action.handler; });
+        return action;
     };
     BasicExtension.prototype.pushCalculators = function (fieldConfig, calculator) {
+        var _a;
         fieldConfig.calculators = this.toArray(fieldConfig.calculators || []);
-        var _a = fieldConfig.calculators, calculators = _a === void 0 ? [] : _a;
-        calculators.push.apply(calculators, this.toArray(calculator));
-        fieldConfig.calculators = calculators;
+        (_a = fieldConfig.calculators).push.apply(_a, this.toArray(calculator));
     };
     BasicExtension.prototype.pushAction = function (fieldConfig, actions) {
         fieldConfig.actions = this.toArray(fieldConfig.actions || []);
@@ -62,7 +73,7 @@ var BasicExtension = /** @class */ (function () {
                 var defaultType = _a.type;
                 return pushAction.type === defaultType;
             });
-            !findAction ? defaultAction.push(pushAction) : Object.assign(findAction, __assign({}, pushAction));
+            !findAction ? defaultAction.push(pushAction) : Object.assign(findAction, pushAction);
         });
     };
     BasicExtension.prototype.toArray = function (obj) {
@@ -85,11 +96,41 @@ var BasicExtension = /** @class */ (function () {
     BasicExtension.prototype.serializeAction = function (action) {
         return serializeAction(action);
     };
+    BasicExtension.prototype.pushActionToMethod = function (actions) {
+        var _this = this;
+        var events = this.createLifeActions(actions);
+        this.toArray(actions).forEach(function (_a) {
+            var type = _a.type;
+            return _this.defineProperty(_this.builder, type, events[_this.getEventType(type)]);
+        });
+    };
+    BasicExtension.prototype.createLifeActionEvents = function (actions) {
+        var _this = this;
+        var events = this.createLifeActions(actions);
+        return this.toArray(actions).map(function (_a) {
+            var type = _a.type;
+            return events[_this.getEventType(type)];
+        });
+    };
+    BasicExtension.prototype.createLifeActions = function (actions) {
+        var _this = this;
+        this.cache.lifeType = this.toArray(this.cache.lifeType || []);
+        var lifeType = this.cache.lifeType;
+        var props = { builder: this.builder, id: this.builder.id };
+        var _actions = this.toArray(actions).map(function (action) {
+            !lifeType.includes(action.type) && lifeType.push(action.type);
+            return _this.serializeAction(action);
+        });
+        return this.createActions(_actions, props, { injector: this.injector });
+    };
     BasicExtension.prototype.createActions = function (actions, props, options) {
         return createActions(actions, props, options);
     };
     BasicExtension.prototype.getEventType = function (type) {
         return getEventType(type);
+    };
+    BasicExtension.prototype.getActionType = function (type) {
+        return getActionType(type);
     };
     BasicExtension.prototype.getJsonFieldById = function (fieldId) {
         return this.jsonFields.find(function (_a) {

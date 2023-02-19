@@ -11,9 +11,10 @@ var ViewModelExtension = /** @class */ (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     ViewModelExtension.prototype.extension = function () {
+        this.createNotifyEvent();
         this.pushCalculators(this.json, {
             action: this.createViewModelCalculator(),
-            dependents: { type: calculator_constant_1.LOAD, fieldId: this.builder.id }
+            dependents: { type: calculator_constant_1.LOAD_SOURCE, fieldId: this.builder.id }
         });
     };
     ViewModelExtension.prototype.createViewModelCalculator = function () {
@@ -24,9 +25,10 @@ var ViewModelExtension = /** @class */ (function (_super) {
             return type === calculator_constant_1.LOAD;
         });
         var handler = function (_a) {
+            var _b;
             var actionEvent = _a.actionEvent;
-            _this.createViewModel(hasLoadEvent ? actionEvent : {});
-            _this.createNotifyEvent();
+            _this.createViewModel(hasLoadEvent ? actionEvent : ((_b = _this.builder.parent) === null || _b === void 0 ? void 0 : _b.$$cache.viewModel) || {});
+            return actionEvent;
         };
         return { type: calculator_constant_1.LOAD_VIEW_MODEL, handler: handler };
     };
@@ -36,21 +38,16 @@ var ViewModelExtension = /** @class */ (function (_super) {
         this.definePropertyGet(this.builder, calculator_constant_1.VIEW_MODEL, function () { return _this.cache.viewModel.model; });
     };
     ViewModelExtension.prototype.createNotifyEvent = function () {
-        var _a;
-        var notifyAction = { type: calculator_constant_1.NOTIFY_VIEW_MODEL_CHANGE, handler: this.notifyHandler.bind(this) };
-        var refresAction = { type: calculator_constant_1.REFRES_DATA, handler: this.refresHandler.bind(this) };
-        var props = { builder: this.builder, id: this.builder.id };
-        var actions = this.createActions([notifyAction, refresAction], props, { injector: this.injector });
-        this.definePropertys(this.builder, (_a = {},
-            _a[calculator_constant_1.NOTIFY_VIEW_MODEL_CHANGE] = actions[this.getEventType(calculator_constant_1.NOTIFY_VIEW_MODEL_CHANGE)],
-            _a[calculator_constant_1.REFRES_DATA] = actions[this.getEventType(calculator_constant_1.REFRES_DATA)],
-            _a));
+        this.pushActionToMethod([
+            { type: calculator_constant_1.NOTIFY_MODEL_CHANGE, handler: this.notifyHandler.bind(this) },
+            { type: calculator_constant_1.REFRESH_DATA, handler: this.refresHandler.bind(this) }
+        ]);
     };
     ViewModelExtension.prototype.notifyHandler = function (_a, options) {
         var builder = _a.builder, actionEvent = _a.actionEvent;
         if (options === void 0) { options = { hasSelf: true }; }
         if (!(options === null || options === void 0 ? void 0 : options.hasSelf)) {
-            builder.children.forEach(function (child) { return child.notifyViewModelChanges(actionEvent, options); });
+            builder.children.forEach(function (child) { return child.notifyModelChanges(actionEvent, options); });
         }
         return actionEvent;
     };
@@ -61,7 +58,7 @@ var ViewModelExtension = /** @class */ (function (_super) {
     };
     ViewModelExtension.prototype.destory = function () {
         this.unDefineProperty(this.cache, [calculator_constant_1.VIEW_MODEL]);
-        this.unDefineProperty(this.builder, [calculator_constant_1.VIEW_MODEL, calculator_constant_1.NOTIFY_VIEW_MODEL_CHANGE]);
+        this.unDefineProperty(this.builder, [calculator_constant_1.VIEW_MODEL, calculator_constant_1.REFRESH_DATA, calculator_constant_1.NOTIFY_MODEL_CHANGE]);
         return _super.prototype.destory.call(this);
     };
     return ViewModelExtension;

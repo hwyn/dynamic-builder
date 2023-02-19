@@ -12,7 +12,9 @@ var calculator_constant_1 = require("../constant/calculator.constant");
 var ReadConfigExtension = /** @class */ (function (_super) {
     tslib_1.__extends(ReadConfigExtension, _super);
     function ReadConfigExtension() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.getJsonConfig = _this.injector.get(token_1.GET_JSON_CONFIG);
+        return _this;
     }
     ReadConfigExtension.prototype.extension = function () {
         var _this = this;
@@ -36,9 +38,10 @@ var ReadConfigExtension = /** @class */ (function (_super) {
         return (0, utility_1.toForkJoin)(builderFields.map(this.preloadedBuildField.bind(this)));
     };
     ReadConfigExtension.prototype.preloadedBuildField = function (jsonField) {
+        var _this = this;
         return this.getConfigJson(jsonField).pipe((0, operators_1.tap)(function (jsonConfig) {
             jsonConfig.isPreloaded = true;
-            jsonField.config = (0, lodash_1.cloneDeep)(jsonConfig);
+            jsonField.config = _this.cloneDeepPlain(jsonConfig);
         }));
     };
     ReadConfigExtension.prototype.getConfigJson = function (props) {
@@ -56,10 +59,10 @@ var ReadConfigExtension = /** @class */ (function (_super) {
         }
         if (isJsonName) {
             var getJsonName = jsonNameAction ? this.createLoadConfigAction(jsonNameAction, props) : (0, rxjs_1.of)(jsonName);
-            configOb = getJsonName.pipe((0, utility_1.observableMap)(function (configName) { return _this.injector.get(token_1.GET_JSON_CONFIG, configName); }));
+            configOb = getJsonName.pipe((0, utility_1.observableMap)(function (configName) { return _this.getJsonConfig(configName); }));
         }
         else {
-            configOb = configAction ? this.createLoadConfigAction(configAction, props) : (0, rxjs_1.of)(config);
+            configOb = (configAction ? this.createLoadConfigAction(configAction, props) : (0, rxjs_1.of)(config)).pipe((0, operators_1.map)(this.cloneDeepPlain));
         }
         return configOb.pipe((0, operators_1.map)(function (_config) {
             if (_config === void 0) { _config = []; }
@@ -91,8 +94,7 @@ var ReadConfigExtension = /** @class */ (function (_super) {
     };
     ReadConfigExtension.prototype.eligiblePreloaded = function (props) {
         var _a = props.preloaded, preloaded = _a === void 0 ? true : _a, _b = props.config, _c = _b === void 0 ? {} : _b, _d = _c.isPreloaded, isPreloaded = _d === void 0 ? false : _d;
-        var eligibleAttr = ['jsonName', 'configAction', 'jsonNameAction', 'config'];
-        return preloaded && !isPreloaded && eligibleAttr.some(function (key) { return !!props[key]; });
+        return preloaded && !isPreloaded && this.isBuildField(props);
     };
     ReadConfigExtension.prototype.createGetExecuteHandler = function () {
         var _this = this;

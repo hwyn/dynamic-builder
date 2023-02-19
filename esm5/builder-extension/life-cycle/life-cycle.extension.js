@@ -1,15 +1,17 @@
-import { __extends, __spreadArray } from "tslib";
-import { cloneDeep, flatMap, isEmpty } from 'lodash';
+import { __assign, __extends, __spreadArray } from "tslib";
+import { flatMap, isEmpty } from 'lodash';
 import { of } from 'rxjs';
 import { filter, tap } from 'rxjs/operators';
 import { observableMap, transformObservable } from '../../utility';
 import { BasicExtension } from '../basic/basic.extension';
-import { CHANGE, DESTORY, LOAD, NON_SELF_BUILSERS, ORIGIN_CALCULATORS, ORIGIN_NON_SELF_CALCULATORS } from '../constant/calculator.constant';
+// eslint-disable-next-line max-len
+import { CHANGE, DESTORY, LOAD, LOAD_SOURCE, NON_SELF_BUILSERS, ORIGIN_CALCULATORS, ORIGIN_NON_SELF_CALCULATORS } from '../constant/calculator.constant';
 var LifeCycleExtension = /** @class */ (function (_super) {
     __extends(LifeCycleExtension, _super);
     function LifeCycleExtension() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.hasChange = false;
+        _this.lifeEvent = [LOAD, CHANGE, DESTORY];
         _this.calculators = [];
         _this.nonSelfCalculators = [];
         _this.detectChanges = _this.cache.detectChanges.pipe(filter(function () { return !_this.hasChange; }));
@@ -23,16 +25,25 @@ var LifeCycleExtension = /** @class */ (function (_super) {
         this.serializeCalculators();
         return this.createLife();
     };
+    LifeCycleExtension.prototype.createLoadAction = function (json) {
+        var _a = json.actions, actions = _a === void 0 ? [] : _a;
+        var loadIndex = actions.findIndex(function (_a) {
+            var type = _a.type;
+            return type === LOAD;
+        });
+        var loadAction = { before: __assign(__assign({}, actions[loadIndex]), { type: LOAD_SOURCE }), type: LOAD };
+        loadIndex === -1 ? actions.push(loadAction) : actions[loadIndex] = loadAction;
+        return json;
+    };
     LifeCycleExtension.prototype.createLife = function () {
-        var _a = this.json.actions, actions = _a === void 0 ? [] : _a;
-        var lifeEvent = [LOAD, CHANGE];
+        var _this = this;
+        var actions = this.createLoadAction(this.json).actions;
         var lifeActionsType = actions.filter(function (_a) {
             var type = _a.type;
-            return lifeEvent.includes(type);
+            return _this.lifeEvent.includes(type);
         });
-        var props = { builder: this.builder, id: this.builder.id };
         lifeActionsType.forEach(function (action) { return action.runObservable = true; });
-        this.lifeActions = this.createActions(lifeActionsType, props, { injector: this.injector });
+        this.lifeActions = this.createLifeActions(lifeActionsType);
         this.defineProperty(this.builder, this.getEventType(CHANGE), this.onLifeChange.bind(this));
         return this.invokeLifeCycle(this.getEventType(LOAD), this.props);
     };
@@ -42,8 +53,7 @@ var LifeCycleExtension = /** @class */ (function (_super) {
         this.hasChange = false;
     };
     LifeCycleExtension.prototype.invokeLifeCycle = function (type, event, otherEvent) {
-        var lifeActions = this.lifeActions;
-        return lifeActions[type] ? lifeActions[type](event, otherEvent) : of(event);
+        return this.lifeActions[type] ? this.lifeActions[type](event, otherEvent) : of(event);
     };
     LifeCycleExtension.prototype.serializeCalculators = function () {
         this.createCalculators();
@@ -52,20 +62,24 @@ var LifeCycleExtension = /** @class */ (function (_super) {
     };
     LifeCycleExtension.prototype.linkCalculators = function () {
         var _this = this;
+        this.cache.lifeType = __spreadArray(__spreadArray([], this.lifeEvent, true), this.cache.lifeType || [], true);
         this.calculators.forEach(function (calculator) { return _this.linkCalculator(calculator); });
         this.getNonSelfCalculators().forEach(function (calculator) { return _this.linkCalculator(calculator, true); });
+        this.calculators = this.calculators.filter(function (c) { return !_this.nonSelfCalculators.includes(c); });
     };
+    // eslint-disable-next-line complexity
     LifeCycleExtension.prototype.linkCalculator = function (calculator, nonSelfCalculator) {
         var _a = calculator.dependent, type = _a.type, fieldId = _a.fieldId;
         var sourceField = this.getJsonFieldById(fieldId) || this.json;
         sourceField.actions = this.toArray(sourceField.actions || []);
         var _b = sourceField.actions, actions = _b === void 0 ? [] : _b, sourceId = sourceField.id;
         var nonSource = fieldId !== sourceId;
-        if (nonSource && !nonSelfCalculator) {
+        var isBuildCalculator = this.isBuildField(sourceField) && this.cache.lifeType.includes(type);
+        if ((isBuildCalculator || nonSource) && !nonSelfCalculator) {
             this.nonSelfCalculators.push(calculator);
-            this.linkOtherCalculator(calculator);
+            !isBuildCalculator && this.linkOtherCalculator(calculator);
         }
-        if (!nonSource && !actions.some(function (action) { return action.type === type; })) {
+        if (!nonSource && !actions.some(function (action) { return action.type === type; }) && !isBuildCalculator) {
             sourceField.actions.unshift({ type: type });
         }
     };
@@ -73,13 +87,13 @@ var LifeCycleExtension = /** @class */ (function (_super) {
         var _a = calculator.dependent, type = _a.type, _b = _a.fieldId, fieldId = _b === void 0 ? '' : _b;
         var otherFields = this.builder.root.getAllFieldById(fieldId);
         if (!isEmpty(otherFields)) {
-            otherFields.forEach(function (otherField) { return otherField.addEventListener({ type: type }); });
+            otherFields.forEach(function (otherField) { return otherField.addEventListener && otherField.addEventListener({ type: type }); });
         }
     };
     LifeCycleExtension.prototype.createCalculators = function () {
         var _this = this;
         var fields = __spreadArray(__spreadArray([], this.jsonFields, true), [this.json], false);
-        var fieldsCalculators = cloneDeep(fields.filter(function (_a) {
+        var fieldsCalculators = this.cloneDeepPlain(fields.filter(function (_a) {
             var calculators = _a.calculators;
             return !isEmpty(calculators);
         }));
@@ -111,9 +125,7 @@ var LifeCycleExtension = /** @class */ (function (_super) {
         this.builder.nonSelfCalculators = this.nonSelfCalculators;
         this.defineProperty(this.cache, ORIGIN_CALCULATORS, this.calculators);
         this.defineProperty(this.cache, ORIGIN_NON_SELF_CALCULATORS, this.nonSelfCalculators);
-        if (this.nonSelfCalculators.length) {
-            this.nonSelfBuilders.push(this.builder);
-        }
+        this.nonSelfCalculators.length && this.nonSelfBuilders.push(this.builder);
     };
     LifeCycleExtension.prototype.beforeDestory = function () {
         var _this = this;
@@ -121,15 +133,18 @@ var LifeCycleExtension = /** @class */ (function (_super) {
     };
     LifeCycleExtension.prototype.destory = function () {
         var _this = this;
-        var _a;
         if (this.nonSelfCalculators.length) {
             this.nonSelfBuilders.splice(this.nonSelfBuilders.indexOf(this.builder), 1);
         }
         this.unDefineProperty(this.builder, ['calculators', 'nonSelfCalculators', this.getEventType(CHANGE)]);
-        this.unDefineProperty(this.cache, [ORIGIN_CALCULATORS, ORIGIN_NON_SELF_CALCULATORS, NON_SELF_BUILSERS]);
+        this.unDefineProperty(this.cache, ['lifeType', ORIGIN_CALCULATORS, ORIGIN_NON_SELF_CALCULATORS, NON_SELF_BUILSERS]);
         this.unDefineProperty(this, ['detectChanges', 'lifeActions']);
-        var parentField = (_a = this.builder.parent) === null || _a === void 0 ? void 0 : _a.getFieldById(this.builder.id);
-        return transformObservable(_super.prototype.destory.call(this)).pipe(tap(function () { var _a; return parentField && ((_a = parentField.instance) === null || _a === void 0 ? void 0 : _a.destory.next(_this.builder.id)); }));
+        return transformObservable(_super.prototype.destory.call(this)).pipe(tap(function () {
+            var _a, _b;
+            var parentField = (_a = _this.builder.parent) === null || _a === void 0 ? void 0 : _a.getFieldById(_this.builder.id);
+            var instance = (parentField || _this.props).instance;
+            instance && ((_b = instance.destory) === null || _b === void 0 ? void 0 : _b.next(_this.props.id || _this.builder.id));
+        }));
     };
     return LifeCycleExtension;
 }(BasicExtension));

@@ -1,11 +1,11 @@
 import { __extends, __spreadArray } from "tslib";
 import { Injector } from '@fm/di';
 import { BuilderContext as BasicBuilderContext } from '../../builder/builder-context';
-// eslint-disable-next-line max-len
-import { ACTION_INTERCEPT, BUILDER_EXTENSION, FORM_CONTROL, GET_JSON_CONFIG, LAYOUT_ELEMENT, LOAD_BUILDER_CONFIG, VALIDATOR_SERVICE } from '../../token';
+import { ACTION_INTERCEPT, ACTIONS_CONFIG, BUILDER_EXTENSION, COVERT_CONFIG, COVERT_INTERCEPT, FORM_CONTROL, GET_JSON_CONFIG, LAYOUT_ELEMENT, LOAD_BUILDER_CONFIG, VALIDATOR_SERVICE } from '../../token';
 import { Action } from '../action/actions';
 import { ActionExtension } from '../action/actions.extension';
 import { DataSourceExtension } from '../datasource/datasource.extension';
+import { Covert } from '../form/covert';
 import { FormExtension } from '../form/form.extension';
 import { GridExtension } from '../grid/grid.extension';
 import { InstanceExtension } from '../instance/instance.extension';
@@ -16,31 +16,41 @@ import { ViewModelExtension } from '../view-model/view-model.extension';
 import { CheckVisibilityExtension } from '../visibility/check-visibility.extension';
 var defaultExtensions = [
     CheckVisibilityExtension,
-    GridExtension,
-    InstanceExtension,
-    ViewModelExtension,
-    FormExtension,
-    DataSourceExtension,
     MetadataExtension,
+    GridExtension,
+    DataSourceExtension,
+    InstanceExtension,
+    FormExtension,
+    ViewModelExtension,
     ActionExtension,
     LifeCycleExtension
 ];
 var BuilderContext = /** @class */ (function (_super) {
     __extends(BuilderContext, _super);
-    function BuilderContext() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
+    function BuilderContext(parent) {
+        var _this = _super.call(this) || this;
         _this.map = new Map();
-        _this.extensions = defaultExtensions;
+        _this.actions = [];
+        _this.coverts = [];
+        _this.extensions = [];
+        parent && parent.extendsConfig(_this);
         return _this;
     }
+    BuilderContext.prototype.extendsConfig = function (childContext) {
+        var _a, _b, _c;
+        childContext.registryExtension(this.extensions);
+        (_a = childContext.uiElements).push.apply(_a, this.uiElements);
+        (_b = childContext.actions).push.apply(_b, this.actions);
+        (_c = childContext.coverts).push.apply(_c, this.coverts);
+    };
     BuilderContext.prototype.useFactory = function (useFactory) {
-        return function (injector) {
+        return function (injector) { return function () {
             var args = [];
-            for (var _i = 1; _i < arguments.length; _i++) {
-                args[_i - 1] = arguments[_i];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                args[_i] = arguments[_i];
             }
             return useFactory.apply(void 0, __spreadArray(__spreadArray([], args, false), [injector], false));
-        };
+        }; };
     };
     BuilderContext.prototype.registryFactory = function (injector, token) {
         var proxyFactory = this.map.get(token);
@@ -61,9 +71,27 @@ var BuilderContext = /** @class */ (function (_super) {
     BuilderContext.prototype.forwardBuilderLayout = function (createElement) {
         this.map.set(LAYOUT_ELEMENT, createElement);
     };
+    BuilderContext.prototype.forwardAction = function (name, action) {
+        if (this.actions.some(function (_a) {
+            var actionName = _a.name;
+            return actionName === name;
+        })) {
+            console.info("action: ".concat(name, "\u5DF2\u7ECF\u6CE8\u518C\u8FC7!!!!"));
+        }
+        this.actions.push({ name: name, action: action });
+    };
+    BuilderContext.prototype.forwardCovert = function (name, covert) {
+        if (this.actions.some(function (_a) {
+            var covertName = _a.name;
+            return covertName === name;
+        })) {
+            console.info("covert: ".concat(name, "\u5DF2\u7ECF\u6CE8\u518C\u8FC7!!!!"));
+        }
+        this.coverts.push({ name: name, covert: covert });
+    };
     BuilderContext.prototype.registryExtension = function (extensions) {
         var _a;
-        this.extensions = (_a = this.extensions).concat.apply(_a, extensions);
+        (_a = this.extensions).push.apply(_a, extensions);
     };
     BuilderContext.prototype.registryInjector = function (injector) {
         _super.prototype.registryInjector.call(this, injector);
@@ -71,12 +99,14 @@ var BuilderContext = /** @class */ (function (_super) {
         this.registryFactory(injector, FORM_CONTROL);
         this.registryFactory(injector, LAYOUT_ELEMENT);
         injector.set(ACTION_INTERCEPT, { provide: ACTION_INTERCEPT, useClass: Action });
+        injector.set(COVERT_INTERCEPT, { provide: COVERT_INTERCEPT, useClass: Covert });
+        injector.set(ACTIONS_CONFIG, { provide: ACTIONS_CONFIG, multi: true, useValue: this.actions });
+        injector.set(COVERT_CONFIG, { provide: COVERT_CONFIG, multi: true, useValue: this.coverts });
         injector.set(LOAD_BUILDER_CONFIG, { provide: LOAD_BUILDER_CONFIG, useValue: ReadConfigExtension });
-        this.extensions.forEach(function (extension) {
-            injector.set(BUILDER_EXTENSION, { provide: BUILDER_EXTENSION, multi: true, useValue: extension });
-        });
+        injector.set(BUILDER_EXTENSION, { provide: BUILDER_EXTENSION, multi: true, useValue: defaultExtensions });
+        injector.set(BUILDER_EXTENSION, { provide: BUILDER_EXTENSION, multi: true, useValue: this.extensions });
     };
     return BuilderContext;
 }(BasicBuilderContext));
 export { BuilderContext };
-export var useBuilderContext = function () { return new BuilderContext(); };
+export var useBuilderContext = function (parent) { return new BuilderContext(parent); };

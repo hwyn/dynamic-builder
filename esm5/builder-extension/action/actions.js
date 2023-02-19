@@ -1,11 +1,11 @@
 import { __assign, __decorate, __metadata, __param, __spreadArray } from "tslib";
 /* eslint-disable max-lines-per-function */
 import { Inject, Injector } from '@fm/di';
-import { flatMap, isEmpty } from 'lodash';
+import { flatMap, groupBy, isEmpty, toArray } from 'lodash';
 import { forkJoin, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ACTIONS_CONFIG } from '../../token';
-import { observableTap, transformObservable } from '../../utility';
+import { observableMap, observableTap, toForkJoin, transformObservable } from '../../utility';
 import { serializeAction } from '../basic/basic.extension';
 import { BaseAction } from './base.action';
 var Action = /** @class */ (function () {
@@ -20,6 +20,23 @@ var Action = /** @class */ (function () {
         })[0], _b = _a === void 0 ? {} : _a, _c = _b.action, action = _c === void 0 ? null : _c;
         return action;
     };
+    Action.prototype.getCacheAction = function (ActionType, context, baseAction) {
+        var _a;
+        var builder = baseAction.builder, _uid = baseAction.actionPropos._uid, builderField = baseAction.builderField;
+        var _b = (builderField || {}).cacheAction, cacheAction = _b === void 0 ? [] : _b;
+        var cacheType = (_a = cacheAction.find(function (_a) {
+            var uid = _a.uid;
+            return _uid === uid;
+        })) === null || _a === void 0 ? void 0 : _a.action;
+        if (!cacheType) {
+            cacheType = new ActionType((builder === null || builder === void 0 ? void 0 : builder.injector) || this.injector, context);
+            if (!ActionType.cache || !builderField || !_uid)
+                return cacheType;
+        }
+        cacheType.context = context;
+        builderField.cacheAction && cacheAction.push({ uid: _uid, action: cacheType });
+        return cacheType;
+    };
     Action.prototype.createEvent = function (event, otherEventParam) {
         if (otherEventParam === void 0) { otherEventParam = []; }
         return __spreadArray([event], otherEventParam, true);
@@ -31,51 +48,56 @@ var Action = /** @class */ (function () {
     Action.prototype.call = function (calculators, builder, callLink) {
         var _this = this;
         if (callLink === void 0) { callLink = []; }
-        return function (value) { return forkJoin(calculators.map(function (_a) {
-            var id = _a.targetId, action = _a.action;
-            return _this.invoke(__assign(__assign({}, action), { callLink: callLink }), { builder: builder, id: id }, value);
-        })); };
+        var groupList = toArray(groupBy(calculators, 'targetId'));
+        return function (value) {
+            var other = [];
+            for (var _i = 1; _i < arguments.length; _i++) {
+                other[_i - 1] = arguments[_i];
+            }
+            return forkJoin(groupList.map(function (links) {
+                return _this.invoke.apply(_this, __spreadArray([links.map(function (_a) {
+                        var action = _a.action;
+                        return (__assign(__assign({}, action), { callLink: callLink }));
+                    }), { builder: builder, id: links[0].targetId }, value], other, false));
+            }));
+        };
     };
     Action.prototype.invokeCallCalculators = function (calculators, _a, props) {
         var type = _a.type, callLink = _a.callLink;
         var builder = props.builder, id = props.id;
-        var link = __spreadArray(__spreadArray([], callLink || [], true), [{ fieldId: id, type: type }], false);
         var filterCalculators = calculators.filter(function (_a) {
             var _b = _a.dependent, fieldId = _b.fieldId, cType = _b.type;
             return fieldId === id && cType === type;
         });
+        var link = __spreadArray(__spreadArray([], (callLink || []), true), [{ fieldId: id, type: type, count: filterCalculators.length }], false);
         return !isEmpty(filterCalculators) ? this.call(filterCalculators, builder, link) : function (value) { return of(value); };
     };
-    Action.prototype.invokeCalculators = function (actionProps, actionSub, props) {
+    Action.prototype.invokeCalculators = function (actionProps, props, value) {
         var _this = this;
+        var otherEventParam = [];
+        for (var _i = 3; _i < arguments.length; _i++) {
+            otherEventParam[_i - 3] = arguments[_i];
+        }
         var builder = props.builder, id = props.id;
-        var calculators = builder.calculators;
         var nonSelfBuilders = builder.$$cache.nonSelfBuilders || [];
         var calculatorsInvokes = nonSelfBuilders.map(function (nonBuild) {
             return _this.invokeCallCalculators(nonBuild.nonSelfCalculators, actionProps, { builder: nonBuild, id: id });
         });
-        calculatorsInvokes.push(this.invokeCallCalculators(calculators || [], actionProps, props));
-        return actionSub.pipe(observableTap(function (value) { return forkJoin(calculatorsInvokes.map(function (invokeCalculators) { return invokeCalculators(value); })); }));
+        calculatorsInvokes.push(this.invokeCallCalculators(builder.calculators || [], actionProps, props));
+        return forkJoin(calculatorsInvokes.map(function (invokeCalculators) { return invokeCalculators.apply(void 0, __spreadArray([value], otherEventParam, false)); }));
     };
-    Action.prototype.invokeAction = function (action, props, event) {
-        var _this = this;
+    Action.prototype.execute = function (action, props, event) {
         if (event === void 0) { event = null; }
         var otherEventParam = [];
         for (var _i = 3; _i < arguments.length; _i++) {
             otherEventParam[_i - 3] = arguments[_i];
         }
         var name = action.name, handler = action.handler, stop = action.stop;
+        var e = this.createEvent(event, otherEventParam);
         if (stop && !isEmpty(event) && (event === null || event === void 0 ? void 0 : event.stopPropagation)) {
             event.stopPropagation();
         }
-        var after = action.after, before = action.before;
-        var e = this.createEvent(event, otherEventParam);
-        var executeAction = function () { return name || handler ? _this.executeAction(action, _this.getActionContext(props), e) : of(event); };
-        var actionSub = before ? this.invoke(before, props, event, otherEventParam).pipe(function () { return executeAction(); }) : executeAction();
-        if (after) {
-            actionSub = actionSub.pipe(observableTap(function (value) { return _this.invoke.apply(_this, __spreadArray([after, props, value], otherEventParam, false)); }));
-        }
-        return actionSub;
+        return name || handler ? this.executeAction(action, this.getActionContext(props), e) : of(event);
     };
     Action.prototype.invoke = function (actions, props, event) {
         var _this = this;
@@ -84,42 +106,44 @@ var Action = /** @class */ (function () {
         for (var _i = 3; _i < arguments.length; _i++) {
             otherEventParam[_i - 3] = arguments[_i];
         }
-        var actionsSub;
-        var action;
-        if (Array.isArray(actions)) {
-            action = serializeAction(actions.filter(function (a) { return !!serializeAction(a).type; })[0]);
-            actionsSub = forkJoin((actions).map(function (a) { return (_this.invokeAction.apply(_this, __spreadArray([serializeAction(a), props, event], otherEventParam, false))); })).pipe(map(function (result) { return result.pop(); }));
-        }
-        else {
-            action = serializeAction(actions);
-            actionsSub = this.invokeAction.apply(this, __spreadArray([action, props, event], otherEventParam, false));
-        }
-        var hasInvokeCalculators = !isEmpty(props) && action && action.type;
-        return hasInvokeCalculators ? this.invokeCalculators(action, actionsSub, props) : actionsSub;
+        var _actions = (Array.isArray(actions) ? actions : [actions]).map(serializeAction);
+        return toForkJoin(_actions.map(function (_a) {
+            var before = _a.before;
+            return before && _this.invoke.apply(_this, __spreadArray([before, props, event], otherEventParam, false));
+        })).pipe(observableMap(function () { return forkJoin(_actions.map(function (action) {
+            return _this.execute.apply(_this, __spreadArray([action, props, event], otherEventParam, false));
+        })); }), observableTap(function (result) { return !props ? of(null) : toForkJoin(_actions.map(function (action, index) {
+            return action.type && _this.invokeCalculators.apply(_this, __spreadArray([action, props, result[index]], otherEventParam, false));
+        })); }), observableTap(function (result) { return toForkJoin(_actions.map(function (_a, index) {
+            var after = _a.after;
+            return after && _this.invoke.apply(_this, __spreadArray([after, props, typeof result[index] === 'undefined' ? event : result[index]], otherEventParam, false));
+        })); }), map(function (result) { return result.pop(); }));
     };
-    // eslint-disable-next-line complexity
-    Action.prototype.executeAction = function (actionPropos, actionContext, event) {
-        if (event === void 0) { event = this.createEvent(void (0)); }
-        var actionEvent = event[0], otherEvent = event.slice(1);
-        var _a = serializeAction(actionPropos), _b = _a.name, name = _b === void 0 ? "" : _b, handler = _a.handler;
-        var _c = name.match(/([^.]+)/ig) || [name], actionName = _c[0], _d = _c[1], execute = _d === void 0 ? 'execute' : _d;
+    Action.prototype.callAction = function (actionName, context) {
+        var events = [];
+        for (var _i = 2; _i < arguments.length; _i++) {
+            events[_i - 2] = arguments[_i];
+        }
+        return this.invoke.apply(this, __spreadArray([serializeAction(actionName), context], events, false));
+    };
+    Action.prototype.executeAction = function (actionPropos, actionContext, _a) {
+        var _b = _a === void 0 ? this.createEvent(void (0)) : _a, actionEvent = _b[0], otherEvent = _b.slice(1);
+        var _c = serializeAction(actionPropos), _d = _c.name, name = _d === void 0 ? "" : _d, handler = _c.handler;
+        var _e = name.match(/([^.]+)/ig) || [name], actionName = _e[0], _f = _e[1], execute = _f === void 0 ? 'execute' : _f;
         var context = __assign(__assign({}, actionContext), { actionPropos: actionPropos, actionEvent: actionEvent });
-        var action = new BaseAction(this.injector, context);
+        var ActionType = null;
         var executeHandler = handler;
+        var action = new BaseAction(this.injector, context);
         var builder = action.builder;
+        if (!executeHandler && (ActionType = this.getAction(actionName))) {
+            action = this.getCacheAction(ActionType, context, action);
+            executeHandler = action && action[execute].bind(action);
+        }
         if (!executeHandler && builder) {
             while (builder) {
                 executeHandler = builder.getExecuteHandler(name) || executeHandler;
-                if (builder === builder.root) {
-                    break;
-                }
                 builder = builder.parent;
             }
-        }
-        if (!executeHandler) {
-            var ActionType = this.getAction(actionName);
-            action = ActionType && new ActionType(this.injector, context);
-            executeHandler = action && action[execute].bind(action);
         }
         if (!executeHandler) {
             throw new Error("".concat(name, " not defined!"));

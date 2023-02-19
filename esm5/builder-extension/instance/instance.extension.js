@@ -1,6 +1,6 @@
 import { __extends } from "tslib";
 import { isEmpty } from 'lodash';
-import { Observable, Subject } from 'rxjs';
+import { Observable, shareReplay, Subject } from 'rxjs';
 import { BuilderModel } from '../../builder/builder-model';
 import { observableMap, toForkJoin, transformObservable } from '../../utility';
 import { BasicExtension } from '../basic/basic.extension';
@@ -15,10 +15,10 @@ var InstanceExtension = /** @class */ (function (_super) {
     InstanceExtension.createInstance = function () {
         return {
             current: null,
-            destory: new Subject(),
             onMounted: function () { return void (0); },
             onDestory: function () { return void (0); },
-            detectChanges: function () { return undefined; }
+            detectChanges: function () { return undefined; },
+            destory: new Subject().pipe(shareReplay(1))
         };
     };
     InstanceExtension.prototype.extension = function () {
@@ -51,8 +51,8 @@ var InstanceExtension = /** @class */ (function (_super) {
             if (hasMounted) {
                 instance.onMounted(id);
             }
-            if (current instanceof BuilderModel && !current.id) {
-                console.error("Builder needs to set the ID property: ".concat(id));
+            if (current instanceof BuilderModel && current.id !== id) {
+                console.info("Builder needs to set the id property: ".concat(id));
             }
         };
         return { get: get, set: set };
@@ -60,8 +60,10 @@ var InstanceExtension = /** @class */ (function (_super) {
     InstanceExtension.prototype.addInstance = function (_a) {
         var jsonField = _a[0], builderField = _a[1];
         var destory = { type: DESTORY, after: this.bindCalculatorAction(this.instanceDestory.bind(this)) };
+        var instance = InstanceExtension.createInstance();
         this.pushAction(jsonField, [destory, { type: MOUNTED }]);
-        this.defineProperty(builderField, INSTANCE, InstanceExtension.createInstance());
+        this.defineProperty(builderField, INSTANCE, instance);
+        instance.destory.subscribe();
     };
     InstanceExtension.prototype.instanceDestory = function (_a) {
         var actionEvent = _a.actionEvent, instance = _a.builderField.instance;
@@ -72,8 +74,12 @@ var InstanceExtension = /** @class */ (function (_super) {
     };
     InstanceExtension.prototype.beforeDestory = function () {
         var _this = this;
-        if (!isEmpty(this.buildFieldList)) {
-            return toForkJoin(this.buildFieldList.map(function (_a) {
+        var showFields = this.buildFieldList.filter(function (_a) {
+            var visibility = _a.visibility;
+            return _this.builder.showField(visibility);
+        });
+        if (!isEmpty(showFields)) {
+            return toForkJoin(showFields.map(function (_a) {
                 var id = _a.id, instance = _a.instance;
                 return new Observable(function (subscribe) {
                     instance.destory.subscribe(function () {
