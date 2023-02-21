@@ -1,5 +1,5 @@
 import { __assign, __extends } from "tslib";
-import { isEmpty, isFunction, isString, uniq } from 'lodash';
+import { isEmpty, isFunction, uniq } from 'lodash';
 import { of } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { GET_JSON_CONFIG } from '../../token';
@@ -15,16 +15,15 @@ var ReadConfigExtension = /** @class */ (function (_super) {
     }
     ReadConfigExtension.prototype.extension = function () {
         var _this = this;
+        var _a, _b;
+        this.cache.basePath = ((_a = this.props) === null || _a === void 0 ? void 0 : _a.basePath) || ((_b = this.builder.parent) === null || _b === void 0 ? void 0 : _b.$$cache.basePath) || '';
         this.definePropertys(this.builder, { id: this.props.id, getExecuteHandler: this.createGetExecuteHandler() });
         return this.getConfigJson(this.props).pipe(tap(function (jsonConfig) { return _this.props.config = jsonConfig; }));
     };
-    ReadConfigExtension.prototype.extendsConfig = function (jsonConfig) {
-        var extendsConfig = jsonConfig.extends;
-        var extendsProps = isString(extendsConfig) ? { jsonName: extendsConfig } : extendsConfig;
-        return !extendsProps || extendsProps.isLoaded ? of(jsonConfig) : this.getConfigJson(extendsProps).pipe(tap(function (extendsConfig) {
-            extendsConfig.isLoaded = true;
-            jsonConfig.extends = extendsConfig;
-        }));
+    ReadConfigExtension.prototype.getConfig = function (url) {
+        var isAbstractPath = /^[^\\.]+/ig.test(url);
+        var _url = isAbstractPath ? url : "".concat(this.cache.basePath, "/").concat(url.replace(/^\.\//, '')).replace(/[\\/]+/ig, '/');
+        return this.getJsonConfig(_url);
     };
     ReadConfigExtension.prototype.preloaded = function (jsonConfig) {
         var isPreloaded = jsonConfig.isPreloaded, fields = jsonConfig.fields;
@@ -42,7 +41,7 @@ var ReadConfigExtension = /** @class */ (function (_super) {
     };
     ReadConfigExtension.prototype.getConfigJson = function (props) {
         var _this = this;
-        return this.getConfigObservable(props).pipe(observableTap(function (jsonConfig) { return _this.extendsConfig(jsonConfig); }), tap(function (jsonConfig) { return _this.checkFieldRepeat(jsonConfig); }), observableTap(function (jsonConfig) { return _this.preloaded(jsonConfig); }));
+        return this.getConfigObservable(props).pipe(tap(function (jsonConfig) { return _this.checkFieldRepeat(jsonConfig); }), observableTap(function (jsonConfig) { return _this.preloaded(jsonConfig); }));
     };
     ReadConfigExtension.prototype.getConfigObservable = function (props) {
         var _this = this;
@@ -55,7 +54,7 @@ var ReadConfigExtension = /** @class */ (function (_super) {
         }
         if (isJsonName) {
             var getJsonName = jsonNameAction ? this.createLoadConfigAction(jsonNameAction, props) : of(jsonName);
-            configOb = getJsonName.pipe(observableMap(function (configName) { return _this.getJsonConfig(configName); }));
+            configOb = getJsonName.pipe(observableMap(function (configName) { return _this.getConfig(configName); }));
         }
         else {
             configOb = (configAction ? this.createLoadConfigAction(configAction, props) : of(config)).pipe(map(this.cloneDeepPlain));

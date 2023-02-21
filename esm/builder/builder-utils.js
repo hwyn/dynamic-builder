@@ -41,7 +41,7 @@ function loadForBuild(props) {
 function getCacheObj(props) {
     const { config: { fields = [] } = {} } = props;
     const { bindFn = [], ready = false, destoryed = false, detectChanges = new Subject(), destory: modelDestory = destory.bind(this), addChild: modelAddChild = addChild.bind(this), removeChild: modelRemoveChild = removeChild.bind(this) } = this.$$cache || {};
-    return {
+    return Object.assign(this.$$cache, {
         ready,
         bindFn,
         destoryed,
@@ -50,7 +50,7 @@ function getCacheObj(props) {
         addChild: modelAddChild,
         removeChild: modelRemoveChild,
         fields: fields.map(createField.bind(this)),
-    };
+    });
 }
 function createField(field) {
     const _a = cloneDeepPlain(field), { id, type, visibility } = _a, other = __rest(_a, ["id", "type", "visibility"]);

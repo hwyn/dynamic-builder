@@ -1,4 +1,4 @@
-import { isEmpty, isFunction, isString, uniq } from 'lodash';
+import { isEmpty, isFunction, uniq } from 'lodash';
 import { of } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { GET_JSON_CONFIG } from '../../token';
@@ -11,16 +11,15 @@ export class ReadConfigExtension extends BasicExtension {
         this.getJsonConfig = this.injector.get(GET_JSON_CONFIG);
     }
     extension() {
+        var _a, _b;
+        this.cache.basePath = ((_a = this.props) === null || _a === void 0 ? void 0 : _a.basePath) || ((_b = this.builder.parent) === null || _b === void 0 ? void 0 : _b.$$cache.basePath) || '';
         this.definePropertys(this.builder, { id: this.props.id, getExecuteHandler: this.createGetExecuteHandler() });
         return this.getConfigJson(this.props).pipe(tap((jsonConfig) => this.props.config = jsonConfig));
     }
-    extendsConfig(jsonConfig) {
-        const { extends: extendsConfig } = jsonConfig;
-        const extendsProps = isString(extendsConfig) ? { jsonName: extendsConfig } : extendsConfig;
-        return !extendsProps || extendsProps.isLoaded ? of(jsonConfig) : this.getConfigJson(extendsProps).pipe(tap((extendsConfig) => {
-            extendsConfig.isLoaded = true;
-            jsonConfig.extends = extendsConfig;
-        }));
+    getConfig(url) {
+        const isAbstractPath = /^[^\\.]+/ig.test(url);
+        const _url = isAbstractPath ? url : `${this.cache.basePath}/${url.replace(/^\.\//, '')}`.replace(/[\\/]+/ig, '/');
+        return this.getJsonConfig(_url);
     }
     preloaded(jsonConfig) {
         const { isPreloaded, fields } = jsonConfig;
@@ -37,7 +36,7 @@ export class ReadConfigExtension extends BasicExtension {
         }));
     }
     getConfigJson(props) {
-        return this.getConfigObservable(props).pipe(observableTap((jsonConfig) => this.extendsConfig(jsonConfig)), tap((jsonConfig) => this.checkFieldRepeat(jsonConfig)), observableTap((jsonConfig) => this.preloaded(jsonConfig)));
+        return this.getConfigObservable(props).pipe(tap((jsonConfig) => this.checkFieldRepeat(jsonConfig)), observableTap((jsonConfig) => this.preloaded(jsonConfig)));
     }
     getConfigObservable(props) {
         const { id, jsonName = ``, jsonNameAction = ``, configAction = '', config } = props;
@@ -49,7 +48,7 @@ export class ReadConfigExtension extends BasicExtension {
         }
         if (isJsonName) {
             const getJsonName = jsonNameAction ? this.createLoadConfigAction(jsonNameAction, props) : of(jsonName);
-            configOb = getJsonName.pipe(observableMap((configName) => this.getJsonConfig(configName)));
+            configOb = getJsonName.pipe(observableMap((configName) => this.getConfig(configName)));
         }
         else {
             configOb = (configAction ? this.createLoadConfigAction(configAction, props) : of(config)).pipe(map(this.cloneDeepPlain));

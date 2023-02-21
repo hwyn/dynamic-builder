@@ -59,6 +59,7 @@ export interface BuilderProps extends BuilderElement {
         [key: string]: (params?: any) => Observable<any>;
     };
     children?: any;
+    basePath?: string;
     jsonName?: string | Action | ExecuteHandler;
     jsonNameAction?: string | Action | ExecuteHandler;
     configAction?: string | Action | ExecuteHandler;

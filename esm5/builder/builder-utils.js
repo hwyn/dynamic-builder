@@ -46,7 +46,7 @@ function loadForBuild(props) {
 function getCacheObj(props) {
     var _a = props.config, _b = _a === void 0 ? {} : _a, _c = _b.fields, fields = _c === void 0 ? [] : _c;
     var _d = this.$$cache || {}, _e = _d.bindFn, bindFn = _e === void 0 ? [] : _e, _f = _d.ready, ready = _f === void 0 ? false : _f, _g = _d.destoryed, destoryed = _g === void 0 ? false : _g, _h = _d.detectChanges, detectChanges = _h === void 0 ? new Subject() : _h, _j = _d.destory, modelDestory = _j === void 0 ? destory.bind(this) : _j, _k = _d.addChild, modelAddChild = _k === void 0 ? addChild.bind(this) : _k, _l = _d.removeChild, modelRemoveChild = _l === void 0 ? removeChild.bind(this) : _l;
-    return {
+    return Object.assign(this.$$cache, {
         ready: ready,
         bindFn: bindFn,
         destoryed: destoryed,
@@ -55,7 +55,7 @@ function getCacheObj(props) {
         addChild: modelAddChild,
         removeChild: modelRemoveChild,
         fields: fields.map(createField.bind(this)),
-    };
+    });
 }
 function createField(field) {
     var _a = cloneDeepPlain(field), id = _a.id, type = _a.type, visibility = _a.visibility, other = __rest(_a, ["id", "type", "visibility"]);
