@@ -9,9 +9,9 @@ import { Grid } from '../grid/grid';
 import { BuilderModelExtensions } from '../type-api';
 export declare class BuilderContext extends BasicBuilderContext {
     private map;
+    private extensions;
     private actions;
     private coverts;
-    private extensions;
     constructor(parent?: BuilderContext);
     private extendsConfig;
     private useFactory;

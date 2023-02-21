@@ -38,10 +38,9 @@ var ReadConfigExtension = /** @class */ (function (_super) {
         return (0, utility_1.toForkJoin)(builderFields.map(this.preloadedBuildField.bind(this)));
     };
     ReadConfigExtension.prototype.preloadedBuildField = function (jsonField) {
-        var _this = this;
         return this.getConfigJson(jsonField).pipe((0, operators_1.tap)(function (jsonConfig) {
             jsonConfig.isPreloaded = true;
-            jsonField.config = _this.cloneDeepPlain(jsonConfig);
+            jsonField.config = jsonConfig;
         }));
     };
     ReadConfigExtension.prototype.getConfigJson = function (props) {

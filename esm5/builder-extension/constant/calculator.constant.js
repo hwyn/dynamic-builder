@@ -14,7 +14,6 @@ export var DATD_SOURCE = 'dataSource';
 export var CHECK_VISIBILITY = 'checkVisibility';
 export var ADD_EVENT_LISTENER = 'addEventListener';
 export var VIEW_MODEL = 'viewModel';
-export var COVERT = 'covert';
 export var CONTROL = 'control';
 export var GRID = 'grid';
 export var LAYOUT = 'layout';

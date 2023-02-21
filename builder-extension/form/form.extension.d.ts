@@ -1,5 +1,6 @@
 import { BasicExtension } from '../basic/basic.extension';
 export declare class FormExtension extends BasicExtension {
+    private covertMap;
     private builderFields;
     private defaultChangeType;
     private getControl;

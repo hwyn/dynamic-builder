@@ -5,7 +5,7 @@ import { flatMap, isEmpty } from 'lodash';
 import { Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { BUILDER_EXTENSION, LOAD_BUILDER_CONFIG } from '../token';
-import { observableMap, toForkJoin, transformObservable, withValue } from '../utility';
+import { cloneDeepPlain, observableMap, toForkJoin, transformObservable, withValue } from '../utility';
 import { BuilderEngine } from './builder-engine.service';
 const CACHE = `$$cache`;
 export function init() {
@@ -53,7 +53,7 @@ function getCacheObj(props) {
     };
 }
 function createField(field) {
-    const { id, type, visibility } = field, other = __rest(field, ["id", "type", "visibility"]);
+    const _a = cloneDeepPlain(field), { id, type, visibility } = _a, other = __rest(_a, ["id", "type", "visibility"]);
     const element = field.element || (typeof type !== 'string' ? type : this.injector.get(BuilderEngine).getUiComponent(type));
     const _field = { id, type, element, visibility, field: other };
     Object.keys(_field).forEach((key) => _field[key] === undefined && delete _field[key]);

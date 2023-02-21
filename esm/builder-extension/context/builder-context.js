@@ -28,16 +28,16 @@ export class BuilderContext extends BasicBuilderContext {
     constructor(parent) {
         super();
         this.map = new Map();
+        this.extensions = [];
         this.actions = [];
         this.coverts = [];
-        this.extensions = [];
-        parent && parent.extendsConfig(this);
+        parent && this.extendsConfig(parent);
     }
-    extendsConfig(childContext) {
-        childContext.registryExtension(this.extensions);
-        childContext.uiElements.push(...this.uiElements);
-        childContext.actions.push(...this.actions);
-        childContext.coverts.push(...this.coverts);
+    extendsConfig(parent) {
+        this.registryExtension(parent.extensions);
+        this.uiElements.push(...parent.uiElements);
+        this.actions.push(...parent.actions);
+        this.coverts.push(...parent.coverts);
     }
     useFactory(useFactory) {
         return (injector) => (...args) => useFactory(...args, injector);

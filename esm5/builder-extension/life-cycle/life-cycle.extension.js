@@ -121,10 +121,10 @@ var LifeCycleExtension = /** @class */ (function (_super) {
         configurable: true
     });
     LifeCycleExtension.prototype.bindCalculator = function () {
+        var _a;
         this.builder.calculators = this.calculators;
         this.builder.nonSelfCalculators = this.nonSelfCalculators;
-        this.defineProperty(this.cache, ORIGIN_CALCULATORS, this.calculators);
-        this.defineProperty(this.cache, ORIGIN_NON_SELF_CALCULATORS, this.nonSelfCalculators);
+        this.definePropertys(this.cache, (_a = {}, _a[ORIGIN_CALCULATORS] = this.calculators, _a[ORIGIN_NON_SELF_CALCULATORS] = this.nonSelfCalculators, _a));
         this.nonSelfCalculators.length && this.nonSelfBuilders.push(this.builder);
     };
     LifeCycleExtension.prototype.beforeDestory = function () {

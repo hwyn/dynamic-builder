@@ -4,10 +4,11 @@ import { Visibility } from '../../builder';
 import { COVERT_INTERCEPT, FORM_CONTROL } from '../../token';
 import { transformObservable } from '../../utility';
 import { BasicExtension } from '../basic/basic.extension';
-import { CHANGE, CHECK_VISIBILITY, CONTROL, COVERT, LOAD_ACTION, NOTIFY_MODEL_CHANGE } from '../constant/calculator.constant';
+import { CHANGE, CHECK_VISIBILITY, CONTROL, LOAD_ACTION, NOTIFY_MODEL_CHANGE } from '../constant/calculator.constant';
 export class FormExtension extends BasicExtension {
     constructor() {
         super(...arguments);
+        this.covertMap = new Map();
         this.builderFields = [];
         this.defaultChangeType = CHANGE;
         this.getControl = this.injector.get(FORM_CONTROL);
@@ -47,7 +48,7 @@ export class FormExtension extends BasicExtension {
         jsonField.actions = actions;
         replaceAction.before = intercept ? Object.assign(Object.assign({}, this.bindCalculatorAction(intercept)), { after: bindingViewModel }) : bindingViewModel;
         actionIndex === -1 ? actions.push(replaceAction) : actions[actionIndex] = replaceAction;
-        this.defineProperty(binding, COVERT, this.covertIntercept.getCovertObj(covert, this.builder, builderField));
+        this.covertMap.set(binding, this.covertIntercept.getCovertObj(covert, this.builder, builderField));
     }
     addControl(jsonField, builderField) {
         const { binding } = jsonField;
@@ -98,10 +99,10 @@ export class FormExtension extends BasicExtension {
     }
     getValueToModel(binding) {
         const value = this.cache.viewModel.getBindValue(binding);
-        return this.covertIntercept.covertToView(binding.covert, value);
+        return this.covertIntercept.covertToView(this.covertMap.get(binding), value);
     }
     setValueToModel(binding, value) {
-        value = this.covertIntercept.covertToModel(binding.covert, value);
+        value = this.covertIntercept.covertToModel(this.covertMap.get(binding), value);
         this.cache.viewModel.setBindValue(binding, value);
     }
     deleteValueToModel(binding) {
@@ -111,11 +112,11 @@ export class FormExtension extends BasicExtension {
         return actionResult && actionResult.target && !!actionResult.target.nodeType;
     }
     destory() {
+        this.covertMap.clear();
         this.builderFields.forEach((builderField) => {
             var _a;
             (_a = builderField.control) === null || _a === void 0 ? void 0 : _a.destory();
             this.unDefineProperty(builderField, [CONTROL]);
-            this.unDefineProperty(this.getJsonFieldById(builderField.id).binding, [COVERT]);
         });
         return super.destory();
     }

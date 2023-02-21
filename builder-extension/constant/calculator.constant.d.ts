@@ -14,7 +14,6 @@ export declare const DATD_SOURCE = "dataSource";
 export declare const CHECK_VISIBILITY = "checkVisibility";
 export declare const ADD_EVENT_LISTENER = "addEventListener";
 export declare const VIEW_MODEL = "viewModel";
-export declare const COVERT = "covert";
 export declare const CONTROL = "control";
 export declare const GRID = "grid";
 export declare const LAYOUT = "layout";

@@ -33,7 +33,7 @@ export class ReadConfigExtension extends BasicExtension {
     preloadedBuildField(jsonField) {
         return this.getConfigJson(jsonField).pipe(tap((jsonConfig) => {
             jsonConfig.isPreloaded = true;
-            jsonField.config = this.cloneDeepPlain(jsonConfig);
+            jsonField.config = jsonConfig;
         }));
     }
     getConfigJson(props) {

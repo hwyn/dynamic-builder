@@ -102,8 +102,7 @@ export class LifeCycleExtension extends BasicExtension {
     bindCalculator() {
         this.builder.calculators = this.calculators;
         this.builder.nonSelfCalculators = this.nonSelfCalculators;
-        this.defineProperty(this.cache, ORIGIN_CALCULATORS, this.calculators);
-        this.defineProperty(this.cache, ORIGIN_NON_SELF_CALCULATORS, this.nonSelfCalculators);
+        this.definePropertys(this.cache, { [ORIGIN_CALCULATORS]: this.calculators, [ORIGIN_NON_SELF_CALCULATORS]: this.nonSelfCalculators });
         this.nonSelfCalculators.length && this.nonSelfBuilders.push(this.builder);
     }
     beforeDestory() {

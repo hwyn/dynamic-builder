@@ -18,13 +18,13 @@ var ActionExtension = /** @class */ (function (_super) {
         });
     };
     ActionExtension.prototype.create = function (_a) {
+        var _b;
         var jsonField = _a[0], builderField = _a[1];
-        var _b = jsonField.actions, actions = _b === void 0 ? [] : _b;
-        this.defineProperty(builderField, ADD_EVENT_LISTENER, this.addFieldEvent.bind(this, builderField));
+        var _c = jsonField.actions, actions = _c === void 0 ? [] : _c;
+        this.definePropertys(builderField, (_b = {}, _b[ADD_EVENT_LISTENER] = this.addFieldEvent.bind(this, builderField), _b[CACHE_ACTION] = [], _b));
         if (!isEmpty(actions))
             builderField.addEventListener(actions);
         this.fields.push(builderField);
-        this.defineProperty(builderField, CACHE_ACTION, []);
         delete builderField.field.actions;
     };
     ActionExtension.prototype.addFieldEvent = function (builderField, actions) {

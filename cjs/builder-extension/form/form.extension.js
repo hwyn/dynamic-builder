@@ -13,6 +13,7 @@ var FormExtension = /** @class */ (function (_super) {
     tslib_1.__extends(FormExtension, _super);
     function FormExtension() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.covertMap = new Map();
         _this.builderFields = [];
         _this.defaultChangeType = calculator_constant_1.CHANGE;
         _this.getControl = _this.injector.get(token_1.FORM_CONTROL);
@@ -58,7 +59,7 @@ var FormExtension = /** @class */ (function (_super) {
         jsonField.actions = actions;
         replaceAction.before = intercept ? tslib_1.__assign(tslib_1.__assign({}, this.bindCalculatorAction(intercept)), { after: bindingViewModel }) : bindingViewModel;
         actionIndex === -1 ? actions.push(replaceAction) : actions[actionIndex] = replaceAction;
-        this.defineProperty(binding, calculator_constant_1.COVERT, this.covertIntercept.getCovertObj(covert, this.builder, builderField));
+        this.covertMap.set(binding, this.covertIntercept.getCovertObj(covert, this.builder, builderField));
     };
     FormExtension.prototype.addControl = function (jsonField, builderField) {
         var binding = jsonField.binding;
@@ -116,10 +117,10 @@ var FormExtension = /** @class */ (function (_super) {
     };
     FormExtension.prototype.getValueToModel = function (binding) {
         var value = this.cache.viewModel.getBindValue(binding);
-        return this.covertIntercept.covertToView(binding.covert, value);
+        return this.covertIntercept.covertToView(this.covertMap.get(binding), value);
     };
     FormExtension.prototype.setValueToModel = function (binding, value) {
-        value = this.covertIntercept.covertToModel(binding.covert, value);
+        value = this.covertIntercept.covertToModel(this.covertMap.get(binding), value);
         this.cache.viewModel.setBindValue(binding, value);
     };
     FormExtension.prototype.deleteValueToModel = function (binding) {
@@ -130,11 +131,11 @@ var FormExtension = /** @class */ (function (_super) {
     };
     FormExtension.prototype.destory = function () {
         var _this = this;
+        this.covertMap.clear();
         this.builderFields.forEach(function (builderField) {
             var _a;
             (_a = builderField.control) === null || _a === void 0 ? void 0 : _a.destory();
             _this.unDefineProperty(builderField, [calculator_constant_1.CONTROL]);
-            _this.unDefineProperty(_this.getJsonFieldById(builderField.id).binding, [calculator_constant_1.COVERT]);
         });
         return _super.prototype.destory.call(this);
     };

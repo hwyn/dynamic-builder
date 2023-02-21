@@ -5,7 +5,7 @@ export declare class Covert {
     private injector;
     private coverts;
     constructor(injector: Injector, coverts: any[][]);
-    covertToModel(covertType: BaseCovertImpl, value: any): any;
-    covertToView(covertType: BaseCovertImpl, value: any): any;
+    covertToModel(covertType: BaseCovertImpl | undefined, value: any): any;
+    covertToView(covertType: BaseCovertImpl | undefined, value: any): any;
     getCovertObj(covertObj: any, builder: BuilderModelExtensions, builderField: BuilderFieldExtensions): BaseCovertImpl;
 }

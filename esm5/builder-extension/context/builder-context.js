@@ -30,18 +30,18 @@ var BuilderContext = /** @class */ (function (_super) {
     function BuilderContext(parent) {
         var _this = _super.call(this) || this;
         _this.map = new Map();
+        _this.extensions = [];
         _this.actions = [];
         _this.coverts = [];
-        _this.extensions = [];
-        parent && parent.extendsConfig(_this);
+        parent && _this.extendsConfig(parent);
         return _this;
     }
-    BuilderContext.prototype.extendsConfig = function (childContext) {
+    BuilderContext.prototype.extendsConfig = function (parent) {
         var _a, _b, _c;
-        childContext.registryExtension(this.extensions);
-        (_a = childContext.uiElements).push.apply(_a, this.uiElements);
-        (_b = childContext.actions).push.apply(_b, this.actions);
-        (_c = childContext.coverts).push.apply(_c, this.coverts);
+        this.registryExtension(parent.extensions);
+        (_a = this.uiElements).push.apply(_a, parent.uiElements);
+        (_b = this.actions).push.apply(_b, parent.actions);
+        (_c = this.coverts).push.apply(_c, parent.coverts);
     };
     BuilderContext.prototype.useFactory = function (useFactory) {
         return function (injector) { return function () {
