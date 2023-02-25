@@ -3,10 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.FormExtension = void 0;
 var tslib_1 = require("tslib");
 var lodash_1 = require("lodash");
-var rxjs_1 = require("rxjs");
 var builder_1 = require("../../builder");
 var token_1 = require("../../token");
-var utility_1 = require("../../utility");
 var basic_extension_1 = require("../basic/basic.extension");
 var calculator_constant_1 = require("../constant/calculator.constant");
 var FormExtension = /** @class */ (function (_super) {
@@ -28,8 +26,8 @@ var FormExtension = /** @class */ (function (_super) {
     };
     FormExtension.prototype.createMergeControl = function (_a) {
         var jsonField = _a[0], builderField = _a[1];
-        var id = jsonField.id, updateOn = jsonField.updateOn, checkVisibility = jsonField.checkVisibility, validators = jsonField.validators;
         var changeType = this.getChangeType(jsonField);
+        var id = jsonField.id, _b = jsonField.updateOn, updateOn = _b === void 0 ? changeType : _b, checkVisibility = jsonField.checkVisibility, validators = jsonField.validators;
         var builderId = this.builder.id;
         this.addChangeAction(changeType, jsonField, builderField);
         this.pushCalculators(jsonField, tslib_1.__spreadArray(tslib_1.__spreadArray([{
@@ -41,9 +39,9 @@ var FormExtension = /** @class */ (function (_super) {
             }], checkVisibility ? [{
                 action: this.bindCalculatorAction(this.createVisibility.bind(this, jsonField)),
                 dependents: { type: calculator_constant_1.CHECK_VISIBILITY, fieldId: id }
-            }] : [], true), validators && !validators.length ? [{
+            }] : [], true), validators && validators.length ? [{
                 action: this.bindCalculatorAction(this.createValidaity.bind(this)),
-                dependents: { type: updateOn || changeType, fieldId: id }
+                dependents: { type: updateOn, fieldId: id }
             }] : [], true));
     };
     FormExtension.prototype.addChangeAction = function (changeType, jsonField, builderField) {
@@ -79,8 +77,8 @@ var FormExtension = /** @class */ (function (_super) {
         (_c = builderField.control) === null || _c === void 0 ? void 0 : _c.patchValue(value);
     };
     FormExtension.prototype.createValidaity = function (_a) {
-        var _b = _a.builderField, control = _b.control, instance = _b.instance;
-        return (0, utility_1.transformObservable)(control === null || control === void 0 ? void 0 : control.updateValueAndValidity()).pipe((0, rxjs_1.tap)(function () { return instance.detectChanges(); }));
+        var control = _a.builderField.control;
+        control === null || control === void 0 ? void 0 : control.updateValueAndValidity();
     };
     FormExtension.prototype.createVisibility = function (_a, _b) {
         var binding = _a.binding;
@@ -113,15 +111,13 @@ var FormExtension = /** @class */ (function (_super) {
     };
     FormExtension.prototype.getChangeType = function (jsonField) {
         var _a = jsonField.binding.changeType, changeType = _a === void 0 ? this.defaultChangeType : _a;
-        return changeType;
+        return jsonField.binding.changeType = changeType;
     };
     FormExtension.prototype.getValueToModel = function (binding) {
-        var value = this.cache.viewModel.getBindValue(binding);
-        return this.covertIntercept.covertToView(this.covertMap.get(binding), value);
+        return this.covertIntercept.toView(this.covertMap.get(binding), this.cache.viewModel.getBindValue(binding));
     };
     FormExtension.prototype.setValueToModel = function (binding, value) {
-        value = this.covertIntercept.covertToModel(this.covertMap.get(binding), value);
-        this.cache.viewModel.setBindValue(binding, value);
+        this.cache.viewModel.setBindValue(binding, this.covertIntercept.toModel(this.covertMap.get(binding), value));
     };
     FormExtension.prototype.deleteValueToModel = function (binding) {
         this.cache.viewModel.deleteBindValue(binding);

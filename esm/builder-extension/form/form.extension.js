@@ -1,8 +1,6 @@
 import { isEmpty } from 'lodash';
-import { tap } from 'rxjs';
 import { Visibility } from '../../builder';
 import { COVERT_INTERCEPT, FORM_CONTROL } from '../../token';
-import { transformObservable } from '../../utility';
 import { BasicExtension } from '../basic/basic.extension';
 import { CHANGE, CHECK_VISIBILITY, CONTROL, LOAD_ACTION, NOTIFY_MODEL_CHANGE } from '../constant/calculator.constant';
 export class FormExtension extends BasicExtension {
@@ -18,8 +16,8 @@ export class FormExtension extends BasicExtension {
         this.builderFields = this.mapFields(this.jsonFields.filter(({ binding }) => !isEmpty(binding)), this.createMergeControl.bind(this));
     }
     createMergeControl([jsonField, builderField]) {
-        const { id, updateOn, checkVisibility, validators } = jsonField;
         const changeType = this.getChangeType(jsonField);
+        const { id, updateOn = changeType, checkVisibility, validators } = jsonField;
         const builderId = this.builder.id;
         this.addChangeAction(changeType, jsonField, builderField);
         this.pushCalculators(jsonField, [{
@@ -33,9 +31,9 @@ export class FormExtension extends BasicExtension {
                     action: this.bindCalculatorAction(this.createVisibility.bind(this, jsonField)),
                     dependents: { type: CHECK_VISIBILITY, fieldId: id }
                 }] : [],
-            ...validators && !validators.length ? [{
+            ...validators && validators.length ? [{
                     action: this.bindCalculatorAction(this.createValidaity.bind(this)),
-                    dependents: { type: updateOn || changeType, fieldId: id }
+                    dependents: { type: updateOn, fieldId: id }
                 }] : []]);
     }
     addChangeAction(changeType, jsonField, builderField) {
@@ -65,8 +63,8 @@ export class FormExtension extends BasicExtension {
         this.setValueToModel(binding, value);
         (_a = builderField.control) === null || _a === void 0 ? void 0 : _a.patchValue(value);
     }
-    createValidaity({ builderField: { control, instance } }) {
-        return transformObservable(control === null || control === void 0 ? void 0 : control.updateValueAndValidity()).pipe(tap(() => instance.detectChanges()));
+    createValidaity({ builderField: { control } }) {
+        control === null || control === void 0 ? void 0 : control.updateValueAndValidity();
     }
     createVisibility({ binding }, { builderField, actionEvent }) {
         this.changeVisibility(builderField, binding, actionEvent);
@@ -95,15 +93,13 @@ export class FormExtension extends BasicExtension {
     }
     getChangeType(jsonField) {
         const { binding: { changeType = this.defaultChangeType } } = jsonField;
-        return changeType;
+        return jsonField.binding.changeType = changeType;
     }
     getValueToModel(binding) {
-        const value = this.cache.viewModel.getBindValue(binding);
-        return this.covertIntercept.covertToView(this.covertMap.get(binding), value);
+        return this.covertIntercept.toView(this.covertMap.get(binding), this.cache.viewModel.getBindValue(binding));
     }
     setValueToModel(binding, value) {
-        value = this.covertIntercept.covertToModel(this.covertMap.get(binding), value);
-        this.cache.viewModel.setBindValue(binding, value);
+        this.cache.viewModel.setBindValue(binding, this.covertIntercept.toModel(this.covertMap.get(binding), value));
     }
     deleteValueToModel(binding) {
         this.cache.viewModel.deleteBindValue(binding);

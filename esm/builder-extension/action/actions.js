@@ -1,21 +1,16 @@
 import { __decorate, __metadata, __param } from "tslib";
-/* eslint-disable max-lines-per-function */
 import { Inject, Injector } from '@fm/di';
-import { flatMap, groupBy, isEmpty, toArray } from 'lodash';
+import { groupBy, isEmpty, toArray } from 'lodash';
 import { forkJoin, of } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { ACTIONS_CONFIG } from '../../token';
+import { ACTIONS_CONFIG, GET_TYPE } from '../../token';
 import { observableMap, observableTap, toForkJoin, transformObservable } from '../../utility';
 import { serializeAction } from '../basic/basic.extension';
 import { BaseAction } from './base.action';
 let Action = class Action {
-    constructor(injector, actions) {
+    constructor(injector, getType) {
         this.injector = injector;
-        this.actions = flatMap(actions);
-    }
-    getAction(name) {
-        const [{ action = null } = {}] = this.actions.filter(({ name: actionName }) => actionName === name);
-        return action;
+        this.getType = getType;
     }
     getCacheAction(ActionType, context, baseAction) {
         var _a;
@@ -85,7 +80,7 @@ let Action = class Action {
         let executeHandler = handler;
         let action = new BaseAction(this.injector, context);
         let builder = action.builder;
-        if (!executeHandler && (ActionType = this.getAction(actionName))) {
+        if (!executeHandler && (ActionType = this.getType(ACTIONS_CONFIG, actionName))) {
             action = this.getCacheAction(ActionType, context, action);
             executeHandler = action && action[execute].bind(action);
         }
@@ -103,7 +98,7 @@ let Action = class Action {
 };
 Action = __decorate([
     __param(0, Inject(Injector)),
-    __param(1, Inject(ACTIONS_CONFIG)),
-    __metadata("design:paramtypes", [Injector, Array])
+    __param(1, Inject(GET_TYPE)),
+    __metadata("design:paramtypes", [Injector, Object])
 ], Action);
 export { Action };

@@ -1,36 +1,32 @@
 import { __decorate, __metadata, __param } from "tslib";
 import { Inject, Injector } from '@fm/di';
-import { flatMap, isString } from 'lodash';
-import { COVERT_CONFIG } from '../../token';
+import { isString } from 'lodash';
+import { COVERT_CONFIG, GET_TYPE } from '../../token';
+import { BaseCovert } from './base-covert';
 let Covert = class Covert {
-    constructor(injector, coverts) {
+    constructor(injector, getType) {
         this.injector = injector;
-        this.coverts = flatMap(coverts);
+        this.getType = getType;
     }
-    covertToModel(covertType, value) {
-        return (covertType === null || covertType === void 0 ? void 0 : covertType.covertToModel(value)) || value;
+    toModel(covertType, value) {
+        return (covertType === null || covertType === void 0 ? void 0 : covertType.toModel(value)) || value;
     }
-    covertToView(covertType, value) {
-        return (covertType === null || covertType === void 0 ? void 0 : covertType.covertToView(value)) || value;
+    toView(covertType, value) {
+        return (covertType === null || covertType === void 0 ? void 0 : covertType.toView(value)) || value;
     }
     getCovertObj(covertObj, builder, builderField) {
         const name = isString(covertObj) ? covertObj : covertObj === null || covertObj === void 0 ? void 0 : covertObj.name;
-        const [{ covert = null } = {}] = this.coverts.filter(({ name: covertName }) => covertName === name);
+        const covert = covertObj instanceof BaseCovert ? covertObj : this.getType(COVERT_CONFIG, name);
         if (name && !covert) {
             console.info(`covert: ${name}没有被注册!!`);
         }
         const covertType = covert && new covert(builder.injector || this.injector);
-        if (covertType) {
-            covertType.covert = covertObj;
-            covertType.builder = builder;
-            covertType.builderField = builderField;
-        }
-        return covertType;
+        return covertType && covertType.invoke({ covertObj, builder, builderField });
     }
 };
 Covert = __decorate([
     __param(0, Inject(Injector)),
-    __param(1, Inject(COVERT_CONFIG)),
-    __metadata("design:paramtypes", [Injector, Array])
+    __param(1, Inject(GET_TYPE)),
+    __metadata("design:paramtypes", [Injector, Object])
 ], Covert);
 export { Covert };

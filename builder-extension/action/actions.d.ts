@@ -3,9 +3,8 @@ import { Observable } from 'rxjs';
 import { Action as ActionProps, ActionContext, ActionIntercept, ActionInterceptProps, InvokeAction } from './type-api';
 export declare class Action implements ActionIntercept {
     private injector;
-    private actions;
-    constructor(injector: Injector, actions: any[][]);
-    private getAction;
+    private getType;
+    constructor(injector: Injector, getType: any);
     private getCacheAction;
     private createEvent;
     protected getActionContext({ builder, id }?: ActionInterceptProps): ActionContext;

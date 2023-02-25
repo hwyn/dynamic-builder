@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Action = void 0;
 var tslib_1 = require("tslib");
-/* eslint-disable max-lines-per-function */
 var di_1 = require("@fm/di");
 var lodash_1 = require("lodash");
 var rxjs_1 = require("rxjs");
@@ -12,17 +11,10 @@ var utility_1 = require("../../utility");
 var basic_extension_1 = require("../basic/basic.extension");
 var base_action_1 = require("./base.action");
 var Action = /** @class */ (function () {
-    function Action(injector, actions) {
+    function Action(injector, getType) {
         this.injector = injector;
-        this.actions = (0, lodash_1.flatMap)(actions);
+        this.getType = getType;
     }
-    Action.prototype.getAction = function (name) {
-        var _a = this.actions.filter(function (_a) {
-            var actionName = _a.name;
-            return actionName === name;
-        })[0], _b = _a === void 0 ? {} : _a, _c = _b.action, action = _c === void 0 ? null : _c;
-        return action;
-    };
     Action.prototype.getCacheAction = function (ActionType, context, baseAction) {
         var _a;
         var builder = baseAction.builder, _uid = baseAction.actionPropos._uid, builderField = baseAction.builderField;
@@ -138,7 +130,7 @@ var Action = /** @class */ (function () {
         var executeHandler = handler;
         var action = new base_action_1.BaseAction(this.injector, context);
         var builder = action.builder;
-        if (!executeHandler && (ActionType = this.getAction(actionName))) {
+        if (!executeHandler && (ActionType = this.getType(token_1.ACTIONS_CONFIG, actionName))) {
             action = this.getCacheAction(ActionType, context, action);
             executeHandler = action && action[execute].bind(action);
         }
@@ -155,8 +147,8 @@ var Action = /** @class */ (function () {
     };
     Action = tslib_1.__decorate([
         tslib_1.__param(0, (0, di_1.Inject)(di_1.Injector)),
-        tslib_1.__param(1, (0, di_1.Inject)(token_1.ACTIONS_CONFIG)),
-        tslib_1.__metadata("design:paramtypes", [di_1.Injector, Array])
+        tslib_1.__param(1, (0, di_1.Inject)(token_1.GET_TYPE)),
+        tslib_1.__metadata("design:paramtypes", [di_1.Injector, Object])
     ], Action);
     return Action;
 }());

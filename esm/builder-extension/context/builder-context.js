@@ -1,6 +1,6 @@
 import { Injector } from '@fm/di';
 import { BuilderContext as BasicBuilderContext } from '../../builder/builder-context';
-import { ACTION_INTERCEPT, ACTIONS_CONFIG, BUILDER_EXTENSION, COVERT_CONFIG, COVERT_INTERCEPT, FORM_CONTROL, GET_JSON_CONFIG, LAYOUT_ELEMENT, LOAD_BUILDER_CONFIG, VALIDATOR_SERVICE } from '../../token';
+import { ACTION_INTERCEPT, ACTIONS_CONFIG, BUILDER_EXTENSION, COVERT_CONFIG, COVERT_INTERCEPT, FORM_CONTROL, GET_JSON_CONFIG, GET_TYPE, LAYOUT_ELEMENT, LOAD_BUILDER_CONFIG } from '../../token';
 import { Action } from '../action/actions';
 import { ActionExtension } from '../action/actions.extension';
 import { DataSourceExtension } from '../datasource/datasource.extension';
@@ -27,17 +27,18 @@ const defaultExtensions = [
 export class BuilderContext extends BasicBuilderContext {
     constructor(parent) {
         super();
-        this.map = new Map();
+        this.parent = parent;
         this.extensions = [];
-        this.actions = [];
-        this.coverts = [];
-        parent && this.extendsConfig(parent);
+        this.map = new Map();
+        this.typeMap = new Map();
+        this.clsMap = new Map();
     }
-    extendsConfig(parent) {
-        this.registryExtension(parent.extensions);
-        this.uiElements.push(...parent.uiElements);
-        this.actions.push(...parent.actions);
-        this.coverts.push(...parent.coverts);
+    canExtends(injector) {
+        super.registryInjector(injector);
+        this.map.forEach((_factory, token) => this.registryFactory(injector, token));
+        this.clsMap.forEach((cls, token) => injector.set(token, { provide: token, useClass: cls }));
+        this.typeMap.forEach((list, token) => injector.set(token, { provide: token, multi: true, useValue: list }));
+        injector.set(BUILDER_EXTENSION, { provide: BUILDER_EXTENSION, multi: true, useValue: this.extensions });
     }
     useFactory(useFactory) {
         return (injector) => (...args) => useFactory(...args, injector);
@@ -48,46 +49,62 @@ export class BuilderContext extends BasicBuilderContext {
             injector.set(token, { provide: token, useFactory: this.useFactory(proxyFactory), deps: [Injector] });
         }
     }
+    getType(token, name) {
+        var _a;
+        const list = this.typeMap.get(token) || [];
+        for (let i = 0, item = list[i]; i < list.length; i++) {
+            if (item.name === name)
+                return item[item.attr];
+        }
+        return ((_a = this.parent) === null || _a === void 0 ? void 0 : _a.getType(token, name)) || null;
+    }
+    forwardClass(token, cls) {
+        this.clsMap.set(token, cls);
+    }
+    forwardFactory(token, factory) {
+        this.map.set(token, factory);
+    }
+    forwardType(token, name, target, typeName = 'target') {
+        let list = this.typeMap.get(token);
+        if (!list)
+            this.typeMap.set(token, list = []);
+        if (name && target) {
+            if (list.some(({ name: typeName }) => typeName === name)) {
+                console.info(`${typeName}: ${name}已经注册`);
+            }
+            target[`${typeName}Name`] = name;
+            list.push({ name, attr: typeName, [typeName]: target });
+        }
+    }
     forwardGetJsonConfig(getJsonConfig) {
         this.map.set(GET_JSON_CONFIG, getJsonConfig);
     }
     forwardFormControl(factoryFormControl) {
-        const proxyFactory = (value, options, injector) => {
-            var _a;
-            return factoryFormControl(value, (_a = injector.get(VALIDATOR_SERVICE)) === null || _a === void 0 ? void 0 : _a.getValidators(options), injector);
-        };
-        this.map.set(FORM_CONTROL, proxyFactory);
+        this.map.set(FORM_CONTROL, factoryFormControl);
     }
     forwardBuilderLayout(createElement) {
         this.map.set(LAYOUT_ELEMENT, createElement);
     }
-    forwardAction(name, action) {
-        if (this.actions.some(({ name: actionName }) => actionName === name)) {
-            console.info(`action: ${name}已经注册过!!!!`);
-        }
-        this.actions.push({ name, action });
+    forwardAction(name, action, options) {
+        Object.assign(action, options);
+        this.forwardType(ACTIONS_CONFIG, name, action, 'action');
     }
     forwardCovert(name, covert) {
-        if (this.actions.some(({ name: covertName }) => covertName === name)) {
-            console.info(`covert: ${name}已经注册过!!!!`);
-        }
-        this.coverts.push({ name, covert });
+        this.forwardType(COVERT_CONFIG, name, covert, 'covert');
     }
     registryExtension(extensions) {
         this.extensions.push(...extensions);
     }
     registryInjector(injector) {
-        super.registryInjector(injector);
-        this.registryFactory(injector, GET_JSON_CONFIG);
-        this.registryFactory(injector, FORM_CONTROL);
-        this.registryFactory(injector, LAYOUT_ELEMENT);
-        injector.set(ACTION_INTERCEPT, { provide: ACTION_INTERCEPT, useClass: Action });
-        injector.set(COVERT_INTERCEPT, { provide: COVERT_INTERCEPT, useClass: Covert });
-        injector.set(ACTIONS_CONFIG, { provide: ACTIONS_CONFIG, multi: true, useValue: this.actions });
-        injector.set(COVERT_CONFIG, { provide: COVERT_CONFIG, multi: true, useValue: this.coverts });
+        var _a;
         injector.set(LOAD_BUILDER_CONFIG, { provide: LOAD_BUILDER_CONFIG, useValue: ReadConfigExtension });
         injector.set(BUILDER_EXTENSION, { provide: BUILDER_EXTENSION, multi: true, useValue: defaultExtensions });
-        injector.set(BUILDER_EXTENSION, { provide: BUILDER_EXTENSION, multi: true, useValue: this.extensions });
+        (_a = this.parent) === null || _a === void 0 ? void 0 : _a.canExtends(injector);
+        injector.set(BuilderContext, { provide: BuilderContext, useValue: this });
+        injector.set(GET_TYPE, { provide: GET_TYPE, useValue: this.getType.bind(this) });
+        injector.set(ACTION_INTERCEPT, { provide: ACTION_INTERCEPT, useClass: Action });
+        injector.set(COVERT_INTERCEPT, { provide: COVERT_INTERCEPT, useClass: Covert });
+        this.canExtends(injector);
     }
 }
 export const useBuilderContext = (parent) => new BuilderContext(parent);

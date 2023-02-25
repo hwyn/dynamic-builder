@@ -32,19 +32,20 @@ var BuilderContext = /** @class */ (function (_super) {
     tslib_1.__extends(BuilderContext, _super);
     function BuilderContext(parent) {
         var _this = _super.call(this) || this;
-        _this.map = new Map();
+        _this.parent = parent;
         _this.extensions = [];
-        _this.actions = [];
-        _this.coverts = [];
-        parent && _this.extendsConfig(parent);
+        _this.map = new Map();
+        _this.typeMap = new Map();
+        _this.clsMap = new Map();
         return _this;
     }
-    BuilderContext.prototype.extendsConfig = function (parent) {
-        var _a, _b, _c;
-        this.registryExtension(parent.extensions);
-        (_a = this.uiElements).push.apply(_a, parent.uiElements);
-        (_b = this.actions).push.apply(_b, parent.actions);
-        (_c = this.coverts).push.apply(_c, parent.coverts);
+    BuilderContext.prototype.canExtends = function (injector) {
+        var _this = this;
+        _super.prototype.registryInjector.call(this, injector);
+        this.map.forEach(function (_factory, token) { return _this.registryFactory(injector, token); });
+        this.clsMap.forEach(function (cls, token) { return injector.set(token, { provide: token, useClass: cls }); });
+        this.typeMap.forEach(function (list, token) { return injector.set(token, { provide: token, multi: true, useValue: list }); });
+        injector.set(token_1.BUILDER_EXTENSION, { provide: token_1.BUILDER_EXTENSION, multi: true, useValue: this.extensions });
     };
     BuilderContext.prototype.useFactory = function (useFactory) {
         return function (injector) { return function () {
@@ -61,53 +62,68 @@ var BuilderContext = /** @class */ (function (_super) {
             injector.set(token, { provide: token, useFactory: this.useFactory(proxyFactory), deps: [di_1.Injector] });
         }
     };
+    BuilderContext.prototype.getType = function (token, name) {
+        var _a;
+        var list = this.typeMap.get(token) || [];
+        for (var i = 0, item = list[i]; i < list.length; i++) {
+            if (item.name === name)
+                return item[item.attr];
+        }
+        return ((_a = this.parent) === null || _a === void 0 ? void 0 : _a.getType(token, name)) || null;
+    };
+    BuilderContext.prototype.forwardClass = function (token, cls) {
+        this.clsMap.set(token, cls);
+    };
+    BuilderContext.prototype.forwardFactory = function (token, factory) {
+        this.map.set(token, factory);
+    };
+    BuilderContext.prototype.forwardType = function (token, name, target, typeName) {
+        var _a;
+        if (typeName === void 0) { typeName = 'target'; }
+        var list = this.typeMap.get(token);
+        if (!list)
+            this.typeMap.set(token, list = []);
+        if (name && target) {
+            if (list.some(function (_a) {
+                var typeName = _a.name;
+                return typeName === name;
+            })) {
+                console.info("".concat(typeName, ": ").concat(name, "\u5DF2\u7ECF\u6CE8\u518C"));
+            }
+            target["".concat(typeName, "Name")] = name;
+            list.push((_a = { name: name, attr: typeName }, _a[typeName] = target, _a));
+        }
+    };
     BuilderContext.prototype.forwardGetJsonConfig = function (getJsonConfig) {
         this.map.set(token_1.GET_JSON_CONFIG, getJsonConfig);
     };
     BuilderContext.prototype.forwardFormControl = function (factoryFormControl) {
-        var proxyFactory = function (value, options, injector) {
-            var _a;
-            return factoryFormControl(value, (_a = injector.get(token_1.VALIDATOR_SERVICE)) === null || _a === void 0 ? void 0 : _a.getValidators(options), injector);
-        };
-        this.map.set(token_1.FORM_CONTROL, proxyFactory);
+        this.map.set(token_1.FORM_CONTROL, factoryFormControl);
     };
     BuilderContext.prototype.forwardBuilderLayout = function (createElement) {
         this.map.set(token_1.LAYOUT_ELEMENT, createElement);
     };
-    BuilderContext.prototype.forwardAction = function (name, action) {
-        if (this.actions.some(function (_a) {
-            var actionName = _a.name;
-            return actionName === name;
-        })) {
-            console.info("action: ".concat(name, "\u5DF2\u7ECF\u6CE8\u518C\u8FC7!!!!"));
-        }
-        this.actions.push({ name: name, action: action });
+    BuilderContext.prototype.forwardAction = function (name, action, options) {
+        Object.assign(action, options);
+        this.forwardType(token_1.ACTIONS_CONFIG, name, action, 'action');
     };
     BuilderContext.prototype.forwardCovert = function (name, covert) {
-        if (this.actions.some(function (_a) {
-            var covertName = _a.name;
-            return covertName === name;
-        })) {
-            console.info("covert: ".concat(name, "\u5DF2\u7ECF\u6CE8\u518C\u8FC7!!!!"));
-        }
-        this.coverts.push({ name: name, covert: covert });
+        this.forwardType(token_1.COVERT_CONFIG, name, covert, 'covert');
     };
     BuilderContext.prototype.registryExtension = function (extensions) {
         var _a;
         (_a = this.extensions).push.apply(_a, extensions);
     };
     BuilderContext.prototype.registryInjector = function (injector) {
-        _super.prototype.registryInjector.call(this, injector);
-        this.registryFactory(injector, token_1.GET_JSON_CONFIG);
-        this.registryFactory(injector, token_1.FORM_CONTROL);
-        this.registryFactory(injector, token_1.LAYOUT_ELEMENT);
-        injector.set(token_1.ACTION_INTERCEPT, { provide: token_1.ACTION_INTERCEPT, useClass: actions_1.Action });
-        injector.set(token_1.COVERT_INTERCEPT, { provide: token_1.COVERT_INTERCEPT, useClass: covert_1.Covert });
-        injector.set(token_1.ACTIONS_CONFIG, { provide: token_1.ACTIONS_CONFIG, multi: true, useValue: this.actions });
-        injector.set(token_1.COVERT_CONFIG, { provide: token_1.COVERT_CONFIG, multi: true, useValue: this.coverts });
+        var _a;
         injector.set(token_1.LOAD_BUILDER_CONFIG, { provide: token_1.LOAD_BUILDER_CONFIG, useValue: read_config_extension_1.ReadConfigExtension });
         injector.set(token_1.BUILDER_EXTENSION, { provide: token_1.BUILDER_EXTENSION, multi: true, useValue: defaultExtensions });
-        injector.set(token_1.BUILDER_EXTENSION, { provide: token_1.BUILDER_EXTENSION, multi: true, useValue: this.extensions });
+        (_a = this.parent) === null || _a === void 0 ? void 0 : _a.canExtends(injector);
+        injector.set(BuilderContext, { provide: BuilderContext, useValue: this });
+        injector.set(token_1.GET_TYPE, { provide: token_1.GET_TYPE, useValue: this.getType.bind(this) });
+        injector.set(token_1.ACTION_INTERCEPT, { provide: token_1.ACTION_INTERCEPT, useClass: actions_1.Action });
+        injector.set(token_1.COVERT_INTERCEPT, { provide: token_1.COVERT_INTERCEPT, useClass: covert_1.Covert });
+        this.canExtends(injector);
     };
     return BuilderContext;
 }(builder_context_1.BuilderContext));

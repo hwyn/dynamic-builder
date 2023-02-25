@@ -1,25 +1,17 @@
 import { __assign, __decorate, __metadata, __param, __spreadArray } from "tslib";
-/* eslint-disable max-lines-per-function */
 import { Inject, Injector } from '@fm/di';
-import { flatMap, groupBy, isEmpty, toArray } from 'lodash';
+import { groupBy, isEmpty, toArray } from 'lodash';
 import { forkJoin, of } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { ACTIONS_CONFIG } from '../../token';
+import { ACTIONS_CONFIG, GET_TYPE } from '../../token';
 import { observableMap, observableTap, toForkJoin, transformObservable } from '../../utility';
 import { serializeAction } from '../basic/basic.extension';
 import { BaseAction } from './base.action';
 var Action = /** @class */ (function () {
-    function Action(injector, actions) {
+    function Action(injector, getType) {
         this.injector = injector;
-        this.actions = flatMap(actions);
+        this.getType = getType;
     }
-    Action.prototype.getAction = function (name) {
-        var _a = this.actions.filter(function (_a) {
-            var actionName = _a.name;
-            return actionName === name;
-        })[0], _b = _a === void 0 ? {} : _a, _c = _b.action, action = _c === void 0 ? null : _c;
-        return action;
-    };
     Action.prototype.getCacheAction = function (ActionType, context, baseAction) {
         var _a;
         var builder = baseAction.builder, _uid = baseAction.actionPropos._uid, builderField = baseAction.builderField;
@@ -135,7 +127,7 @@ var Action = /** @class */ (function () {
         var executeHandler = handler;
         var action = new BaseAction(this.injector, context);
         var builder = action.builder;
-        if (!executeHandler && (ActionType = this.getAction(actionName))) {
+        if (!executeHandler && (ActionType = this.getType(ACTIONS_CONFIG, actionName))) {
             action = this.getCacheAction(ActionType, context, action);
             executeHandler = action && action[execute].bind(action);
         }
@@ -152,8 +144,8 @@ var Action = /** @class */ (function () {
     };
     Action = __decorate([
         __param(0, Inject(Injector)),
-        __param(1, Inject(ACTIONS_CONFIG)),
-        __metadata("design:paramtypes", [Injector, Array])
+        __param(1, Inject(GET_TYPE)),
+        __metadata("design:paramtypes", [Injector, Object])
     ], Action);
     return Action;
 }());
