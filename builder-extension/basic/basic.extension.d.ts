@@ -27,7 +27,7 @@ export declare abstract class BasicExtension {
     protected isBuildField(props: any): boolean;
     protected cloneDeepPlain<T>(value: T): T;
     protected serializeCalculatorConfig(jsonCalculator: any, actionType: string, defaultDependents: CalculatorsDependent | CalculatorsDependent[]): any;
-    protected bindCalculatorAction(handler: (baseAction: BaseAction) => any): Action;
+    protected bindCalculatorAction(handler: (baseAction: BaseAction) => any, type?: string): Action;
     protected pushCalculators(fieldConfig: BuilderFieldExtensions, calculator: Calculators | Calculators[]): void;
     protected pushAction(fieldConfig: BuilderFieldExtensions, actions: Action | Action[]): void;
     protected toArray<T = any>(obj: any): T[];

@@ -42,7 +42,10 @@ export class FormExtension extends BasicExtension {
         const actionIndex = actions.findIndex(({ type }) => type === changeType);
         const changeAfter = this.bindCalculatorAction(this.detectChanges.bind(this, id));
         const replaceAction = { type: changeType, after: changeAfter };
-        const bindingViewModel = Object.assign(Object.assign({}, this.bindCalculatorAction(this.createChange.bind(this, jsonField))), actions[actionIndex] ? { after: this.bindCalculatorAction(actions[actionIndex]) } : {});
+        const bindingViewModel = this.bindCalculatorAction(this.createChange.bind(this, jsonField));
+        if (actions[actionIndex]) {
+            bindingViewModel.after = this.bindCalculatorAction(actions[actionIndex]);
+        }
         jsonField.actions = actions;
         replaceAction.before = intercept ? Object.assign(Object.assign({}, this.bindCalculatorAction(intercept)), { after: bindingViewModel }) : bindingViewModel;
         actionIndex === -1 ? actions.push(replaceAction) : actions[actionIndex] = replaceAction;

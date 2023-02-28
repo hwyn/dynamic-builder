@@ -1,8 +1,7 @@
 import { BuilderModelExtensions, GridType } from '../type-api';
 export declare class Grid {
-    private builder;
     private config;
-    constructor(builder: BuilderModelExtensions, json: any);
+    constructor(json: any);
     private serializationConfig;
-    getViewGrip(props: any): GridType;
+    getViewGrip(builder: BuilderModelExtensions, props: any): GridType;
 }

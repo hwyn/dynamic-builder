@@ -17,16 +17,17 @@ export class ViewModelExtension extends BasicExtension {
             this.createViewModel(hasLoadEvent ? actionEvent : ((_a = this.builder.parent) === null || _a === void 0 ? void 0 : _a.$$cache.viewModel) || {});
             return actionEvent;
         };
-        return { type: LOAD_VIEW_MODEL, handler };
+        return this.bindCalculatorAction(handler, LOAD_VIEW_MODEL);
     }
     createViewModel(store) {
-        this.defineProperty(this.cache, VIEW_MODEL, store instanceof BaseView ? store : new BaseView(this.injector, store));
-        this.definePropertyGet(this.builder, VIEW_MODEL, () => this.cache.viewModel.model);
+        const viewModel = store instanceof BaseView ? store : new BaseView(this.injector, store);
+        this.defineProperty(this.cache, VIEW_MODEL, viewModel);
+        this.definePropertyGet(this.builder, VIEW_MODEL, () => viewModel.model);
     }
     createNotifyEvent() {
         this.pushActionToMethod([
-            { type: NOTIFY_MODEL_CHANGE, handler: this.notifyHandler.bind(this) },
-            { type: REFRESH_DATA, handler: this.refresHandler.bind(this) }
+            { type: NOTIFY_MODEL_CHANGE, handler: this.notifyHandler },
+            { type: REFRESH_DATA, handler: this.refresHandler }
         ]);
     }
     notifyHandler({ builder, actionEvent }, options = { hasSelf: true }) {
@@ -35,9 +36,9 @@ export class ViewModelExtension extends BasicExtension {
         }
         return actionEvent;
     }
-    refresHandler({ actionEvent }) {
+    refresHandler({ actionEvent, builder }) {
         var _a;
-        (_a = this.cache) === null || _a === void 0 ? void 0 : _a.viewModel.refreshData(actionEvent);
+        (_a = builder.$$cache) === null || _a === void 0 ? void 0 : _a.viewModel.refreshData(actionEvent);
     }
     destory() {
         this.unDefineProperty(this.cache, [VIEW_MODEL]);

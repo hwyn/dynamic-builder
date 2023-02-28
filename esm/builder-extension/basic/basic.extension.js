@@ -51,15 +51,19 @@ export class BasicExtension {
         calculatorConfig.dependents = dependents;
         return calculatorConfig;
     }
-    bindCalculatorAction(handler) {
+    bindCalculatorAction(handler, type = CALCULATOR) {
         const action = this.serializeAction(handler);
-        action.type = CALCULATOR;
-        this.cache.bindFn.push(() => delete action.handler);
+        action.type = type;
+        this.cache.bindFn.push(function () { delete action.handler; });
         return action;
     }
     pushCalculators(fieldConfig, calculator) {
         fieldConfig.calculators = this.toArray(fieldConfig.calculators || []);
-        fieldConfig.calculators.push(...this.toArray(calculator));
+        const pushCalculators = this.toArray(calculator);
+        fieldConfig.calculators.push(...pushCalculators);
+        this.cache.bindFn.push(function () {
+            pushCalculators.forEach((c) => fieldConfig.calculators.splice(fieldConfig.calculators.indexOf(c), 1));
+        });
     }
     pushAction(fieldConfig, actions) {
         fieldConfig.actions = this.toArray(fieldConfig.actions || []);

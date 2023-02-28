@@ -22,7 +22,7 @@ var GridExtension = /** @class */ (function (_super) {
         });
     };
     GridExtension.prototype.createLoadGrid = function () {
-        this.defineProperty(this.cache, calculator_constant_1.GRID, new grid_1.Grid(this.builder, this.json));
+        this.defineProperty(this.cache, calculator_constant_1.GRID, new grid_1.Grid(this.json));
         this.layoutBuildFields = this.mapFields(this.jsonFields, this.addFieldLayout.bind(this, {}));
         this.defineProperty(this.builder, calculator_constant_1.ELEMENT, this.getLayoutElement(this.cache.grid, this.builder));
     };

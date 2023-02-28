@@ -82,6 +82,7 @@ function destory() {
                     (_a = _this.privateExtension) === null || _a === void 0 ? void 0 : _a.splice(0);
                     _this.parent && removeChild.call(_this.parent, _this);
                     cacheObj.bindFn.forEach(function (fn) { return fn(); });
+                    cacheObj.bindFn.splice(0);
                 },
                 error: function (e) {
                     console.error(e);

@@ -19,7 +19,7 @@ var GridExtension = /** @class */ (function (_super) {
         });
     };
     GridExtension.prototype.createLoadGrid = function () {
-        this.defineProperty(this.cache, GRID, new Grid(this.builder, this.json));
+        this.defineProperty(this.cache, GRID, new Grid(this.json));
         this.layoutBuildFields = this.mapFields(this.jsonFields, this.addFieldLayout.bind(this, {}));
         this.defineProperty(this.builder, ELEMENT, this.getLayoutElement(this.cache.grid, this.builder));
     };

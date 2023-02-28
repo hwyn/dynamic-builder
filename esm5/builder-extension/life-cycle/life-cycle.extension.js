@@ -93,10 +93,10 @@ var LifeCycleExtension = /** @class */ (function (_super) {
     LifeCycleExtension.prototype.createCalculators = function () {
         var _this = this;
         var fields = __spreadArray(__spreadArray([], this.jsonFields, true), [this.json], false);
-        var fieldsCalculators = this.cloneDeepPlain(fields.filter(function (_a) {
+        var fieldsCalculators = fields.filter(function (_a) {
             var calculators = _a.calculators;
             return !isEmpty(calculators);
-        }));
+        });
         this.calculators = [];
         fieldsCalculators.forEach(function (_a) {
             var _b;

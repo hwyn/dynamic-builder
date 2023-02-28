@@ -2,6 +2,41 @@ import { __extends } from "tslib";
 import { isEmpty, isUndefined } from 'lodash';
 import { BasicExtension } from '../basic/basic.extension';
 import { CHANGE, CHECK_VISIBILITY, LOAD, LOAD_ACTION, REFRESH_VISIBILITY } from '../constant/calculator.constant';
+function filterNoneCalculators(originCalculators, hiddenList) {
+    return originCalculators.filter(function (_a) {
+        var targetId = _a.targetId, type = _a.action.type, dType = _a.dependent.type;
+        return !hiddenList.includes(targetId) || [type, dType].includes(CHECK_VISIBILITY);
+    });
+}
+function getParentVisibility(builder) {
+    var _a;
+    var id = builder.id, parent = builder.parent;
+    return parent && ((_a = parent.getFieldById(id)) === null || _a === void 0 ? void 0 : _a.visibility);
+}
+export function createCheckVisibility() {
+    var cache = {};
+    return function (_a) {
+        var builder = _a.builder;
+        var ids = cache.ids;
+        var $$cache = builder.$$cache;
+        var fields = $$cache.fields, ready = $$cache.ready;
+        var hiddenList = fields.filter(function (_a) {
+            var visibility = _a.visibility;
+            return !builder.showField(visibility);
+        }).map(function (_a) {
+            var id = _a.id;
+            return id;
+        });
+        var newIds = hiddenList.join('');
+        if (ids !== newIds && ready) {
+            cache.ids = newIds;
+            builder.calculators = filterNoneCalculators($$cache.originCalculators, hiddenList);
+            $$cache.nonSelfBuilders.forEach(function (nonBuild) {
+                nonBuild.nonSelfCalculators = filterNoneCalculators(nonBuild.$$cache.originNonSelfCalculators, hiddenList);
+            });
+        }
+    };
+}
 var CheckVisibilityExtension = /** @class */ (function (_super) {
     __extends(CheckVisibilityExtension, _super);
     function CheckVisibilityExtension() {
@@ -11,12 +46,12 @@ var CheckVisibilityExtension = /** @class */ (function (_super) {
         var visibliityList = this.jsonFields.filter(this.checkNeedOrDefaultVisibility.bind(this));
         this.pushActionToMethod({ type: REFRESH_VISIBILITY });
         if (!isEmpty(visibliityList)) {
-            this.builderFields = this.mapFields(visibliityList, this.addFieldCalculators.bind(this));
+            this.eachFields(visibliityList, this.addFieldCalculators.bind(this));
             this.pushCalculators(this.json, [{
-                    action: this.bindCalculatorAction(this.checkVisibility.bind(this, {})),
+                    action: this.bindCalculatorAction(createCheckVisibility()),
                     dependents: this.createDependents([LOAD, CHANGE])
                 }, {
-                    action: this.bindCalculatorAction(this.removeOnEvent.bind(this)),
+                    action: this.bindCalculatorAction(this.removeOnEvent),
                     dependents: { type: LOAD_ACTION, fieldId: this.builder.id }
                 }]);
         }
@@ -28,7 +63,7 @@ var CheckVisibilityExtension = /** @class */ (function (_super) {
     CheckVisibilityExtension.prototype.addFieldCalculators = function (_a) {
         var jsonField = _a[0], field = _a[1].field;
         var _b = this.serializeCheckVisibilityConfig(jsonField), action = _b.action, dependents = _b.dependents;
-        action.after = this.bindCalculatorAction(this.checkVisibilityAfter.bind(this));
+        action.after = this.bindCalculatorAction(this.checkVisibilityAfter);
         this.pushCalculators(jsonField, [{ action: action, dependents: dependents }]);
         delete field.checkVisibility;
     };
@@ -43,51 +78,23 @@ var CheckVisibilityExtension = /** @class */ (function (_super) {
             builder.ready && builder.detectChanges();
         }
     };
-    CheckVisibilityExtension.prototype.removeOnEvent = function () {
-        this.builderFields.forEach(function (_a) {
+    CheckVisibilityExtension.prototype.removeOnEvent = function (_a) {
+        var builder = _a.builder;
+        builder.$$cache.fields.forEach(function (_a) {
             var _b = _a.events, events = _b === void 0 ? {} : _b;
             return delete events.onCheckVisibility;
         });
     };
-    CheckVisibilityExtension.prototype.checkVisibility = function (cache) {
-        var _this = this;
-        var ids = cache.ids;
-        var _a = this.cache, fields = _a.fields, ready = _a.ready;
-        var hiddenList = fields.filter(function (_a) {
-            var visibility = _a.visibility;
-            return !_this.builder.showField(visibility);
-        }).map(function (_a) {
-            var id = _a.id;
-            return id;
-        });
-        var newIds = hiddenList.join('');
-        if (ids !== newIds && ready) {
-            cache.ids = newIds;
-            this.builder.calculators = this.filterNoneCalculators(this.cache.originCalculators, hiddenList);
-            this.builder.$$cache.nonSelfBuilders.forEach(function (nonBuild) {
-                nonBuild.nonSelfCalculators = _this.filterNoneCalculators(nonBuild.$$cache.originNonSelfCalculators, hiddenList);
-            });
-        }
-    };
-    CheckVisibilityExtension.prototype.filterNoneCalculators = function (originCalculators, hiddenList) {
-        return originCalculators.filter(function (_a) {
-            var targetId = _a.targetId, type = _a.action.type, dType = _a.dependent.type;
-            return !hiddenList.includes(targetId) || [type, dType].includes(CHECK_VISIBILITY);
-        });
-    };
     CheckVisibilityExtension.prototype.checkNeedOrDefaultVisibility = function (jsonField) {
-        var _this = this;
         var visibility = jsonField.visibility, checkVisibility = jsonField.checkVisibility;
-        var isCheck = !isUndefined(checkVisibility || visibility) || this.getParentVisibility();
+        var isCheck = !isUndefined(checkVisibility || visibility) || getParentVisibility(this.builder);
         if (isCheck && !checkVisibility) {
-            jsonField.checkVisibility = function () { return visibility || _this.getParentVisibility(); };
+            jsonField.checkVisibility = function (_a) {
+                var builder = _a.builder;
+                return visibility || getParentVisibility(builder);
+            };
         }
         return isCheck;
-    };
-    CheckVisibilityExtension.prototype.getParentVisibility = function () {
-        var _a;
-        var _b = this.builder, id = _b.id, parent = _b.parent;
-        return parent && ((_a = parent.getFieldById(id)) === null || _a === void 0 ? void 0 : _a.visibility);
     };
     CheckVisibilityExtension.prototype.destory = function () {
         this.unDefineProperty(this.builder, [REFRESH_VISIBILITY]);

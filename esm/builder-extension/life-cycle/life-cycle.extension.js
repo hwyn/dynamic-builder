@@ -81,7 +81,7 @@ export class LifeCycleExtension extends BasicExtension {
     }
     createCalculators() {
         const fields = [...this.jsonFields, this.json];
-        const fieldsCalculators = this.cloneDeepPlain(fields.filter(({ calculators }) => !isEmpty(calculators)));
+        const fieldsCalculators = fields.filter(({ calculators }) => !isEmpty(calculators));
         this.calculators = [];
         fieldsCalculators.forEach(({ id: targetId, calculators = [] }) => {
             var _a;

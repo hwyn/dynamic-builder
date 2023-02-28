@@ -53,7 +53,10 @@ var FormExtension = /** @class */ (function (_super) {
         });
         var changeAfter = this.bindCalculatorAction(this.detectChanges.bind(this, id));
         var replaceAction = { type: changeType, after: changeAfter };
-        var bindingViewModel = tslib_1.__assign(tslib_1.__assign({}, this.bindCalculatorAction(this.createChange.bind(this, jsonField))), actions[actionIndex] ? { after: this.bindCalculatorAction(actions[actionIndex]) } : {});
+        var bindingViewModel = this.bindCalculatorAction(this.createChange.bind(this, jsonField));
+        if (actions[actionIndex]) {
+            bindingViewModel.after = this.bindCalculatorAction(actions[actionIndex]);
+        }
         jsonField.actions = actions;
         replaceAction.before = intercept ? tslib_1.__assign(tslib_1.__assign({}, this.bindCalculatorAction(intercept)), { after: bindingViewModel }) : bindingViewModel;
         actionIndex === -1 ? actions.push(replaceAction) : actions[actionIndex] = replaceAction;

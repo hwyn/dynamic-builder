@@ -10,7 +10,7 @@ export class ActionExtension extends BasicExtension {
     extension() {
         const handler = this.eachFields.bind(this, this.jsonFields, this.create.bind(this));
         this.pushCalculators(this.json, {
-            action: { type: LOAD_ACTION, handler },
+            action: this.bindCalculatorAction(handler, LOAD_ACTION),
             dependents: { type: LOAD_VIEW_MODEL, fieldId: this.builder.id }
         });
     }

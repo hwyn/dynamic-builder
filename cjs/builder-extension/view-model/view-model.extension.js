@@ -30,17 +30,17 @@ var ViewModelExtension = /** @class */ (function (_super) {
             _this.createViewModel(hasLoadEvent ? actionEvent : ((_b = _this.builder.parent) === null || _b === void 0 ? void 0 : _b.$$cache.viewModel) || {});
             return actionEvent;
         };
-        return { type: calculator_constant_1.LOAD_VIEW_MODEL, handler: handler };
+        return this.bindCalculatorAction(handler, calculator_constant_1.LOAD_VIEW_MODEL);
     };
     ViewModelExtension.prototype.createViewModel = function (store) {
-        var _this = this;
-        this.defineProperty(this.cache, calculator_constant_1.VIEW_MODEL, store instanceof base_view_1.BaseView ? store : new base_view_1.BaseView(this.injector, store));
-        this.definePropertyGet(this.builder, calculator_constant_1.VIEW_MODEL, function () { return _this.cache.viewModel.model; });
+        var viewModel = store instanceof base_view_1.BaseView ? store : new base_view_1.BaseView(this.injector, store);
+        this.defineProperty(this.cache, calculator_constant_1.VIEW_MODEL, viewModel);
+        this.definePropertyGet(this.builder, calculator_constant_1.VIEW_MODEL, function () { return viewModel.model; });
     };
     ViewModelExtension.prototype.createNotifyEvent = function () {
         this.pushActionToMethod([
-            { type: calculator_constant_1.NOTIFY_MODEL_CHANGE, handler: this.notifyHandler.bind(this) },
-            { type: calculator_constant_1.REFRESH_DATA, handler: this.refresHandler.bind(this) }
+            { type: calculator_constant_1.NOTIFY_MODEL_CHANGE, handler: this.notifyHandler },
+            { type: calculator_constant_1.REFRESH_DATA, handler: this.refresHandler }
         ]);
     };
     ViewModelExtension.prototype.notifyHandler = function (_a, options) {
@@ -53,8 +53,8 @@ var ViewModelExtension = /** @class */ (function (_super) {
     };
     ViewModelExtension.prototype.refresHandler = function (_a) {
         var _b;
-        var actionEvent = _a.actionEvent;
-        (_b = this.cache) === null || _b === void 0 ? void 0 : _b.viewModel.refreshData(actionEvent);
+        var actionEvent = _a.actionEvent, builder = _a.builder;
+        (_b = builder.$$cache) === null || _b === void 0 ? void 0 : _b.viewModel.refreshData(actionEvent);
     };
     ViewModelExtension.prototype.destory = function () {
         this.unDefineProperty(this.cache, [calculator_constant_1.VIEW_MODEL]);

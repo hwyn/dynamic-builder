@@ -13,7 +13,7 @@ var ActionExtension = /** @class */ (function (_super) {
     ActionExtension.prototype.extension = function () {
         var handler = this.eachFields.bind(this, this.jsonFields, this.create.bind(this));
         this.pushCalculators(this.json, {
-            action: { type: LOAD_ACTION, handler: handler },
+            action: this.bindCalculatorAction(handler, LOAD_ACTION),
             dependents: { type: LOAD_VIEW_MODEL, fieldId: this.builder.id }
         });
     };

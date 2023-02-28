@@ -16,7 +16,7 @@ var ActionExtension = /** @class */ (function (_super) {
     ActionExtension.prototype.extension = function () {
         var handler = this.eachFields.bind(this, this.jsonFields, this.create.bind(this));
         this.pushCalculators(this.json, {
-            action: { type: calculator_constant_1.LOAD_ACTION, handler: handler },
+            action: this.bindCalculatorAction(handler, calculator_constant_1.LOAD_ACTION),
             dependents: { type: calculator_constant_1.LOAD_VIEW_MODEL, fieldId: this.builder.id }
         });
     };

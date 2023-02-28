@@ -54,16 +54,21 @@ var BasicExtension = /** @class */ (function () {
         calculatorConfig.dependents = dependents;
         return calculatorConfig;
     };
-    BasicExtension.prototype.bindCalculatorAction = function (handler) {
+    BasicExtension.prototype.bindCalculatorAction = function (handler, type) {
+        if (type === void 0) { type = CALCULATOR; }
         var action = this.serializeAction(handler);
-        action.type = CALCULATOR;
-        this.cache.bindFn.push(function () { return delete action.handler; });
+        action.type = type;
+        this.cache.bindFn.push(function () { delete action.handler; });
         return action;
     };
     BasicExtension.prototype.pushCalculators = function (fieldConfig, calculator) {
         var _a;
         fieldConfig.calculators = this.toArray(fieldConfig.calculators || []);
-        (_a = fieldConfig.calculators).push.apply(_a, this.toArray(calculator));
+        var pushCalculators = this.toArray(calculator);
+        (_a = fieldConfig.calculators).push.apply(_a, pushCalculators);
+        this.cache.bindFn.push(function () {
+            pushCalculators.forEach(function (c) { return fieldConfig.calculators.splice(fieldConfig.calculators.indexOf(c), 1); });
+        });
     };
     BasicExtension.prototype.pushAction = function (fieldConfig, actions) {
         fieldConfig.actions = this.toArray(fieldConfig.actions || []);
