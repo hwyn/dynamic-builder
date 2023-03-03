@@ -62,7 +62,7 @@ var InstanceExtension = /** @class */ (function (_super) {
     };
     InstanceExtension.prototype.addInstance = function (_a) {
         var jsonField = _a[0], builderField = _a[1];
-        var destory = { type: calculator_constant_1.DESTORY, after: this.bindCalculatorAction(this.instanceDestory.bind(this)) };
+        var destory = { type: calculator_constant_1.DESTORY, after: this.bindCalculatorAction(this.instanceDestory) };
         var instance = InstanceExtension.createInstance();
         this.pushAction(jsonField, [destory, { type: calculator_constant_1.MOUNTED }]);
         this.defineProperty(builderField, calculator_constant_1.INSTANCE, instance);
@@ -82,15 +82,16 @@ var InstanceExtension = /** @class */ (function (_super) {
             return _this.builder.showField(visibility);
         });
         if (!(0, lodash_1.isEmpty)(showFields)) {
+            var subscriptions_1 = [];
             return (0, utility_1.toForkJoin)(showFields.map(function (_a) {
                 var id = _a.id, instance = _a.instance;
                 return new rxjs_1.Observable(function (subscribe) {
-                    instance.destory.subscribe(function () {
+                    subscriptions_1.push(instance.destory.subscribe(function () {
                         subscribe.next(id);
                         subscribe.complete();
-                    });
+                    }));
                 });
-            })).pipe((0, utility_1.observableMap)(function () { return (0, utility_1.transformObservable)(_super.prototype.beforeDestory.call(_this)); }));
+            })).pipe((0, rxjs_1.tap)(function () { return subscriptions_1.forEach(function (s) { return s.unsubscribe(); }); }), (0, utility_1.observableMap)(function () { return (0, utility_1.transformObservable)(_super.prototype.beforeDestory.call(_this)); }));
         }
     };
     InstanceExtension.prototype.destory = function () {

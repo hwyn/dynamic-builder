@@ -15,7 +15,8 @@ function groupFieldsToArray(fields) {
     return toArray(groupBy(fields, ({ layout: { row } }) => row));
 }
 export class Grid {
-    constructor(json) {
+    constructor(json, builder) {
+        this.builder = builder;
         this.config = this.serializationConfig(json.grid);
     }
     serializationConfig(gridConfig) {
@@ -29,11 +30,11 @@ export class Grid {
         });
         return Object.assign(Object.assign({ id }, other), { additional: groupAdditional });
     }
-    getViewGrip(builder, props) {
+    getViewGrip(props) {
         const config = cloneDeepPlain(this.config);
         const { additional = [], className = '', style } = config;
         const { className: propsClassName = '', style: propsStyle } = props;
-        const groupLayout = groupByFields(builder.fields);
+        const groupLayout = groupByFields(this.builder.fields);
         config.additional = additional.filter((item, group) => {
             item.fieldRows = groupFieldsToArray(groupLayout[group + 1]);
             return !!item.fieldRows.length;
@@ -45,5 +46,8 @@ export class Grid {
             config.style = Object.assign({}, style, propsStyle);
         }
         return config;
+    }
+    destory() {
+        delete this.builder;
     }
 }

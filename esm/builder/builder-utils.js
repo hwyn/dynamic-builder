@@ -12,7 +12,7 @@ export function init() {
     Object.defineProperty(this, CACHE, withValue(getCacheObj.call(this, {})));
     Object.defineProperties(this, {
         onChange: withValue(() => { }),
-        onDestory: withValue(this.$$cache.destory.bind(this)),
+        onDestory: withValue(() => { var _a; return (_a = this.$$cache) === null || _a === void 0 ? void 0 : _a.destory(); }),
         loadForBuild: withValue((props) => {
             delete this.loadForBuild;
             Object.defineProperty(this, 'privateExtension', withValue(parseExtension(props.privateExtension || [])));
@@ -68,7 +68,6 @@ function destory() {
             transformObservable(this.destory && this.destory.call(this)).pipe(observableMap(() => toForkJoin(beforeDestorys.map((beforeDestory) => beforeDestory && beforeDestory()))), observableMap((destorys) => toForkJoin(destorys.map((destory) => destory && destory())))).subscribe({
                 next: () => {
                     var _a;
-                    cacheObj.ready = false;
                     cacheObj.fields.splice(0);
                     cacheObj.detectChanges.unsubscribe();
                     cacheObj.beforeDestorys.splice(0);
@@ -77,6 +76,7 @@ function destory() {
                     this.parent && removeChild.call(this.parent, this);
                     cacheObj.bindFn.forEach((fn) => fn());
                     cacheObj.bindFn.splice(0);
+                    Object.defineProperties(this, { $$cache: withValue({ ready: false, destoryed: true }), onDestory: withValue(null) });
                 },
                 error: (e) => {
                     console.error(e);

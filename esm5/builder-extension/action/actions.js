@@ -71,11 +71,11 @@ var Action = /** @class */ (function () {
             otherEventParam[_i - 3] = arguments[_i];
         }
         var builder = props.builder, id = props.id;
-        var nonSelfBuilders = builder.$$cache.nonSelfBuilders || [];
+        var nonSelfBuilders = (builder === null || builder === void 0 ? void 0 : builder.$$cache.nonSelfBuilders) || [];
         var calculatorsInvokes = nonSelfBuilders.map(function (nonBuild) {
             return _this.invokeCallCalculators(nonBuild.nonSelfCalculators, actionProps, { builder: nonBuild, id: id });
         });
-        calculatorsInvokes.push(this.invokeCallCalculators(builder.calculators || [], actionProps, props));
+        calculatorsInvokes.push(this.invokeCallCalculators((builder === null || builder === void 0 ? void 0 : builder.calculators) || [], actionProps, props));
         return forkJoin(calculatorsInvokes.map(function (invokeCalculators) { return invokeCalculators.apply(void 0, __spreadArray([value], otherEventParam, false)); }));
     };
     Action.prototype.execute = function (action, props, event) {

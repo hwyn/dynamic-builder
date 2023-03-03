@@ -1,5 +1,5 @@
 import { isEmpty } from 'lodash';
-import { Observable, shareReplay, Subject } from 'rxjs';
+import { Observable, shareReplay, Subject, tap } from 'rxjs';
 import { BuilderModel } from '../../builder/builder-model';
 import { observableMap, toForkJoin, transformObservable } from '../../utility';
 import { BasicExtension } from '../basic/basic.extension';
@@ -52,7 +52,7 @@ export class InstanceExtension extends BasicExtension {
         return { get, set };
     }
     addInstance([jsonField, builderField]) {
-        const destory = { type: DESTORY, after: this.bindCalculatorAction(this.instanceDestory.bind(this)) };
+        const destory = { type: DESTORY, after: this.bindCalculatorAction(this.instanceDestory) };
         const instance = InstanceExtension.createInstance();
         this.pushAction(jsonField, [destory, { type: MOUNTED }]);
         this.defineProperty(builderField, INSTANCE, instance);
@@ -67,12 +67,13 @@ export class InstanceExtension extends BasicExtension {
     beforeDestory() {
         const showFields = this.buildFieldList.filter(({ visibility }) => this.builder.showField(visibility));
         if (!isEmpty(showFields)) {
+            const subscriptions = [];
             return toForkJoin(showFields.map(({ id, instance }) => new Observable((subscribe) => {
-                instance.destory.subscribe(() => {
+                subscriptions.push(instance.destory.subscribe(() => {
                     subscribe.next(id);
                     subscribe.complete();
-                });
-            }))).pipe(observableMap(() => transformObservable(super.beforeDestory())));
+                }));
+            }))).pipe(tap(() => subscriptions.forEach((s) => s.unsubscribe())), observableMap(() => transformObservable(super.beforeDestory())));
         }
     }
     destory() {

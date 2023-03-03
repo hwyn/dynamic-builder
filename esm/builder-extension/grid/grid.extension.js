@@ -16,7 +16,7 @@ export class GridExtension extends BasicExtension {
         });
     }
     createLoadGrid() {
-        this.defineProperty(this.cache, GRID, new Grid(this.json));
+        this.defineProperty(this.cache, GRID, new Grid(this.json, this.builder));
         this.layoutBuildFields = this.mapFields(this.jsonFields, this.addFieldLayout.bind(this, {}));
         this.defineProperty(this.builder, ELEMENT, this.getLayoutElement(this.cache.grid, this.builder));
     }
@@ -29,6 +29,7 @@ export class GridExtension extends BasicExtension {
         delete field.layout;
     }
     destory() {
+        this.cache.grid.destory();
         this.defineProperty(this.cache, GRID, null);
         this.defineProperty(this.builder, ELEMENT, null);
         this.layoutBuildFields.forEach((builderField) => this.defineProperty(builderField, LAYOUT, null));

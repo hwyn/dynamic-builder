@@ -63,7 +63,10 @@ export class CheckVisibilityExtension extends BasicExtension {
         }
     }
     removeOnEvent({ builder }) {
-        builder.$$cache.fields.forEach(({ events = {} }) => delete events.onCheckVisibility);
+        builder.$$cache.fields.forEach((field) => {
+            field.onCheckVisibility = field.events.onCheckVisibility;
+            delete field.events.onCheckVisibility;
+        });
     }
     checkNeedOrDefaultVisibility(jsonField) {
         const { visibility, checkVisibility } = jsonField;

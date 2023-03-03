@@ -146,7 +146,10 @@ var LifeCycleExtension = /** @class */ (function (_super) {
             var _a, _b;
             var parentField = (_a = _this.builder.parent) === null || _a === void 0 ? void 0 : _a.getFieldById(_this.builder.id);
             var instance = (parentField || _this.props).instance;
-            instance && ((_b = instance.destory) === null || _b === void 0 ? void 0 : _b.next(_this.props.id || _this.builder.id));
+            if (instance) {
+                (_b = instance.destory) === null || _b === void 0 ? void 0 : _b.next(_this.props.id || _this.builder.id);
+                !instance.destory && (instance.current = null);
+            }
         }));
     };
     return LifeCycleExtension;

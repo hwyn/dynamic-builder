@@ -1,6 +1,6 @@
 import { __extends } from "tslib";
 import { isEmpty } from 'lodash';
-import { Observable, shareReplay, Subject } from 'rxjs';
+import { Observable, shareReplay, Subject, tap } from 'rxjs';
 import { BuilderModel } from '../../builder/builder-model';
 import { observableMap, toForkJoin, transformObservable } from '../../utility';
 import { BasicExtension } from '../basic/basic.extension';
@@ -59,7 +59,7 @@ var InstanceExtension = /** @class */ (function (_super) {
     };
     InstanceExtension.prototype.addInstance = function (_a) {
         var jsonField = _a[0], builderField = _a[1];
-        var destory = { type: DESTORY, after: this.bindCalculatorAction(this.instanceDestory.bind(this)) };
+        var destory = { type: DESTORY, after: this.bindCalculatorAction(this.instanceDestory) };
         var instance = InstanceExtension.createInstance();
         this.pushAction(jsonField, [destory, { type: MOUNTED }]);
         this.defineProperty(builderField, INSTANCE, instance);
@@ -79,15 +79,16 @@ var InstanceExtension = /** @class */ (function (_super) {
             return _this.builder.showField(visibility);
         });
         if (!isEmpty(showFields)) {
+            var subscriptions_1 = [];
             return toForkJoin(showFields.map(function (_a) {
                 var id = _a.id, instance = _a.instance;
                 return new Observable(function (subscribe) {
-                    instance.destory.subscribe(function () {
+                    subscriptions_1.push(instance.destory.subscribe(function () {
                         subscribe.next(id);
                         subscribe.complete();
-                    });
+                    }));
                 });
-            })).pipe(observableMap(function () { return transformObservable(_super.prototype.beforeDestory.call(_this)); }));
+            })).pipe(tap(function () { return subscriptions_1.forEach(function (s) { return s.unsubscribe(); }); }), observableMap(function () { return transformObservable(_super.prototype.beforeDestory.call(_this)); }));
         }
     };
     InstanceExtension.prototype.destory = function () {

@@ -119,7 +119,10 @@ export class LifeCycleExtension extends BasicExtension {
             var _a, _b;
             const parentField = (_a = this.builder.parent) === null || _a === void 0 ? void 0 : _a.getFieldById(this.builder.id);
             const instance = (parentField || this.props).instance;
-            instance && ((_b = instance.destory) === null || _b === void 0 ? void 0 : _b.next(this.props.id || this.builder.id));
+            if (instance) {
+                (_b = instance.destory) === null || _b === void 0 ? void 0 : _b.next(this.props.id || this.builder.id);
+                !instance.destory && (instance.current = null);
+            }
         }));
     }
 }

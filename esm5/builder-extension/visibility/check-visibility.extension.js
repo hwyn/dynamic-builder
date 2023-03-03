@@ -80,9 +80,9 @@ var CheckVisibilityExtension = /** @class */ (function (_super) {
     };
     CheckVisibilityExtension.prototype.removeOnEvent = function (_a) {
         var builder = _a.builder;
-        builder.$$cache.fields.forEach(function (_a) {
-            var _b = _a.events, events = _b === void 0 ? {} : _b;
-            return delete events.onCheckVisibility;
+        builder.$$cache.fields.forEach(function (field) {
+            field.onCheckVisibility = field.events.onCheckVisibility;
+            delete field.events.onCheckVisibility;
         });
     };
     CheckVisibilityExtension.prototype.checkNeedOrDefaultVisibility = function (jsonField) {

@@ -33,9 +33,9 @@ var DataSourceExtension = /** @class */ (function (_super) {
         instance.detectChanges();
     };
     DataSourceExtension.prototype.createOnDataSourceConfig = function () {
-        this.builderFields.forEach(function (_a) {
-            var _b = _a.events, events = _b === void 0 ? {} : _b;
-            return delete events.onDataSource;
+        this.builderFields.forEach(function (field) {
+            field.onDataSource = field.events.onDataSource;
+            delete field.events.onDataSource;
         });
     };
     DataSourceExtension.prototype.serializeDataSourceConfig = function (jsonField) {

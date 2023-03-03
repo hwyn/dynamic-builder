@@ -13,7 +13,7 @@ export function init() {
     Object.defineProperty(this, CACHE, withValue(getCacheObj.call(this, {})));
     Object.defineProperties(this, {
         onChange: withValue(function () { }),
-        onDestory: withValue(this.$$cache.destory.bind(this)),
+        onDestory: withValue(function () { var _a; return (_a = _this.$$cache) === null || _a === void 0 ? void 0 : _a.destory(); }),
         loadForBuild: withValue(function (props) {
             delete _this.loadForBuild;
             Object.defineProperty(_this, 'privateExtension', withValue(parseExtension(props.privateExtension || [])));
@@ -74,7 +74,6 @@ function destory() {
             transformObservable(this.destory && this.destory.call(this)).pipe(observableMap(function () { return toForkJoin(beforeDestorys.map(function (beforeDestory) { return beforeDestory && beforeDestory(); })); }), observableMap(function (destorys) { return toForkJoin(destorys.map(function (destory) { return destory && destory(); })); })).subscribe({
                 next: function () {
                     var _a;
-                    cacheObj.ready = false;
                     cacheObj.fields.splice(0);
                     cacheObj.detectChanges.unsubscribe();
                     cacheObj.beforeDestorys.splice(0);
@@ -83,6 +82,7 @@ function destory() {
                     _this.parent && removeChild.call(_this.parent, _this);
                     cacheObj.bindFn.forEach(function (fn) { return fn(); });
                     cacheObj.bindFn.splice(0);
+                    Object.defineProperties(_this, { $$cache: withValue({ ready: false, destoryed: true }), onDestory: withValue(null) });
                 },
                 error: function (e) {
                     console.error(e);

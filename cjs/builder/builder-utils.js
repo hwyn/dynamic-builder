@@ -16,7 +16,7 @@ function init() {
     Object.defineProperty(this, CACHE, (0, utility_1.withValue)(getCacheObj.call(this, {})));
     Object.defineProperties(this, {
         onChange: (0, utility_1.withValue)(function () { }),
-        onDestory: (0, utility_1.withValue)(this.$$cache.destory.bind(this)),
+        onDestory: (0, utility_1.withValue)(function () { var _a; return (_a = _this.$$cache) === null || _a === void 0 ? void 0 : _a.destory(); }),
         loadForBuild: (0, utility_1.withValue)(function (props) {
             delete _this.loadForBuild;
             Object.defineProperty(_this, 'privateExtension', (0, utility_1.withValue)(parseExtension(props.privateExtension || [])));
@@ -78,7 +78,6 @@ function destory() {
             (0, utility_1.transformObservable)(this.destory && this.destory.call(this)).pipe((0, utility_1.observableMap)(function () { return (0, utility_1.toForkJoin)(beforeDestorys.map(function (beforeDestory) { return beforeDestory && beforeDestory(); })); }), (0, utility_1.observableMap)(function (destorys) { return (0, utility_1.toForkJoin)(destorys.map(function (destory) { return destory && destory(); })); })).subscribe({
                 next: function () {
                     var _a;
-                    cacheObj.ready = false;
                     cacheObj.fields.splice(0);
                     cacheObj.detectChanges.unsubscribe();
                     cacheObj.beforeDestorys.splice(0);
@@ -87,6 +86,7 @@ function destory() {
                     _this.parent && removeChild.call(_this.parent, _this);
                     cacheObj.bindFn.forEach(function (fn) { return fn(); });
                     cacheObj.bindFn.splice(0);
+                    Object.defineProperties(_this, { $$cache: (0, utility_1.withValue)({ ready: false, destoryed: true }), onDestory: (0, utility_1.withValue)(null) });
                 },
                 error: function (e) {
                     console.error(e);

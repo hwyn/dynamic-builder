@@ -19,7 +19,7 @@ var GridExtension = /** @class */ (function (_super) {
         });
     };
     GridExtension.prototype.createLoadGrid = function () {
-        this.defineProperty(this.cache, GRID, new Grid(this.json));
+        this.defineProperty(this.cache, GRID, new Grid(this.json, this.builder));
         this.layoutBuildFields = this.mapFields(this.jsonFields, this.addFieldLayout.bind(this, {}));
         this.defineProperty(this.builder, ELEMENT, this.getLayoutElement(this.cache.grid, this.builder));
     };
@@ -34,6 +34,7 @@ var GridExtension = /** @class */ (function (_super) {
     };
     GridExtension.prototype.destory = function () {
         var _this = this;
+        this.cache.grid.destory();
         this.defineProperty(this.cache, GRID, null);
         this.defineProperty(this.builder, ELEMENT, null);
         this.layoutBuildFields.forEach(function (builderField) { return _this.defineProperty(builderField, LAYOUT, null); });

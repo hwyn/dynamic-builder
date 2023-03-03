@@ -21,7 +21,8 @@ function groupFieldsToArray(fields) {
     }));
 }
 var Grid = /** @class */ (function () {
-    function Grid(json) {
+    function Grid(json, builder) {
+        this.builder = builder;
         this.config = this.serializationConfig(json.grid);
     }
     Grid.prototype.serializationConfig = function (gridConfig) {
@@ -38,11 +39,11 @@ var Grid = /** @class */ (function () {
         });
         return __assign(__assign({ id: id }, other), { additional: groupAdditional });
     };
-    Grid.prototype.getViewGrip = function (builder, props) {
+    Grid.prototype.getViewGrip = function (props) {
         var config = cloneDeepPlain(this.config);
         var _a = config.additional, additional = _a === void 0 ? [] : _a, _b = config.className, className = _b === void 0 ? '' : _b, style = config.style;
         var _c = props.className, propsClassName = _c === void 0 ? '' : _c, propsStyle = props.style;
-        var groupLayout = groupByFields(builder.fields);
+        var groupLayout = groupByFields(this.builder.fields);
         config.additional = additional.filter(function (item, group) {
             item.fieldRows = groupFieldsToArray(groupLayout[group + 1]);
             return !!item.fieldRows.length;
@@ -54,6 +55,9 @@ var Grid = /** @class */ (function () {
             config.style = Object.assign({}, style, propsStyle);
         }
         return config;
+    };
+    Grid.prototype.destory = function () {
+        delete this.builder;
     };
     return Grid;
 }());
