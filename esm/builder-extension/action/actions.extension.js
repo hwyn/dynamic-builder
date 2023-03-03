@@ -1,4 +1,4 @@
-import { isEmpty } from 'lodash';
+import { isEmpty, isPlainObject } from 'lodash';
 import { BasicExtension } from '../basic/basic.extension';
 import { ADD_EVENT_LISTENER, EVENTS, LOAD_ACTION, LOAD_VIEW_MODEL } from '../constant/calculator.constant';
 const CACHE_ACTION = 'cacheAction';
@@ -6,6 +6,14 @@ export class ActionExtension extends BasicExtension {
     constructor() {
         super(...arguments);
         this.fields = [];
+    }
+    beforeExtension() {
+        [this.json, ...this.jsonFields].forEach((jsonField) => {
+            const { actions } = jsonField;
+            if (!Array.isArray(actions) && isPlainObject(actions)) {
+                jsonField.actions = Object.keys(actions).map((key) => this.bindCalculatorAction(actions[key], key));
+            }
+        });
     }
     extension() {
         const handler = this.eachFields.bind(this, this.jsonFields, this.create.bind(this));

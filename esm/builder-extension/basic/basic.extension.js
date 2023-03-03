@@ -54,7 +54,7 @@ export class BasicExtension {
     bindCalculatorAction(handler, type = CALCULATOR) {
         const action = this.serializeAction(handler);
         action.type = type;
-        this.cache.bindFn.push(function () { delete action.handler; });
+        action.handler && this.cache.bindFn.push(function () { delete action.handler; });
         return action;
     }
     pushCalculators(fieldConfig, calculator) {

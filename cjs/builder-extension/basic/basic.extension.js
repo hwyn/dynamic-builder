@@ -62,7 +62,7 @@ var BasicExtension = /** @class */ (function () {
         if (type === void 0) { type = calculator_constant_1.CALCULATOR; }
         var action = this.serializeAction(handler);
         action.type = type;
-        this.cache.bindFn.push(function () { delete action.handler; });
+        action.handler && this.cache.bindFn.push(function () { delete action.handler; });
         return action;
     };
     BasicExtension.prototype.pushCalculators = function (fieldConfig, calculator) {

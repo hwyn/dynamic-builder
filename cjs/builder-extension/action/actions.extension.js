@@ -13,6 +13,15 @@ var ActionExtension = /** @class */ (function (_super) {
         _this.fields = [];
         return _this;
     }
+    ActionExtension.prototype.beforeExtension = function () {
+        var _this = this;
+        tslib_1.__spreadArray([this.json], this.jsonFields, true).forEach(function (jsonField) {
+            var actions = jsonField.actions;
+            if (!Array.isArray(actions) && (0, lodash_1.isPlainObject)(actions)) {
+                jsonField.actions = Object.keys(actions).map(function (key) { return _this.bindCalculatorAction(actions[key], key); });
+            }
+        });
+    };
     ActionExtension.prototype.extension = function () {
         var handler = this.eachFields.bind(this, this.jsonFields, this.create.bind(this));
         this.pushCalculators(this.json, {
