@@ -58,6 +58,9 @@ export class BuilderContext extends BasicBuilderContext {
         }
         return ((_a = this.parent) === null || _a === void 0 ? void 0 : _a.getType(token, name)) || null;
     }
+    getFactory(token) {
+        return this.map.get(token);
+    }
     forwardClass(token, cls) {
         this.clsMap.set(token, cls);
     }

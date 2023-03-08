@@ -68,6 +68,9 @@ var BuilderContext = /** @class */ (function (_super) {
         }
         return ((_a = this.parent) === null || _a === void 0 ? void 0 : _a.getType(token, name)) || null;
     };
+    BuilderContext.prototype.getFactory = function (token) {
+        return this.map.get(token);
+    };
     BuilderContext.prototype.forwardClass = function (token, cls) {
         this.clsMap.set(token, cls);
     };

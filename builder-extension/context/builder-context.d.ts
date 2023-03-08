@@ -17,7 +17,8 @@ export declare class BuilderContext extends BasicBuilderContext {
     private canExtends;
     private useFactory;
     private registryFactory;
-    private getType;
+    getType<T = any>(token: InjectorToken, name: string): T | null;
+    getFactory<T>(token: InjectorToken): T;
     forwardClass<T = any>(token: InjectorToken, cls: Type<T>): void;
     forwardFactory<T = any>(token: InjectorToken, factory: T): void;
     forwardType<T = any>(token: InjectorToken, name: string, target: Type<T>, typeName?: string): void;
