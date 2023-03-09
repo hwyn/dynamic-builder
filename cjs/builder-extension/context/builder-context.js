@@ -65,7 +65,8 @@ var BuilderContext = /** @class */ (function (_super) {
     BuilderContext.prototype.getType = function (token, name) {
         var _a;
         var list = this.typeMap.get(token) || [];
-        for (var i = 0, item = list[i]; i < list.length; i++) {
+        for (var i = 0, item = void 0; i < list.length; i++) {
+            item = list[i];
             if (item.name === name)
                 return item[item.attr];
         }

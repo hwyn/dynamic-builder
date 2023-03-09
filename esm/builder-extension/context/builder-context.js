@@ -52,7 +52,8 @@ export class BuilderContext extends BasicBuilderContext {
     getType(token, name) {
         var _a;
         const list = this.typeMap.get(token) || [];
-        for (let i = 0, item = list[i]; i < list.length; i++) {
+        for (let i = 0, item; i < list.length; i++) {
+            item = list[i];
             if (item.name === name)
                 return item[item.attr];
         }
