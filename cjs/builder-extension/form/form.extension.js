@@ -117,13 +117,14 @@ var FormExtension = /** @class */ (function (_super) {
         return jsonField.binding.changeType = changeType;
     };
     FormExtension.prototype.getValueToModel = function (binding) {
-        return this.covertIntercept.toView(this.covertMap.get(binding), this.cache.viewModel.getBindValue(binding));
+        var path = binding.path, initialValue = binding.default;
+        return this.covertIntercept.toView(this.covertMap.get(binding), this.cache.viewModel.getBindValue(path, initialValue));
     };
     FormExtension.prototype.setValueToModel = function (binding, value) {
-        this.cache.viewModel.setBindValue(binding, this.covertIntercept.toModel(this.covertMap.get(binding), value));
+        this.cache.viewModel.setBindValue(binding.path, this.covertIntercept.toModel(this.covertMap.get(binding), value));
     };
     FormExtension.prototype.deleteValueToModel = function (binding) {
-        this.cache.viewModel.deleteBindValue(binding);
+        this.cache.viewModel.deleteBindValue(binding.path);
     };
     FormExtension.prototype.isDomEvent = function (actionResult) {
         return actionResult && actionResult.target && !!actionResult.target.nodeType;

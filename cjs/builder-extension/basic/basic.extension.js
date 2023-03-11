@@ -22,6 +22,13 @@ var BasicExtension = /** @class */ (function () {
         this.jsonFields = (_a = this.json) === null || _a === void 0 ? void 0 : _a.fields;
         this.beforeExtension();
     }
+    Object.defineProperty(BasicExtension.prototype, "builderAttr", {
+        get: function () {
+            return ['jsonName', 'configAction', 'jsonNameAction', 'config'];
+        },
+        enumerable: false,
+        configurable: true
+    });
     BasicExtension.prototype.beforeExtension = function () { };
     BasicExtension.prototype.afterExtension = function () { };
     BasicExtension.prototype.beforeDestory = function () { };
@@ -45,7 +52,7 @@ var BasicExtension = /** @class */ (function () {
         });
     };
     BasicExtension.prototype.isBuildField = function (props) {
-        return ['jsonName', 'configAction', 'jsonNameAction', 'config'].some(function (key) { return !!props[key]; });
+        return this.builderAttr.some(function (key) { return !!props[key]; });
     };
     BasicExtension.prototype.cloneDeepPlain = function (value) {
         return (0, utility_1.cloneDeepPlain)(value);

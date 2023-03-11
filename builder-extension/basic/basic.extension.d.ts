@@ -15,6 +15,7 @@ export declare abstract class BasicExtension {
     protected jsonFields: any[];
     protected injector: Injector;
     constructor(builder: BuilderModelExtensions, props: BuilderProps, cache: CacheObj, json: any);
+    protected get builderAttr(): string[];
     protected beforeExtension(): void;
     protected abstract extension(): void | Observable<any>;
     protected afterExtension(): void;

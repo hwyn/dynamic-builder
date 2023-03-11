@@ -4,14 +4,14 @@ export class BaseView {
         this.injector = injector;
         this._store = _store;
     }
-    getBindValue({ path, default: value }) {
-        return get(this._store, path, value);
+    getBindValue(path, initialValue) {
+        return get(this._store, path, initialValue);
     }
-    setBindValue(binding, value) {
-        set(this._store, binding.path, value);
+    setBindValue(path, value) {
+        set(this._store, path, value);
     }
-    deleteBindValue(binding) {
-        omit(this._store, [binding.path]);
+    deleteBindValue(path) {
+        omit(this._store, [path]);
     }
     refreshData(model) {
         this._store = model;

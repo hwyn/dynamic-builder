@@ -18,6 +18,9 @@ export class BasicExtension {
         this.jsonFields = (_a = this.json) === null || _a === void 0 ? void 0 : _a.fields;
         this.beforeExtension();
     }
+    get builderAttr() {
+        return ['jsonName', 'configAction', 'jsonNameAction', 'config'];
+    }
     beforeExtension() { }
     afterExtension() { }
     beforeDestory() { }
@@ -38,7 +41,7 @@ export class BasicExtension {
         });
     }
     isBuildField(props) {
-        return ['jsonName', 'configAction', 'jsonNameAction', 'config'].some((key) => !!props[key]);
+        return this.builderAttr.some((key) => !!props[key]);
     }
     cloneDeepPlain(value) {
         return cloneDeepPlain(value);

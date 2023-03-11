@@ -6,7 +6,7 @@ export declare abstract class BaseAction<T = any> {
     protected injector: Injector;
     private context;
     static cache?: boolean;
-    static actionName?: string;
+    static actionName: string;
     constructor(injector: Injector, context?: any);
     protected abstract execute(baseAction?: BaseAction): T | Observable<T>;
     get builderField(): BuilderFieldExtensions;

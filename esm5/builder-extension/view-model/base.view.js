@@ -4,15 +4,14 @@ var BaseView = /** @class */ (function () {
         this.injector = injector;
         this._store = _store;
     }
-    BaseView.prototype.getBindValue = function (_a) {
-        var path = _a.path, value = _a.default;
-        return get(this._store, path, value);
+    BaseView.prototype.getBindValue = function (path, initialValue) {
+        return get(this._store, path, initialValue);
     };
-    BaseView.prototype.setBindValue = function (binding, value) {
-        set(this._store, binding.path, value);
+    BaseView.prototype.setBindValue = function (path, value) {
+        set(this._store, path, value);
     };
-    BaseView.prototype.deleteBindValue = function (binding) {
-        omit(this._store, [binding.path]);
+    BaseView.prototype.deleteBindValue = function (path) {
+        omit(this._store, [path]);
     };
     BaseView.prototype.refreshData = function (model) {
         this._store = model;

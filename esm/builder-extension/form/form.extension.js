@@ -99,13 +99,14 @@ export class FormExtension extends BasicExtension {
         return jsonField.binding.changeType = changeType;
     }
     getValueToModel(binding) {
-        return this.covertIntercept.toView(this.covertMap.get(binding), this.cache.viewModel.getBindValue(binding));
+        const { path, default: initialValue } = binding;
+        return this.covertIntercept.toView(this.covertMap.get(binding), this.cache.viewModel.getBindValue(path, initialValue));
     }
     setValueToModel(binding, value) {
-        this.cache.viewModel.setBindValue(binding, this.covertIntercept.toModel(this.covertMap.get(binding), value));
+        this.cache.viewModel.setBindValue(binding.path, this.covertIntercept.toModel(this.covertMap.get(binding), value));
     }
     deleteValueToModel(binding) {
-        this.cache.viewModel.deleteBindValue(binding);
+        this.cache.viewModel.deleteBindValue(binding.path);
     }
     isDomEvent(actionResult) {
         return actionResult && actionResult.target && !!actionResult.target.nodeType;
