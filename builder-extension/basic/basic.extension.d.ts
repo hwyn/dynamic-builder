@@ -4,8 +4,8 @@ import { BuilderProps, CacheObj } from '../../builder';
 import { Action, ActionInterceptProps, BaseAction } from '../action';
 import { CreateOptions } from '../action/create-actions';
 import { BuilderFieldExtensions, BuilderModelExtensions, Calculators, CalculatorsDependent } from '../type-api';
-export declare type CallBackOptions = [any, BuilderFieldExtensions];
-declare type CallBack = (options: CallBackOptions) => any;
+export type CallBackOptions = [any, BuilderFieldExtensions];
+type CallBack = (options: CallBackOptions) => any;
 export declare const serializeAction: (action: string | Action | ((...args: any[]) => any)) => Action;
 export declare abstract class BasicExtension {
     protected builder: BuilderModelExtensions;

@@ -4,7 +4,7 @@ export interface CreateOptions {
     injector: Injector;
     interceptFn?: (...args: any[]) => any;
 }
-declare type Actions = {
+type Actions = {
     [key: string]: (event?: Event, ...arg: any[]) => any;
 };
 export declare function getEventType(type: string): string;

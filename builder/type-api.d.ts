@@ -45,7 +45,7 @@ export interface BuilderJsonField {
     actions?: Action[];
     [key: string]: any;
 }
-export declare type PrivateExtension = {
+export type PrivateExtension = {
     extension: any;
     needExtends?: boolean;
 };

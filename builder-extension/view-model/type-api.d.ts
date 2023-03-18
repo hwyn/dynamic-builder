@@ -1,5 +1,5 @@
 import { BuilderFieldExtensions } from '../type-api';
-export declare type notifyOptions = {
+export type notifyOptions = {
     hasSelf: boolean;
 };
 export declare interface BuilderViewModel {

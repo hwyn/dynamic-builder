@@ -1,6 +1,6 @@
 import { Injector } from '@fm/di';
 import { BuilderProps } from './type-api';
-export declare type UiElement = {
+export type UiElement = {
     name: string;
     component: any;
 };
