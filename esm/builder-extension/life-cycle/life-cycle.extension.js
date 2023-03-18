@@ -1,6 +1,6 @@
 import { flatMap, isEmpty } from 'lodash';
 import { of } from 'rxjs';
-import { filter, tap } from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
 import { observableMap, transformObservable } from '../../utility';
 import { BasicExtension } from '../basic/basic.extension';
 // eslint-disable-next-line max-len
@@ -12,7 +12,6 @@ export class LifeCycleExtension extends BasicExtension {
         this.lifeEvent = [LOAD, CHANGE, DESTORY];
         this.calculators = [];
         this.nonSelfCalculators = [];
-        this.detectChanges = this.cache.detectChanges.pipe(filter(() => !this.hasChange));
     }
     extension() {
         const nonSelfBuilders = this.builder.root.$$cache.nonSelfBuilders;
@@ -38,9 +37,7 @@ export class LifeCycleExtension extends BasicExtension {
         return this.invokeLifeCycle(this.getEventType(LOAD), this.props);
     }
     onLifeChange(props) {
-        this.hasChange = true;
         this.invokeLifeCycle(this.getEventType(CHANGE), props).subscribe();
-        this.hasChange = false;
     }
     invokeLifeCycle(type, event, otherEvent) {
         return this.lifeActions[type] ? this.lifeActions[type](event, otherEvent) : of(event);
@@ -114,7 +111,7 @@ export class LifeCycleExtension extends BasicExtension {
         }
         this.unDefineProperty(this.builder, ['calculators', 'nonSelfCalculators', this.getEventType(CHANGE)]);
         this.unDefineProperty(this.cache, ['lifeType', ORIGIN_CALCULATORS, ORIGIN_NON_SELF_CALCULATORS, NON_SELF_BUILSERS]);
-        this.unDefineProperty(this, ['detectChanges', 'lifeActions']);
+        this.unDefineProperty(this, ['lifeActions']);
         return transformObservable(super.destory()).pipe(tap(() => {
             var _a, _b;
             const parentField = (_a = this.builder.parent) === null || _a === void 0 ? void 0 : _a.getFieldById(this.builder.id);

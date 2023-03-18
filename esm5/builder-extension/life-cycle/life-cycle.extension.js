@@ -1,7 +1,7 @@
 import { __assign, __extends, __spreadArray } from "tslib";
 import { flatMap, isEmpty } from 'lodash';
 import { of } from 'rxjs';
-import { filter, tap } from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
 import { observableMap, transformObservable } from '../../utility';
 import { BasicExtension } from '../basic/basic.extension';
 // eslint-disable-next-line max-len
@@ -14,7 +14,6 @@ var LifeCycleExtension = /** @class */ (function (_super) {
         _this.lifeEvent = [LOAD, CHANGE, DESTORY];
         _this.calculators = [];
         _this.nonSelfCalculators = [];
-        _this.detectChanges = _this.cache.detectChanges.pipe(filter(function () { return !_this.hasChange; }));
         return _this;
     }
     LifeCycleExtension.prototype.extension = function () {
@@ -48,9 +47,7 @@ var LifeCycleExtension = /** @class */ (function (_super) {
         return this.invokeLifeCycle(this.getEventType(LOAD), this.props);
     };
     LifeCycleExtension.prototype.onLifeChange = function (props) {
-        this.hasChange = true;
         this.invokeLifeCycle(this.getEventType(CHANGE), props).subscribe();
-        this.hasChange = false;
     };
     LifeCycleExtension.prototype.invokeLifeCycle = function (type, event, otherEvent) {
         return this.lifeActions[type] ? this.lifeActions[type](event, otherEvent) : of(event);
@@ -138,7 +135,7 @@ var LifeCycleExtension = /** @class */ (function (_super) {
         }
         this.unDefineProperty(this.builder, ['calculators', 'nonSelfCalculators', this.getEventType(CHANGE)]);
         this.unDefineProperty(this.cache, ['lifeType', ORIGIN_CALCULATORS, ORIGIN_NON_SELF_CALCULATORS, NON_SELF_BUILSERS]);
-        this.unDefineProperty(this, ['detectChanges', 'lifeActions']);
+        this.unDefineProperty(this, ['lifeActions']);
         return transformObservable(_super.prototype.destory.call(this)).pipe(tap(function () {
             var _a, _b;
             var parentField = (_a = _this.builder.parent) === null || _a === void 0 ? void 0 : _a.getFieldById(_this.builder.id);

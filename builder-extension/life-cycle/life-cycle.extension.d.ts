@@ -10,7 +10,6 @@ export declare class LifeCycleExtension extends BasicExtension {
     protected lifeActions: {
         [key: string]: (event?: Event, ...arg: any[]) => any;
     };
-    protected detectChanges: any;
     protected extension(): void;
     protected afterExtension(): Observable<any>;
     protected createLoadAction(json: any): any;

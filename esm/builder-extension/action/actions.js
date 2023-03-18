@@ -21,9 +21,9 @@ let Action = class Action {
             cacheType = new ActionType((builder === null || builder === void 0 ? void 0 : builder.injector) || this.injector, context);
             if (!ActionType.cache || !builderField || !_uid)
                 return cacheType;
+            builderField.cacheAction && cacheAction.push({ uid: _uid, action: cacheType });
         }
         cacheType.context = context;
-        builderField.cacheAction && cacheAction.push({ uid: _uid, action: cacheType });
         return cacheType;
     }
     createEvent(event, otherEventParam = []) {
