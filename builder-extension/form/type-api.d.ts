@@ -1,6 +1,6 @@
 import { BuilderModel } from '../../builder/builder-model';
 import { BuilderFieldExtensions } from '../type-api';
-export declare interface BaseCovertImpl {
+export declare interface BaseConvertImpl {
     toModel(value: any): any;
     toView(value: any): any;
 }
@@ -10,7 +10,7 @@ export declare interface FormControl<T = any> {
     disable(): void;
     patchValue(value: T): void;
     updateValueAndValidity(): void;
-    destory(fieldId?: string): void;
+    destroy(fieldId?: string): void;
 }
 export declare interface BuilderFormField {
     control?: FormControl;

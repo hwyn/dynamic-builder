@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 import { BuilderContext as BasicBuilderContext } from '../../builder/builder-context';
 import { BaseAction } from '../action';
 import { BasicExtension } from '../basic/basic.extension';
-import { BaseCovert } from '../form/base-covert';
+import { BaseConvert } from '../form/base-convert';
 import { FormOptions } from '../form/type-api';
 import { Grid } from '../grid/grid';
 import { BuilderModelExtensions } from '../type-api';
@@ -26,7 +26,7 @@ export declare class BuilderContext extends BasicBuilderContext {
     forwardFormControl(factoryFormControl: (value: any, options: FormOptions, injector: Injector) => any): void;
     forwardBuilderLayout(createElement: (grid: Grid, builder: BuilderModelExtensions, injector: Injector) => any): void;
     forwardAction(name: string, action: Type<BaseAction>, options?: any): void;
-    forwardCovert(name: string, covert: Type<BaseCovert>): void;
+    forwardConvert(name: string, convert: Type<BaseConvert>): void;
     registryExtension(extensions: Type<BasicExtension>[]): void;
     registryInjector(injector: Injector): void;
 }

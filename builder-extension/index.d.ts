@@ -4,7 +4,7 @@ export * from './action/create-actions';
 export * from './basic/basic.extension';
 export * from './constant/calculator.constant';
 export { BuilderContext, useBuilderContext } from './context/builder-context';
-export { BaseCovert } from './form/base-covert';
+export { BaseConvert } from './form/base-convert';
 export * from './form/type-api';
 export { Grid } from './grid/grid';
 export { BuilderModelExtensions as BuilderModel } from './model/builder-extension-model';

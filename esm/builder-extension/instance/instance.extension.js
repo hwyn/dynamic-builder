@@ -3,7 +3,7 @@ import { Observable, shareReplay, Subject, tap } from 'rxjs';
 import { BuilderModel } from '../../builder/builder-model';
 import { observableMap, toForkJoin, transformObservable } from '../../utility';
 import { BasicExtension } from '../basic/basic.extension';
-import { CURRENT, DESTORY, INSTANCE, LOAD_ACTION, MOUNTED } from '../constant/calculator.constant';
+import { CURRENT, DESTROY, INSTANCE, LOAD_ACTION, MOUNTED } from '../constant/calculator.constant';
 export class InstanceExtension extends BasicExtension {
     constructor() {
         super(...arguments);
@@ -13,9 +13,9 @@ export class InstanceExtension extends BasicExtension {
         return {
             current: null,
             onMounted: () => void (0),
-            onDestory: () => void (0),
+            onDestroy: () => void (0),
             detectChanges: () => undefined,
-            destory: new Subject().pipe(shareReplay(1))
+            destroy: new Subject().pipe(shareReplay(1))
         };
     }
     extension() {
@@ -30,11 +30,11 @@ export class InstanceExtension extends BasicExtension {
         const { instance, events = {} } = builderField;
         this.definePropertys(instance, {
             [this.getEventType(MOUNTED)]: events.onMounted,
-            [this.getEventType(DESTORY)]: events.onDestory
+            [this.getEventType(DESTROY)]: events.onDestroy
         });
         Object.defineProperty(instance, CURRENT, this.getCurrentProperty(builderField));
         delete events.onMounted;
-        delete events.onDestory;
+        delete events.onDestroy;
     }
     getCurrentProperty({ instance, id }) {
         let _current;
@@ -52,37 +52,37 @@ export class InstanceExtension extends BasicExtension {
         return { get, set };
     }
     addInstance([jsonField, builderField]) {
-        const destory = { type: DESTORY, after: this.bindCalculatorAction(this.instanceDestory) };
+        const destroy = { type: DESTROY, after: this.bindCalculatorAction(this.instanceDestroy) };
         const instance = InstanceExtension.createInstance();
-        this.pushAction(jsonField, [destory, { type: MOUNTED }]);
+        this.pushAction(jsonField, [destroy, { type: MOUNTED }]);
         this.defineProperty(builderField, INSTANCE, instance);
-        instance.destory.subscribe();
+        instance.destroy.subscribe();
     }
-    instanceDestory({ actionEvent, builderField: { instance } }) {
+    instanceDestroy({ actionEvent, builderField: { instance } }) {
         const currentIsBuildModel = instance.current instanceof BuilderModel;
         instance.current && (instance.current = null);
         instance.detectChanges = () => undefined;
-        return !currentIsBuildModel && instance.destory.next(actionEvent);
+        return !currentIsBuildModel && instance.destroy.next(actionEvent);
     }
-    beforeDestory() {
+    beforeDestroy() {
         const showFields = this.buildFieldList.filter(({ visibility }) => this.builder.showField(visibility));
         if (!isEmpty(showFields)) {
             const subscriptions = [];
             return toForkJoin(showFields.map(({ id, instance }) => new Observable((subscribe) => {
-                subscriptions.push(instance.destory.subscribe(() => {
+                subscriptions.push(instance.destroy.subscribe(() => {
                     subscribe.next(id);
                     subscribe.complete();
                 }));
-            }))).pipe(tap(() => subscriptions.forEach((s) => s.unsubscribe())), observableMap(() => transformObservable(super.beforeDestory())));
+            }))).pipe(tap(() => subscriptions.forEach((s) => s.unsubscribe())), observableMap(() => transformObservable(super.beforeDestroy())));
         }
     }
-    destory() {
+    destroy() {
         this.buildFieldList.forEach((buildField) => {
             const { instance } = buildField;
-            instance.destory.unsubscribe();
-            this.unDefineProperty(instance, ['detectChanges', this.getEventType(DESTORY), this.getEventType(MOUNTED), CURRENT]);
+            instance.destroy.unsubscribe();
+            this.unDefineProperty(instance, ['detectChanges', this.getEventType(DESTROY), this.getEventType(MOUNTED), CURRENT]);
             this.defineProperty(buildField, INSTANCE, null);
         });
-        return super.destory();
+        return super.destroy();
     }
 }

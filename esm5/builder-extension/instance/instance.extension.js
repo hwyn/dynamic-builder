@@ -4,7 +4,7 @@ import { Observable, shareReplay, Subject, tap } from 'rxjs';
 import { BuilderModel } from '../../builder/builder-model';
 import { observableMap, toForkJoin, transformObservable } from '../../utility';
 import { BasicExtension } from '../basic/basic.extension';
-import { CURRENT, DESTORY, INSTANCE, LOAD_ACTION, MOUNTED } from '../constant/calculator.constant';
+import { CURRENT, DESTROY, INSTANCE, LOAD_ACTION, MOUNTED } from '../constant/calculator.constant';
 var InstanceExtension = /** @class */ (function (_super) {
     __extends(InstanceExtension, _super);
     function InstanceExtension() {
@@ -16,9 +16,9 @@ var InstanceExtension = /** @class */ (function (_super) {
         return {
             current: null,
             onMounted: function () { return void (0); },
-            onDestory: function () { return void (0); },
+            onDestroy: function () { return void (0); },
             detectChanges: function () { return undefined; },
-            destory: new Subject().pipe(shareReplay(1))
+            destroy: new Subject().pipe(shareReplay(1))
         };
     };
     InstanceExtension.prototype.extension = function () {
@@ -35,11 +35,11 @@ var InstanceExtension = /** @class */ (function (_super) {
         var instance = builderField.instance, _c = builderField.events, events = _c === void 0 ? {} : _c;
         this.definePropertys(instance, (_b = {},
             _b[this.getEventType(MOUNTED)] = events.onMounted,
-            _b[this.getEventType(DESTORY)] = events.onDestory,
+            _b[this.getEventType(DESTROY)] = events.onDestroy,
             _b));
         Object.defineProperty(instance, CURRENT, this.getCurrentProperty(builderField));
         delete events.onMounted;
-        delete events.onDestory;
+        delete events.onDestroy;
     };
     InstanceExtension.prototype.getCurrentProperty = function (_a) {
         var instance = _a.instance, id = _a.id;
@@ -59,20 +59,20 @@ var InstanceExtension = /** @class */ (function (_super) {
     };
     InstanceExtension.prototype.addInstance = function (_a) {
         var jsonField = _a[0], builderField = _a[1];
-        var destory = { type: DESTORY, after: this.bindCalculatorAction(this.instanceDestory) };
+        var destroy = { type: DESTROY, after: this.bindCalculatorAction(this.instanceDestroy) };
         var instance = InstanceExtension.createInstance();
-        this.pushAction(jsonField, [destory, { type: MOUNTED }]);
+        this.pushAction(jsonField, [destroy, { type: MOUNTED }]);
         this.defineProperty(builderField, INSTANCE, instance);
-        instance.destory.subscribe();
+        instance.destroy.subscribe();
     };
-    InstanceExtension.prototype.instanceDestory = function (_a) {
+    InstanceExtension.prototype.instanceDestroy = function (_a) {
         var actionEvent = _a.actionEvent, instance = _a.builderField.instance;
         var currentIsBuildModel = instance.current instanceof BuilderModel;
         instance.current && (instance.current = null);
         instance.detectChanges = function () { return undefined; };
-        return !currentIsBuildModel && instance.destory.next(actionEvent);
+        return !currentIsBuildModel && instance.destroy.next(actionEvent);
     };
-    InstanceExtension.prototype.beforeDestory = function () {
+    InstanceExtension.prototype.beforeDestroy = function () {
         var _this = this;
         var showFields = this.buildFieldList.filter(function (_a) {
             var visibility = _a.visibility;
@@ -83,23 +83,23 @@ var InstanceExtension = /** @class */ (function (_super) {
             return toForkJoin(showFields.map(function (_a) {
                 var id = _a.id, instance = _a.instance;
                 return new Observable(function (subscribe) {
-                    subscriptions_1.push(instance.destory.subscribe(function () {
+                    subscriptions_1.push(instance.destroy.subscribe(function () {
                         subscribe.next(id);
                         subscribe.complete();
                     }));
                 });
-            })).pipe(tap(function () { return subscriptions_1.forEach(function (s) { return s.unsubscribe(); }); }), observableMap(function () { return transformObservable(_super.prototype.beforeDestory.call(_this)); }));
+            })).pipe(tap(function () { return subscriptions_1.forEach(function (s) { return s.unsubscribe(); }); }), observableMap(function () { return transformObservable(_super.prototype.beforeDestroy.call(_this)); }));
         }
     };
-    InstanceExtension.prototype.destory = function () {
+    InstanceExtension.prototype.destroy = function () {
         var _this = this;
         this.buildFieldList.forEach(function (buildField) {
             var instance = buildField.instance;
-            instance.destory.unsubscribe();
-            _this.unDefineProperty(instance, ['detectChanges', _this.getEventType(DESTORY), _this.getEventType(MOUNTED), CURRENT]);
+            instance.destroy.unsubscribe();
+            _this.unDefineProperty(instance, ['detectChanges', _this.getEventType(DESTROY), _this.getEventType(MOUNTED), CURRENT]);
             _this.defineProperty(buildField, INSTANCE, null);
         });
-        return _super.prototype.destory.call(this);
+        return _super.prototype.destroy.call(this);
     };
     return InstanceExtension;
 }(BasicExtension));

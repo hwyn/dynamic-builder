@@ -22,8 +22,8 @@ var ReadConfigExtension = /** @class */ (function (_super) {
     };
     ReadConfigExtension.prototype.getConfig = function (url) {
         var isAbstractPath = /^[^\\.]+/ig.test(url);
-        var _url = isAbstractPath ? url : "".concat(this.cache.basePath, "/").concat(url.replace(/^\.\//, '')).replace(/[\\/]+/ig, '/');
-        return this.getJsonConfig(_url);
+        var urlPath = isAbstractPath ? url : "".concat(this.cache.basePath, "/").concat(url.replace(/^\.\//, '')).replace(/[\\/]+/ig, '/');
+        return this.getJsonConfig(urlPath);
     };
     ReadConfigExtension.prototype.preloaded = function (jsonConfig) {
         var isPreloaded = jsonConfig.isPreloaded, fields = jsonConfig.fields;
@@ -104,9 +104,9 @@ var ReadConfigExtension = /** @class */ (function (_super) {
             return isFunction(executeHandler) ? executeHandler.bind(builder) : undefined;
         };
     };
-    ReadConfigExtension.prototype.destory = function () {
+    ReadConfigExtension.prototype.destroy = function () {
         this.unDefineProperty(this.builder, ['getExecuteHandler']);
-        return _super.prototype.destory.call(this);
+        return _super.prototype.destroy.call(this);
     };
     return ReadConfigExtension;
 }(BasicExtension));

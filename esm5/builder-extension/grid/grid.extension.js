@@ -32,13 +32,13 @@ var GridExtension = /** @class */ (function (_super) {
         this.defineProperty(builderField, LAYOUT, merge({ row: cursor[group] }, mergeLayout));
         delete field.layout;
     };
-    GridExtension.prototype.destory = function () {
+    GridExtension.prototype.destroy = function () {
         var _this = this;
-        this.cache.grid.destory();
+        this.cache.grid.destroy();
         this.defineProperty(this.cache, GRID, null);
         this.defineProperty(this.builder, ELEMENT, null);
         this.layoutBuildFields.forEach(function (builderField) { return _this.defineProperty(builderField, LAYOUT, null); });
-        return _super.prototype.destory.call(this);
+        return _super.prototype.destroy.call(this);
     };
     return GridExtension;
 }(BasicExtension));

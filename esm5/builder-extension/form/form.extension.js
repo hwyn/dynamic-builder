@@ -1,18 +1,18 @@
 import { __assign, __extends, __spreadArray } from "tslib";
 import { isEmpty } from 'lodash';
 import { Visibility } from '../../builder';
-import { COVERT_INTERCEPT, FORM_CONTROL } from '../../token';
+import { CONVERT_INTERCEPT, FORM_CONTROL } from '../../token';
 import { BasicExtension } from '../basic/basic.extension';
 import { CHANGE, CHECK_VISIBILITY, CONTROL, LOAD_ACTION, NOTIFY_MODEL_CHANGE } from '../constant/calculator.constant';
 var FormExtension = /** @class */ (function (_super) {
     __extends(FormExtension, _super);
     function FormExtension() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.covertMap = new Map();
+        _this.convertMap = new Map();
         _this.builderFields = [];
         _this.defaultChangeType = CHANGE;
         _this.getControl = _this.injector.get(FORM_CONTROL);
-        _this.covertIntercept = _this.injector.get(COVERT_INTERCEPT);
+        _this.convertIntercept = _this.injector.get(CONVERT_INTERCEPT);
         return _this;
     }
     FormExtension.prototype.extension = function () {
@@ -37,27 +37,27 @@ var FormExtension = /** @class */ (function (_super) {
                 action: this.bindCalculatorAction(this.createVisibility.bind(this, jsonField)),
                 dependents: { type: CHECK_VISIBILITY, fieldId: id }
             }] : [], true), validators && validators.length ? [{
-                action: this.bindCalculatorAction(this.createValidaity.bind(this)),
+                action: this.bindCalculatorAction(this.createValidity.bind(this)),
                 dependents: { type: updateOn, fieldId: id }
             }] : [], true));
     };
     FormExtension.prototype.addChangeAction = function (changeType, jsonField, builderField) {
         var id = jsonField.id, _a = jsonField.actions, actions = _a === void 0 ? [] : _a, binding = jsonField.binding;
-        var covert = binding.covert, _b = binding.intercept, intercept = _b === void 0 ? '' : _b;
+        var convert = binding.convert, _b = binding.intercept, intercept = _b === void 0 ? '' : _b;
         var actionIndex = actions.findIndex(function (_a) {
             var type = _a.type;
             return type === changeType;
         });
         var changeAfter = this.bindCalculatorAction(this.detectChanges.bind(this, id));
-        var replaceAction = { type: changeType, after: changeAfter };
-        var bindingViewModel = this.bindCalculatorAction(this.createChange.bind(this, jsonField));
+        var newAction = { type: changeType, after: changeAfter };
+        var bindingAction = this.bindCalculatorAction(this.createChange.bind(this, jsonField));
         if (actions[actionIndex]) {
-            bindingViewModel.after = this.bindCalculatorAction(actions[actionIndex]);
+            bindingAction.after = this.bindCalculatorAction(actions[actionIndex]);
         }
         jsonField.actions = actions;
-        replaceAction.before = intercept ? __assign(__assign({}, this.bindCalculatorAction(intercept)), { after: bindingViewModel }) : bindingViewModel;
-        actionIndex === -1 ? actions.push(replaceAction) : actions[actionIndex] = replaceAction;
-        this.covertMap.set(binding, this.covertIntercept.getCovertObj(covert, this.builder, builderField));
+        newAction.before = intercept ? __assign(__assign({}, this.bindCalculatorAction(intercept)), { after: bindingAction }) : bindingAction;
+        actionIndex === -1 ? actions.push(newAction) : actions[actionIndex] = newAction;
+        this.convertMap.set(binding, this.convertIntercept.getConvertObj(convert, this.builder, builderField));
     };
     FormExtension.prototype.addControl = function (jsonField, builderField) {
         var binding = jsonField.binding;
@@ -76,7 +76,7 @@ var FormExtension = /** @class */ (function (_super) {
         this.setValueToModel(binding, value);
         (_c = builderField.control) === null || _c === void 0 ? void 0 : _c.patchValue(value);
     };
-    FormExtension.prototype.createValidaity = function (_a) {
+    FormExtension.prototype.createValidity = function (_a) {
         var control = _a.builderField.control;
         control === null || control === void 0 ? void 0 : control.updateValueAndValidity();
     };
@@ -115,10 +115,10 @@ var FormExtension = /** @class */ (function (_super) {
     };
     FormExtension.prototype.getValueToModel = function (binding) {
         var path = binding.path, initialValue = binding.default;
-        return this.covertIntercept.toView(this.covertMap.get(binding), this.cache.viewModel.getBindValue(path, initialValue));
+        return this.convertIntercept.toView(this.convertMap.get(binding), this.cache.viewModel.getBindValue(path, initialValue));
     };
     FormExtension.prototype.setValueToModel = function (binding, value) {
-        this.cache.viewModel.setBindValue(binding.path, this.covertIntercept.toModel(this.covertMap.get(binding), value));
+        this.cache.viewModel.setBindValue(binding.path, this.convertIntercept.toModel(this.convertMap.get(binding), value));
     };
     FormExtension.prototype.deleteValueToModel = function (binding) {
         this.cache.viewModel.deleteBindValue(binding.path);
@@ -126,15 +126,15 @@ var FormExtension = /** @class */ (function (_super) {
     FormExtension.prototype.isDomEvent = function (actionResult) {
         return actionResult && actionResult.target && !!actionResult.target.nodeType;
     };
-    FormExtension.prototype.destory = function () {
+    FormExtension.prototype.destroy = function () {
         var _this = this;
-        this.covertMap.clear();
+        this.convertMap.clear();
         this.builderFields.forEach(function (builderField) {
             var _a;
-            (_a = builderField.control) === null || _a === void 0 ? void 0 : _a.destory();
+            (_a = builderField.control) === null || _a === void 0 ? void 0 : _a.destroy();
             _this.unDefineProperty(builderField, [CONTROL]);
         });
-        return _super.prototype.destory.call(this);
+        return _super.prototype.destroy.call(this);
     };
     return FormExtension;
 }(BasicExtension));

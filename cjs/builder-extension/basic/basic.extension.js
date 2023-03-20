@@ -31,14 +31,14 @@ var BasicExtension = /** @class */ (function () {
     });
     BasicExtension.prototype.beforeExtension = function () { };
     BasicExtension.prototype.afterExtension = function () { };
-    BasicExtension.prototype.beforeDestory = function () { };
-    BasicExtension.prototype.destory = function () { };
+    BasicExtension.prototype.beforeDestroy = function () { };
+    BasicExtension.prototype.destroy = function () { };
     BasicExtension.prototype.init = function () {
         return (0, utility_1.transformObj)(this.extension(), this);
     };
     BasicExtension.prototype.afterInit = function () {
         var _this = this;
-        return (0, utility_1.transformObj)(this.afterExtension(), function () { return (0, utility_1.transformObj)(_this.beforeDestory(), function () { return _this.destory(); }); });
+        return (0, utility_1.transformObj)(this.afterExtension(), function () { return (0, utility_1.transformObj)(_this.beforeDestroy(), function () { return _this.destroy(); }); });
     };
     BasicExtension.prototype.eachFields = function (jsonFields, callBack) {
         var _this = this;

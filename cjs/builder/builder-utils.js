@@ -16,7 +16,7 @@ function init() {
     Object.defineProperty(this, CACHE, (0, utility_1.withValue)(getCacheObj.call(this, {})));
     Object.defineProperties(this, {
         onChange: (0, utility_1.withValue)(function () { }),
-        onDestory: (0, utility_1.withValue)(function () { var _a; return (_a = _this.$$cache) === null || _a === void 0 ? void 0 : _a.destory(); }),
+        onDestroy: (0, utility_1.withValue)(function () { var _a; return (_a = _this.$$cache) === null || _a === void 0 ? void 0 : _a.destroy(); }),
         loadForBuild: (0, utility_1.withValue)(function (props) {
             delete _this.loadForBuild;
             Object.defineProperty(_this, 'privateExtension', (0, utility_1.withValue)(parseExtension(props.privateExtension || [])));
@@ -41,21 +41,21 @@ function loadForBuild(props) {
             .map(function (Extension) { return new Extension(_this, props, _this.$$cache, props.config); })
             .map(function (extension) { return extension.init(); });
         return (0, utility_1.toForkJoin)(tslib_1.__spreadArray([loadExample], beforeInits, true));
-    }), (0, utility_1.observableMap)(function (examples) { return (0, utility_1.toForkJoin)(examples.map(function (example) { return example.afterInit(); })); }), (0, operators_1.tap)(function (beforeDestorys) {
+    }), (0, utility_1.observableMap)(function (examples) { return (0, utility_1.toForkJoin)(examples.map(function (example) { return example.afterInit(); })); }), (0, operators_1.tap)(function (beforeDestroys) {
         _this.$$cache.ready = true;
-        _this.$$cache.beforeDestorys = beforeDestorys;
-        _this.$$cache.destoryed && destory.apply(_this);
+        _this.$$cache.beforeDestroys = beforeDestroys;
+        _this.$$cache.destroyed && destroy.apply(_this);
     }));
 }
 function getCacheObj(props) {
     var _a = props.config, _b = _a === void 0 ? {} : _a, _c = _b.fields, fields = _c === void 0 ? [] : _c;
-    var _d = this.$$cache || {}, _e = _d.bindFn, bindFn = _e === void 0 ? [] : _e, _f = _d.ready, ready = _f === void 0 ? false : _f, _g = _d.destoryed, destoryed = _g === void 0 ? false : _g, _h = _d.detectChanges, detectChanges = _h === void 0 ? new rxjs_1.Subject() : _h, _j = _d.destory, modelDestory = _j === void 0 ? destory.bind(this) : _j, _k = _d.addChild, modelAddChild = _k === void 0 ? addChild.bind(this) : _k, _l = _d.removeChild, modelRemoveChild = _l === void 0 ? removeChild.bind(this) : _l;
+    var _d = this.$$cache || {}, _e = _d.bindFn, bindFn = _e === void 0 ? [] : _e, _f = _d.ready, ready = _f === void 0 ? false : _f, _g = _d.destroyed, destroyed = _g === void 0 ? false : _g, _h = _d.detectChanges, detectChanges = _h === void 0 ? new rxjs_1.Subject() : _h, _j = _d.destroy, modelDestroy = _j === void 0 ? destroy.bind(this) : _j, _k = _d.addChild, modelAddChild = _k === void 0 ? addChild.bind(this) : _k, _l = _d.removeChild, modelRemoveChild = _l === void 0 ? removeChild.bind(this) : _l;
     return Object.assign(this.$$cache, {
         ready: ready,
         bindFn: bindFn,
-        destoryed: destoryed,
+        destroyed: destroyed,
         detectChanges: detectChanges,
-        destory: modelDestory,
+        destroy: modelDestroy,
         addChild: modelAddChild,
         removeChild: modelRemoveChild,
         fields: fields.map(createField.bind(this)),
@@ -68,25 +68,25 @@ function createField(field) {
     Object.keys(_field).forEach(function (key) { return _field[key] === undefined && delete _field[key]; });
     return _field;
 }
-function destory() {
+function destroy() {
     var _this = this;
     var cacheObj = this.$$cache;
-    var _a = cacheObj.beforeDestorys, beforeDestorys = _a === void 0 ? [] : _a, _b = cacheObj.ready, ready = _b === void 0 ? false : _b, destoryed = cacheObj.destoryed;
-    cacheObj.destoryed = true;
-    if (ready && !destoryed) {
+    var _a = cacheObj.beforeDestroys, beforeDestroys = _a === void 0 ? [] : _a, _b = cacheObj.ready, ready = _b === void 0 ? false : _b, destroyed = cacheObj.destroyed;
+    cacheObj.destroyed = true;
+    if (ready && !destroyed) {
         try {
-            (0, utility_1.transformObservable)(this.destory && this.destory.call(this)).pipe((0, utility_1.observableMap)(function () { return (0, utility_1.toForkJoin)(beforeDestorys.map(function (beforeDestory) { return beforeDestory && beforeDestory(); })); }), (0, utility_1.observableMap)(function (destorys) { return (0, utility_1.toForkJoin)(destorys.map(function (destory) { return destory && destory(); })); })).subscribe({
+            (0, utility_1.transformObservable)(this.destroy && this.destroy.call(this)).pipe((0, utility_1.observableMap)(function () { return (0, utility_1.toForkJoin)(beforeDestroys.map(function (beforeDestroy) { return beforeDestroy && beforeDestroy(); })); }), (0, utility_1.observableMap)(function (destroys) { return (0, utility_1.toForkJoin)(destroys.map(function (destroy) { return destroy && destroy(); })); })).subscribe({
                 next: function () {
                     var _a;
                     cacheObj.fields.splice(0);
                     cacheObj.detectChanges.unsubscribe();
-                    cacheObj.beforeDestorys.splice(0);
+                    cacheObj.beforeDestroys.splice(0);
                     _this.children.splice(0);
                     (_a = _this.privateExtension) === null || _a === void 0 ? void 0 : _a.splice(0);
                     _this.parent && removeChild.call(_this.parent, _this);
                     cacheObj.bindFn.forEach(function (fn) { return fn(); });
                     cacheObj.bindFn.splice(0);
-                    Object.defineProperties(_this, { $$cache: (0, utility_1.withValue)({ ready: false, destoryed: true }), onDestory: (0, utility_1.withValue)(null) });
+                    Object.defineProperties(_this, { $$cache: (0, utility_1.withValue)({ ready: false, destroyed: true }), onDestroy: (0, utility_1.withValue)(null) });
                 },
                 error: function (e) {
                     console.error(e);

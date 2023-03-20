@@ -47,10 +47,10 @@ var CheckVisibilityExtension = /** @class */ (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     CheckVisibilityExtension.prototype.extension = function () {
-        var visibliityList = this.jsonFields.filter(this.checkNeedOrDefaultVisibility.bind(this));
+        var visibilityList = this.jsonFields.filter(this.checkNeedOrDefaultVisibility.bind(this));
         this.pushActionToMethod({ type: calculator_constant_1.REFRESH_VISIBILITY });
-        if (!(0, lodash_1.isEmpty)(visibliityList)) {
-            this.eachFields(visibliityList, this.addFieldCalculators.bind(this));
+        if (!(0, lodash_1.isEmpty)(visibilityList)) {
+            this.eachFields(visibilityList, this.addFieldCalculators.bind(this));
             this.pushCalculators(this.json, [{
                     action: this.bindCalculatorAction(createCheckVisibility()),
                     dependents: this.createDependents([calculator_constant_1.LOAD, calculator_constant_1.CHANGE])
@@ -91,18 +91,18 @@ var CheckVisibilityExtension = /** @class */ (function (_super) {
     };
     CheckVisibilityExtension.prototype.checkNeedOrDefaultVisibility = function (jsonField) {
         var visibility = jsonField.visibility, checkVisibility = jsonField.checkVisibility;
-        var isCheck = !(0, lodash_1.isUndefined)(checkVisibility || visibility) || getParentVisibility(this.builder);
-        if (isCheck && !checkVisibility) {
+        var needCheck = !(0, lodash_1.isUndefined)(checkVisibility || visibility) || getParentVisibility(this.builder);
+        if (needCheck && !checkVisibility) {
             jsonField.checkVisibility = function (_a) {
                 var builder = _a.builder;
                 return visibility || getParentVisibility(builder);
             };
         }
-        return isCheck;
+        return needCheck;
     };
-    CheckVisibilityExtension.prototype.destory = function () {
+    CheckVisibilityExtension.prototype.destroy = function () {
         this.unDefineProperty(this.builder, [calculator_constant_1.REFRESH_VISIBILITY]);
-        return _super.prototype.destory.call(this);
+        return _super.prototype.destroy.call(this);
     };
     return CheckVisibilityExtension;
 }(basic_extension_1.BasicExtension));

@@ -1,7 +1,7 @@
 export const LOAD_SOURCE = 'loadSource';
 export const LOAD = 'load';
 export const CHANGE = 'change';
-export const DESTORY = 'destory';
+export const DESTROY = 'destroy';
 export const MOUNTED = 'mounted';
 export const LOAD_ACTION = 'loadAction';
 export const LOAD_CONFIG_ACTION = 'loadConfigType';

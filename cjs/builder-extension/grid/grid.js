@@ -59,7 +59,7 @@ var Grid = /** @class */ (function () {
         }
         return config;
     };
-    Grid.prototype.destory = function () {
+    Grid.prototype.destroy = function () {
         delete this.builder;
     };
     return Grid;

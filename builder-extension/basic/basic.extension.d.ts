@@ -19,8 +19,8 @@ export declare abstract class BasicExtension {
     protected beforeExtension(): void;
     protected abstract extension(): void | Observable<any>;
     protected afterExtension(): void;
-    protected beforeDestory(): void | Observable<any>;
-    protected destory(): void | Observable<any>;
+    protected beforeDestroy(): void | Observable<any>;
+    protected destroy(): void | Observable<any>;
     init(): Observable<BasicExtension>;
     afterInit(): Observable<() => void>;
     protected eachFields(jsonFields: any[], callBack: CallBack): void;

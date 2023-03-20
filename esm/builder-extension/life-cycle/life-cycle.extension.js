@@ -4,12 +4,12 @@ import { tap } from 'rxjs/operators';
 import { observableMap, transformObservable } from '../../utility';
 import { BasicExtension } from '../basic/basic.extension';
 // eslint-disable-next-line max-len
-import { CHANGE, DESTORY, LOAD, LOAD_SOURCE, NON_SELF_BUILSERS, ORIGIN_CALCULATORS, ORIGIN_NON_SELF_CALCULATORS } from '../constant/calculator.constant';
+import { CHANGE, DESTROY, LOAD, LOAD_SOURCE, NON_SELF_BUILSERS, ORIGIN_CALCULATORS, ORIGIN_NON_SELF_CALCULATORS } from '../constant/calculator.constant';
 export class LifeCycleExtension extends BasicExtension {
     constructor() {
         super(...arguments);
         this.hasChange = false;
-        this.lifeEvent = [LOAD, CHANGE, DESTORY];
+        this.lifeEvent = [LOAD, CHANGE, DESTROY];
         this.calculators = [];
         this.nonSelfCalculators = [];
     }
@@ -59,28 +59,28 @@ export class LifeCycleExtension extends BasicExtension {
         const sourceField = this.getJsonFieldById(fieldId) || this.json;
         sourceField.actions = this.toArray(sourceField.actions || []);
         const { actions = [], id: sourceId } = sourceField;
-        const nonSource = fieldId !== sourceId;
+        const isDependentField = fieldId !== sourceId;
         const isBuildCalculator = this.isBuildField(sourceField) && this.cache.lifeType.includes(type);
-        if ((isBuildCalculator || nonSource) && !nonSelfCalculator) {
+        if ((isBuildCalculator || isDependentField) && !nonSelfCalculator) {
             this.nonSelfCalculators.push(calculator);
             !isBuildCalculator && this.linkOtherCalculator(calculator);
         }
-        if (!nonSource && !actions.some((action) => action.type === type) && !isBuildCalculator) {
+        if (!isDependentField && !actions.some((action) => action.type === type) && !isBuildCalculator) {
             sourceField.actions.unshift({ type });
         }
     }
     linkOtherCalculator(calculator) {
         const { type, fieldId = '' } = calculator.dependent;
-        const otherFields = this.builder.root.getAllFieldById(fieldId);
-        if (!isEmpty(otherFields)) {
-            otherFields.forEach((otherField) => otherField.addEventListener && otherField.addEventListener({ type }));
+        const dependentFields = this.builder.root.getAllFieldById(fieldId);
+        if (!isEmpty(dependentFields)) {
+            dependentFields.forEach((dependentField) => dependentField.addEventListener && dependentField.addEventListener({ type }));
         }
     }
     createCalculators() {
         const fields = [...this.jsonFields, this.json];
-        const fieldsCalculators = fields.filter(({ calculators }) => !isEmpty(calculators));
+        const fieldsWithCalculators = fields.filter(({ calculators }) => !isEmpty(calculators));
         this.calculators = [];
-        fieldsCalculators.forEach(({ id: targetId, calculators = [] }) => {
+        fieldsWithCalculators.forEach(({ id: targetId, calculators = [] }) => {
             var _a;
             this.toArray(calculators).forEach(({ action, dependents }) => {
                 this.toArray(dependents).forEach((dependent) => {
@@ -102,23 +102,23 @@ export class LifeCycleExtension extends BasicExtension {
         this.definePropertys(this.cache, { [ORIGIN_CALCULATORS]: this.calculators, [ORIGIN_NON_SELF_CALCULATORS]: this.nonSelfCalculators });
         this.nonSelfCalculators.length && this.nonSelfBuilders.push(this.builder);
     }
-    beforeDestory() {
-        return this.invokeLifeCycle(this.getEventType(DESTORY)).pipe(observableMap(() => transformObservable(super.beforeDestory())));
+    beforeDestroy() {
+        return this.invokeLifeCycle(this.getEventType(DESTROY)).pipe(observableMap(() => transformObservable(super.beforeDestroy())));
     }
-    destory() {
+    destroy() {
         if (this.nonSelfCalculators.length) {
             this.nonSelfBuilders.splice(this.nonSelfBuilders.indexOf(this.builder), 1);
         }
         this.unDefineProperty(this.builder, ['calculators', 'nonSelfCalculators', this.getEventType(CHANGE)]);
         this.unDefineProperty(this.cache, ['lifeType', ORIGIN_CALCULATORS, ORIGIN_NON_SELF_CALCULATORS, NON_SELF_BUILSERS]);
         this.unDefineProperty(this, ['lifeActions']);
-        return transformObservable(super.destory()).pipe(tap(() => {
+        return transformObservable(super.destroy()).pipe(tap(() => {
             var _a, _b;
             const parentField = (_a = this.builder.parent) === null || _a === void 0 ? void 0 : _a.getFieldById(this.builder.id);
             const instance = (parentField || this.props).instance;
             if (instance) {
-                (_b = instance.destory) === null || _b === void 0 ? void 0 : _b.next(this.props.id || this.builder.id);
-                !instance.destory && (instance.current = null);
+                (_b = instance.destroy) === null || _b === void 0 ? void 0 : _b.next(this.props.id || this.builder.id);
+                !instance.destroy && (instance.current = null);
             }
         }));
     }

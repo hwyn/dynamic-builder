@@ -35,13 +35,13 @@ var GridExtension = /** @class */ (function (_super) {
         this.defineProperty(builderField, calculator_constant_1.LAYOUT, (0, lodash_1.merge)({ row: cursor[group] }, mergeLayout));
         delete field.layout;
     };
-    GridExtension.prototype.destory = function () {
+    GridExtension.prototype.destroy = function () {
         var _this = this;
-        this.cache.grid.destory();
+        this.cache.grid.destroy();
         this.defineProperty(this.cache, calculator_constant_1.GRID, null);
         this.defineProperty(this.builder, calculator_constant_1.ELEMENT, null);
         this.layoutBuildFields.forEach(function (builderField) { return _this.defineProperty(builderField, calculator_constant_1.LAYOUT, null); });
-        return _super.prototype.destory.call(this);
+        return _super.prototype.destroy.call(this);
     };
     return GridExtension;
 }(basic_extension_1.BasicExtension));

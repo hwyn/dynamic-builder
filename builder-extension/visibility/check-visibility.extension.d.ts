@@ -9,5 +9,5 @@ export declare class CheckVisibilityExtension extends BasicExtension {
     private checkVisibilityAfter;
     private removeOnEvent;
     private checkNeedOrDefaultVisibility;
-    protected destory(): void | import("rxjs").Observable<any>;
+    protected destroy(): void | import("rxjs").Observable<any>;
 }

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.serializeAction = exports.BuilderModel = exports.Grid = exports.BaseCovert = exports.useBuilderContext = exports.BuilderContext = void 0;
+exports.serializeAction = exports.BuilderModel = exports.Grid = exports.BaseConvert = exports.useBuilderContext = exports.BuilderContext = void 0;
 var tslib_1 = require("tslib");
 var basic_extension_1 = require("./basic/basic.extension");
 Object.defineProperty(exports, "serializeAction", { enumerable: true, get: function () { return basic_extension_1.serializeAction; } });
@@ -11,8 +11,8 @@ tslib_1.__exportStar(require("./constant/calculator.constant"), exports);
 var builder_context_1 = require("./context/builder-context");
 Object.defineProperty(exports, "BuilderContext", { enumerable: true, get: function () { return builder_context_1.BuilderContext; } });
 Object.defineProperty(exports, "useBuilderContext", { enumerable: true, get: function () { return builder_context_1.useBuilderContext; } });
-var base_covert_1 = require("./form/base-covert");
-Object.defineProperty(exports, "BaseCovert", { enumerable: true, get: function () { return base_covert_1.BaseCovert; } });
+var base_convert_1 = require("./form/base-convert");
+Object.defineProperty(exports, "BaseConvert", { enumerable: true, get: function () { return base_convert_1.BaseConvert; } });
 tslib_1.__exportStar(require("./form/type-api"), exports);
 var grid_1 = require("./grid/grid");
 Object.defineProperty(exports, "Grid", { enumerable: true, get: function () { return grid_1.Grid; } });

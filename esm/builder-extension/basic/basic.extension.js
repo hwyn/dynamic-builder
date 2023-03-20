@@ -23,13 +23,13 @@ export class BasicExtension {
     }
     beforeExtension() { }
     afterExtension() { }
-    beforeDestory() { }
-    destory() { }
+    beforeDestroy() { }
+    destroy() { }
     init() {
         return transformObj(this.extension(), this);
     }
     afterInit() {
-        return transformObj(this.afterExtension(), () => transformObj(this.beforeDestory(), () => this.destory()));
+        return transformObj(this.afterExtension(), () => transformObj(this.beforeDestroy(), () => this.destroy()));
     }
     eachFields(jsonFields, callBack) {
         jsonFields.forEach((jsonField) => callBack([jsonField, this.getBuilderFieldById(jsonField.id)]));

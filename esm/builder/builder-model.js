@@ -30,7 +30,7 @@ export class BuilderModel {
         return uniq(fields.filter((field) => !isEmpty(field)));
     }
     detectChanges() {
-        if (!this.$$cache.destoryed && this.ready) {
+        if (!this.$$cache.destroyed && this.ready) {
             this.$$cache.detectChanges.next(this);
         }
     }

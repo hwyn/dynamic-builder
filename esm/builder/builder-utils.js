@@ -12,7 +12,7 @@ export function init() {
     Object.defineProperty(this, CACHE, withValue(getCacheObj.call(this, {})));
     Object.defineProperties(this, {
         onChange: withValue(() => { }),
-        onDestory: withValue(() => { var _a; return (_a = this.$$cache) === null || _a === void 0 ? void 0 : _a.destory(); }),
+        onDestroy: withValue(() => { var _a; return (_a = this.$$cache) === null || _a === void 0 ? void 0 : _a.destroy(); }),
         loadForBuild: withValue((props) => {
             delete this.loadForBuild;
             Object.defineProperty(this, 'privateExtension', withValue(parseExtension(props.privateExtension || [])));
@@ -32,21 +32,21 @@ function loadForBuild(props) {
             .map((Extension) => new Extension(this, props, this.$$cache, props.config))
             .map((extension) => extension.init());
         return toForkJoin([loadExample, ...beforeInits]);
-    }), observableMap((examples) => toForkJoin(examples.map((example) => example.afterInit()))), tap((beforeDestorys) => {
+    }), observableMap((examples) => toForkJoin(examples.map((example) => example.afterInit()))), tap((beforeDestroys) => {
         this.$$cache.ready = true;
-        this.$$cache.beforeDestorys = beforeDestorys;
-        this.$$cache.destoryed && destory.apply(this);
+        this.$$cache.beforeDestroys = beforeDestroys;
+        this.$$cache.destroyed && destroy.apply(this);
     }));
 }
 function getCacheObj(props) {
     const { config: { fields = [] } = {} } = props;
-    const { bindFn = [], ready = false, destoryed = false, detectChanges = new Subject(), destory: modelDestory = destory.bind(this), addChild: modelAddChild = addChild.bind(this), removeChild: modelRemoveChild = removeChild.bind(this) } = this.$$cache || {};
+    const { bindFn = [], ready = false, destroyed = false, detectChanges = new Subject(), destroy: modelDestroy = destroy.bind(this), addChild: modelAddChild = addChild.bind(this), removeChild: modelRemoveChild = removeChild.bind(this) } = this.$$cache || {};
     return Object.assign(this.$$cache, {
         ready,
         bindFn,
-        destoryed,
+        destroyed,
         detectChanges,
-        destory: modelDestory,
+        destroy: modelDestroy,
         addChild: modelAddChild,
         removeChild: modelRemoveChild,
         fields: fields.map(createField.bind(this)),
@@ -59,24 +59,24 @@ function createField(field) {
     Object.keys(_field).forEach((key) => _field[key] === undefined && delete _field[key]);
     return _field;
 }
-function destory() {
+function destroy() {
     const cacheObj = this.$$cache;
-    const { beforeDestorys = [], ready = false, destoryed } = cacheObj;
-    cacheObj.destoryed = true;
-    if (ready && !destoryed) {
+    const { beforeDestroys = [], ready = false, destroyed } = cacheObj;
+    cacheObj.destroyed = true;
+    if (ready && !destroyed) {
         try {
-            transformObservable(this.destory && this.destory.call(this)).pipe(observableMap(() => toForkJoin(beforeDestorys.map((beforeDestory) => beforeDestory && beforeDestory()))), observableMap((destorys) => toForkJoin(destorys.map((destory) => destory && destory())))).subscribe({
+            transformObservable(this.destroy && this.destroy.call(this)).pipe(observableMap(() => toForkJoin(beforeDestroys.map((beforeDestroy) => beforeDestroy && beforeDestroy()))), observableMap((destroys) => toForkJoin(destroys.map((destroy) => destroy && destroy())))).subscribe({
                 next: () => {
                     var _a;
                     cacheObj.fields.splice(0);
                     cacheObj.detectChanges.unsubscribe();
-                    cacheObj.beforeDestorys.splice(0);
+                    cacheObj.beforeDestroys.splice(0);
                     this.children.splice(0);
                     (_a = this.privateExtension) === null || _a === void 0 ? void 0 : _a.splice(0);
                     this.parent && removeChild.call(this.parent, this);
                     cacheObj.bindFn.forEach((fn) => fn());
                     cacheObj.bindFn.splice(0);
-                    Object.defineProperties(this, { $$cache: withValue({ ready: false, destoryed: true }), onDestory: withValue(null) });
+                    Object.defineProperties(this, { $$cache: withValue({ ready: false, destroyed: true }), onDestroy: withValue(null) });
                 },
                 error: (e) => {
                     console.error(e);

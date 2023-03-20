@@ -1,11 +1,11 @@
 import { __extends, __spreadArray } from "tslib";
 import { Injector } from '@fm/di';
 import { BuilderContext as BasicBuilderContext } from '../../builder/builder-context';
-import { ACTION_INTERCEPT, ACTIONS_CONFIG, BUILDER_EXTENSION, COVERT_CONFIG, COVERT_INTERCEPT, FORM_CONTROL, GET_JSON_CONFIG, GET_TYPE, LAYOUT_ELEMENT, LOAD_BUILDER_CONFIG } from '../../token';
+import { ACTION_INTERCEPT, ACTIONS_CONFIG, BUILDER_EXTENSION, CONVERT_CONFIG, CONVERT_INTERCEPT, FORM_CONTROL, GET_JSON_CONFIG, GET_TYPE, LAYOUT_ELEMENT, LOAD_BUILDER_CONFIG } from '../../token';
 import { Action } from '../action/actions';
 import { ActionExtension } from '../action/actions.extension';
 import { DataSourceExtension } from '../datasource/datasource.extension';
-import { Covert } from '../form/covert';
+import { Convert } from '../form/convert';
 import { FormExtension } from '../form/form.extension';
 import { GridExtension } from '../grid/grid.extension';
 import { InstanceExtension } from '../instance/instance.extension';
@@ -108,8 +108,8 @@ var BuilderContext = /** @class */ (function (_super) {
         Object.assign(action, options);
         this.forwardType(ACTIONS_CONFIG, name, action, 'action');
     };
-    BuilderContext.prototype.forwardCovert = function (name, covert) {
-        this.forwardType(COVERT_CONFIG, name, covert, 'covert');
+    BuilderContext.prototype.forwardConvert = function (name, convert) {
+        this.forwardType(CONVERT_CONFIG, name, convert, 'convert');
     };
     BuilderContext.prototype.registryExtension = function (extensions) {
         var _a;
@@ -123,7 +123,7 @@ var BuilderContext = /** @class */ (function (_super) {
         injector.set(BuilderContext, { provide: BuilderContext, useValue: this });
         injector.set(GET_TYPE, { provide: GET_TYPE, useValue: this.getType.bind(this) });
         injector.set(ACTION_INTERCEPT, { provide: ACTION_INTERCEPT, useClass: Action });
-        injector.set(COVERT_INTERCEPT, { provide: COVERT_INTERCEPT, useClass: Covert });
+        injector.set(CONVERT_INTERCEPT, { provide: CONVERT_INTERCEPT, useClass: Convert });
         this.canExtends(injector);
     };
     return BuilderContext;

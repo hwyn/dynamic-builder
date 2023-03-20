@@ -28,11 +28,11 @@ export class GridExtension extends BasicExtension {
         this.defineProperty(builderField, LAYOUT, merge({ row: cursor[group] }, mergeLayout));
         delete field.layout;
     }
-    destory() {
-        this.cache.grid.destory();
+    destroy() {
+        this.cache.grid.destroy();
         this.defineProperty(this.cache, GRID, null);
         this.defineProperty(this.builder, ELEMENT, null);
         this.layoutBuildFields.forEach((builderField) => this.defineProperty(builderField, LAYOUT, null));
-        return super.destory();
+        return super.destroy();
     }
 }

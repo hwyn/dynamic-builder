@@ -39,8 +39,8 @@ export class ActionExtension extends BasicExtension {
             builderField.instance.detectChanges();
         }
     }
-    destory() {
+    destroy() {
         this.fields.forEach((field) => this.unDefineProperty(field, [CACHE_ACTION, EVENTS, ADD_EVENT_LISTENER]));
-        super.destory();
+        super.destroy();
     }
 }

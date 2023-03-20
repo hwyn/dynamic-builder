@@ -14,7 +14,7 @@ var LifeCycleExtension = /** @class */ (function (_super) {
     function LifeCycleExtension() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.hasChange = false;
-        _this.lifeEvent = [calculator_constant_1.LOAD, calculator_constant_1.CHANGE, calculator_constant_1.DESTORY];
+        _this.lifeEvent = [calculator_constant_1.LOAD, calculator_constant_1.CHANGE, calculator_constant_1.DESTROY];
         _this.calculators = [];
         _this.nonSelfCalculators = [];
         return _this;
@@ -73,32 +73,32 @@ var LifeCycleExtension = /** @class */ (function (_super) {
         var sourceField = this.getJsonFieldById(fieldId) || this.json;
         sourceField.actions = this.toArray(sourceField.actions || []);
         var _b = sourceField.actions, actions = _b === void 0 ? [] : _b, sourceId = sourceField.id;
-        var nonSource = fieldId !== sourceId;
+        var isDependentField = fieldId !== sourceId;
         var isBuildCalculator = this.isBuildField(sourceField) && this.cache.lifeType.includes(type);
-        if ((isBuildCalculator || nonSource) && !nonSelfCalculator) {
+        if ((isBuildCalculator || isDependentField) && !nonSelfCalculator) {
             this.nonSelfCalculators.push(calculator);
             !isBuildCalculator && this.linkOtherCalculator(calculator);
         }
-        if (!nonSource && !actions.some(function (action) { return action.type === type; }) && !isBuildCalculator) {
+        if (!isDependentField && !actions.some(function (action) { return action.type === type; }) && !isBuildCalculator) {
             sourceField.actions.unshift({ type: type });
         }
     };
     LifeCycleExtension.prototype.linkOtherCalculator = function (calculator) {
         var _a = calculator.dependent, type = _a.type, _b = _a.fieldId, fieldId = _b === void 0 ? '' : _b;
-        var otherFields = this.builder.root.getAllFieldById(fieldId);
-        if (!(0, lodash_1.isEmpty)(otherFields)) {
-            otherFields.forEach(function (otherField) { return otherField.addEventListener && otherField.addEventListener({ type: type }); });
+        var dependentFields = this.builder.root.getAllFieldById(fieldId);
+        if (!(0, lodash_1.isEmpty)(dependentFields)) {
+            dependentFields.forEach(function (dependentField) { return dependentField.addEventListener && dependentField.addEventListener({ type: type }); });
         }
     };
     LifeCycleExtension.prototype.createCalculators = function () {
         var _this = this;
         var fields = tslib_1.__spreadArray(tslib_1.__spreadArray([], this.jsonFields, true), [this.json], false);
-        var fieldsCalculators = fields.filter(function (_a) {
+        var fieldsWithCalculators = fields.filter(function (_a) {
             var calculators = _a.calculators;
             return !(0, lodash_1.isEmpty)(calculators);
         });
         this.calculators = [];
-        fieldsCalculators.forEach(function (_a) {
+        fieldsWithCalculators.forEach(function (_a) {
             var _b;
             var targetId = _a.id, _c = _a.calculators, calculators = _c === void 0 ? [] : _c;
             _this.toArray(calculators).forEach(function (_a) {
@@ -127,11 +127,11 @@ var LifeCycleExtension = /** @class */ (function (_super) {
         this.definePropertys(this.cache, (_a = {}, _a[calculator_constant_1.ORIGIN_CALCULATORS] = this.calculators, _a[calculator_constant_1.ORIGIN_NON_SELF_CALCULATORS] = this.nonSelfCalculators, _a));
         this.nonSelfCalculators.length && this.nonSelfBuilders.push(this.builder);
     };
-    LifeCycleExtension.prototype.beforeDestory = function () {
+    LifeCycleExtension.prototype.beforeDestroy = function () {
         var _this = this;
-        return this.invokeLifeCycle(this.getEventType(calculator_constant_1.DESTORY)).pipe((0, utility_1.observableMap)(function () { return (0, utility_1.transformObservable)(_super.prototype.beforeDestory.call(_this)); }));
+        return this.invokeLifeCycle(this.getEventType(calculator_constant_1.DESTROY)).pipe((0, utility_1.observableMap)(function () { return (0, utility_1.transformObservable)(_super.prototype.beforeDestroy.call(_this)); }));
     };
-    LifeCycleExtension.prototype.destory = function () {
+    LifeCycleExtension.prototype.destroy = function () {
         var _this = this;
         if (this.nonSelfCalculators.length) {
             this.nonSelfBuilders.splice(this.nonSelfBuilders.indexOf(this.builder), 1);
@@ -139,13 +139,13 @@ var LifeCycleExtension = /** @class */ (function (_super) {
         this.unDefineProperty(this.builder, ['calculators', 'nonSelfCalculators', this.getEventType(calculator_constant_1.CHANGE)]);
         this.unDefineProperty(this.cache, ['lifeType', calculator_constant_1.ORIGIN_CALCULATORS, calculator_constant_1.ORIGIN_NON_SELF_CALCULATORS, calculator_constant_1.NON_SELF_BUILSERS]);
         this.unDefineProperty(this, ['lifeActions']);
-        return (0, utility_1.transformObservable)(_super.prototype.destory.call(this)).pipe((0, operators_1.tap)(function () {
+        return (0, utility_1.transformObservable)(_super.prototype.destroy.call(this)).pipe((0, operators_1.tap)(function () {
             var _a, _b;
             var parentField = (_a = _this.builder.parent) === null || _a === void 0 ? void 0 : _a.getFieldById(_this.builder.id);
             var instance = (parentField || _this.props).instance;
             if (instance) {
-                (_b = instance.destory) === null || _b === void 0 ? void 0 : _b.next(_this.props.id || _this.builder.id);
-                !instance.destory && (instance.current = null);
+                (_b = instance.destroy) === null || _b === void 0 ? void 0 : _b.next(_this.props.id || _this.builder.id);
+                !instance.destroy && (instance.current = null);
             }
         }));
     };

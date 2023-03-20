@@ -5,5 +5,5 @@ export declare class ActionExtension extends BasicExtension {
     protected extension(): void;
     private create;
     private addFieldEvent;
-    destory(): void;
+    destroy(): void;
 }

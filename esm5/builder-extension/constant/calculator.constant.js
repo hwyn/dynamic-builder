@@ -1,7 +1,7 @@
 export var LOAD_SOURCE = 'loadSource';
 export var LOAD = 'load';
 export var CHANGE = 'change';
-export var DESTORY = 'destory';
+export var DESTROY = 'destroy';
 export var MOUNTED = 'mounted';
 export var LOAD_ACTION = 'loadAction';
 export var LOAD_CONFIG_ACTION = 'loadConfigType';

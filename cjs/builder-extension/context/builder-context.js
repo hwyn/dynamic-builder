@@ -8,7 +8,7 @@ var token_1 = require("../../token");
 var actions_1 = require("../action/actions");
 var actions_extension_1 = require("../action/actions.extension");
 var datasource_extension_1 = require("../datasource/datasource.extension");
-var covert_1 = require("../form/covert");
+var convert_1 = require("../form/convert");
 var form_extension_1 = require("../form/form.extension");
 var grid_extension_1 = require("../grid/grid.extension");
 var instance_extension_1 = require("../instance/instance.extension");
@@ -111,8 +111,8 @@ var BuilderContext = /** @class */ (function (_super) {
         Object.assign(action, options);
         this.forwardType(token_1.ACTIONS_CONFIG, name, action, 'action');
     };
-    BuilderContext.prototype.forwardCovert = function (name, covert) {
-        this.forwardType(token_1.COVERT_CONFIG, name, covert, 'covert');
+    BuilderContext.prototype.forwardConvert = function (name, convert) {
+        this.forwardType(token_1.CONVERT_CONFIG, name, convert, 'convert');
     };
     BuilderContext.prototype.registryExtension = function (extensions) {
         var _a;
@@ -126,7 +126,7 @@ var BuilderContext = /** @class */ (function (_super) {
         injector.set(BuilderContext, { provide: BuilderContext, useValue: this });
         injector.set(token_1.GET_TYPE, { provide: token_1.GET_TYPE, useValue: this.getType.bind(this) });
         injector.set(token_1.ACTION_INTERCEPT, { provide: token_1.ACTION_INTERCEPT, useClass: actions_1.Action });
-        injector.set(token_1.COVERT_INTERCEPT, { provide: token_1.COVERT_INTERCEPT, useClass: covert_1.Covert });
+        injector.set(token_1.CONVERT_INTERCEPT, { provide: token_1.CONVERT_INTERCEPT, useClass: convert_1.Convert });
         this.canExtends(injector);
     };
     return BuilderContext;

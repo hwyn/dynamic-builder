@@ -11,23 +11,23 @@ export class ViewModelExtension extends BasicExtension {
     }
     createViewModelCalculator() {
         const { actions = [] } = this.json;
-        const hasLoadEvent = actions.some(({ type = `` }) => type === LOAD);
+        const hasLoadAction = actions.some(({ type = `` }) => type === LOAD);
         const handler = ({ actionEvent }) => {
             var _a;
-            this.createViewModel(hasLoadEvent ? actionEvent : ((_a = this.builder.parent) === null || _a === void 0 ? void 0 : _a.$$cache.viewModel) || {});
+            this.createViewModel(hasLoadAction ? actionEvent : ((_a = this.builder.parent) === null || _a === void 0 ? void 0 : _a.$$cache.viewModel) || {});
             return actionEvent;
         };
         return this.bindCalculatorAction(handler, LOAD_VIEW_MODEL);
     }
     createViewModel(store) {
-        const viewModel = store instanceof BaseView ? store : new BaseView(this.injector, store);
-        this.defineProperty(this.cache, VIEW_MODEL, viewModel);
-        this.definePropertyGet(this.builder, VIEW_MODEL, () => viewModel.model);
+        const baseView = store instanceof BaseView ? store : new BaseView(this.injector, store);
+        this.defineProperty(this.cache, VIEW_MODEL, baseView);
+        this.definePropertyGet(this.builder, VIEW_MODEL, () => baseView.model);
     }
     createNotifyEvent() {
         this.pushActionToMethod([
             { type: NOTIFY_MODEL_CHANGE, handler: this.notifyHandler },
-            { type: REFRESH_DATA, handler: this.refresHandler }
+            { type: REFRESH_DATA, handler: this.refreshHandler }
         ]);
     }
     notifyHandler({ builder, actionEvent }, options = { hasSelf: true }) {
@@ -36,13 +36,13 @@ export class ViewModelExtension extends BasicExtension {
         }
         return actionEvent;
     }
-    refresHandler({ actionEvent, builder }) {
+    refreshHandler({ actionEvent, builder }) {
         var _a;
         (_a = builder.$$cache) === null || _a === void 0 ? void 0 : _a.viewModel.refreshData(actionEvent);
     }
-    destory() {
+    destroy() {
         this.unDefineProperty(this.cache, [VIEW_MODEL]);
         this.unDefineProperty(this.builder, [VIEW_MODEL, REFRESH_DATA, NOTIFY_MODEL_CHANGE]);
-        return super.destory();
+        return super.destroy();
     }
 }

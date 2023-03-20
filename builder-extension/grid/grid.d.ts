@@ -5,5 +5,5 @@ export declare class Grid {
     constructor(json: any, builder: BuilderModelExtensions);
     private serializationConfig;
     getViewGrip(props: any): GridType;
-    protected destory(): void;
+    protected destroy(): void;
 }

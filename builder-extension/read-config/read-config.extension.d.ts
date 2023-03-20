@@ -12,5 +12,5 @@ export declare class ReadConfigExtension extends BasicExtension {
     private checkFieldRepeat;
     private eligiblePreloaded;
     private createGetExecuteHandler;
-    protected destory(): void | Observable<any>;
+    protected destroy(): void | Observable<any>;
 }

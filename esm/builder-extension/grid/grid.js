@@ -47,7 +47,7 @@ export class Grid {
         }
         return config;
     }
-    destory() {
+    destroy() {
         delete this.builder;
     }
 }

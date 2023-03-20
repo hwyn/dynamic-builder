@@ -24,6 +24,6 @@ export declare class LifeCycleExtension extends BasicExtension {
     private getNonSelfCalculators;
     get nonSelfBuilders(): BuilderModelExtensions[];
     private bindCalculator;
-    protected beforeDestory(): Observable<unknown>;
-    protected destory(): Observable<any>;
+    protected beforeDestroy(): Observable<unknown>;
+    protected destroy(): Observable<any>;
 }

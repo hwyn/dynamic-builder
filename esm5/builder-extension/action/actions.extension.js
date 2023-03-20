@@ -49,10 +49,10 @@ var ActionExtension = /** @class */ (function (_super) {
             builderField.instance.detectChanges();
         }
     };
-    ActionExtension.prototype.destory = function () {
+    ActionExtension.prototype.destroy = function () {
         var _this = this;
         this.fields.forEach(function (field) { return _this.unDefineProperty(field, [CACHE_ACTION, EVENTS, ADD_EVENT_LISTENER]); });
-        _super.prototype.destory.call(this);
+        _super.prototype.destroy.call(this);
     };
     return ActionExtension;
 }(BasicExtension));

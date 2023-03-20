@@ -1,4 +1,4 @@
-export class BaseCovert {
+export class BaseConvert {
     constructor(injector) {
         this.injector = injector;
     }

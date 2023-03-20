@@ -1,9 +1,9 @@
 import { Injector } from '@fm/di';
 import { BuilderFieldExtensions, BuilderModelExtensions } from '../type-api';
-import { BaseCovertImpl } from './type-api';
-export declare abstract class BaseCovert implements BaseCovertImpl {
+import { BaseConvertImpl } from './type-api';
+export declare abstract class BaseConvert implements BaseConvertImpl {
     protected injector: Injector;
-    static covertName?: string;
+    static convertName?: string;
     protected builder: BuilderModelExtensions;
     protected builderField: BuilderFieldExtensions;
     constructor(injector: Injector);

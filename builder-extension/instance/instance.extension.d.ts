@@ -8,7 +8,7 @@ export declare class InstanceExtension extends BasicExtension {
     private createInstanceLife;
     private getCurrentProperty;
     private addInstance;
-    private instanceDestory;
-    protected beforeDestory(): Observable<unknown>;
-    destory(): void | Observable<any>;
+    private instanceDestroy;
+    protected beforeDestroy(): Observable<unknown>;
+    destroy(): void | Observable<any>;
 }

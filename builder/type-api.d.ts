@@ -9,23 +9,23 @@ export interface CacheObj {
         [key: string]: any;
     };
     fields: BuilderField[];
-    destoryed: boolean;
+    destroyed: boolean;
     bindFn: any[];
     ready: boolean;
-    destory: () => void;
+    destroy: () => void;
     addChild: (child: BuilderModelImplements) => void;
     removeChild: (child: BuilderModelImplements) => void;
     detectChanges: Subject<any>;
-    extensionDestorys: any[];
+    extensionDestroys: any[];
 }
 interface Field {
     [key: string]: any;
 }
 export interface Instance {
     current: any;
-    destory: Subject<any>;
+    destroy: Subject<any>;
     onMounted: (id: string) => void;
-    onDestory: (id: string) => void;
+    onDestroy: (id: string) => void;
     detectChanges(): void;
 }
 export interface BuilderElement {

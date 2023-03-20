@@ -1,16 +1,16 @@
 import { BasicExtension } from '../basic/basic.extension';
 export declare class FormExtension extends BasicExtension {
-    private covertMap;
+    private convertMap;
     private builderFields;
     private defaultChangeType;
     private getControl;
-    private covertIntercept;
+    private convertIntercept;
     protected extension(): void;
     private createMergeControl;
     private addChangeAction;
     private addControl;
     private createChange;
-    private createValidaity;
+    private createValidity;
     private createVisibility;
     private changeVisibility;
     private excuteChangeEvent;
@@ -21,5 +21,5 @@ export declare class FormExtension extends BasicExtension {
     private setValueToModel;
     private deleteValueToModel;
     private isDomEvent;
-    destory(): void | import("rxjs").Observable<any>;
+    destroy(): void | import("rxjs").Observable<any>;
 }

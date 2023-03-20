@@ -30,10 +30,10 @@ export function createCheckVisibility() {
 }
 export class CheckVisibilityExtension extends BasicExtension {
     extension() {
-        const visibliityList = this.jsonFields.filter(this.checkNeedOrDefaultVisibility.bind(this));
+        const visibilityList = this.jsonFields.filter(this.checkNeedOrDefaultVisibility.bind(this));
         this.pushActionToMethod({ type: REFRESH_VISIBILITY });
-        if (!isEmpty(visibliityList)) {
-            this.eachFields(visibliityList, this.addFieldCalculators.bind(this));
+        if (!isEmpty(visibilityList)) {
+            this.eachFields(visibilityList, this.addFieldCalculators.bind(this));
             this.pushCalculators(this.json, [{
                     action: this.bindCalculatorAction(createCheckVisibility()),
                     dependents: this.createDependents([LOAD, CHANGE])
@@ -70,14 +70,14 @@ export class CheckVisibilityExtension extends BasicExtension {
     }
     checkNeedOrDefaultVisibility(jsonField) {
         const { visibility, checkVisibility } = jsonField;
-        const isCheck = !isUndefined(checkVisibility || visibility) || getParentVisibility(this.builder);
-        if (isCheck && !checkVisibility) {
+        const needCheck = !isUndefined(checkVisibility || visibility) || getParentVisibility(this.builder);
+        if (needCheck && !checkVisibility) {
             jsonField.checkVisibility = ({ builder }) => visibility || getParentVisibility(builder);
         }
-        return isCheck;
+        return needCheck;
     }
-    destory() {
+    destroy() {
         this.unDefineProperty(this.builder, [REFRESH_VISIBILITY]);
-        return super.destory();
+        return super.destroy();
     }
 }

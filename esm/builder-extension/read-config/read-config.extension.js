@@ -18,8 +18,8 @@ export class ReadConfigExtension extends BasicExtension {
     }
     getConfig(url) {
         const isAbstractPath = /^[^\\.]+/ig.test(url);
-        const _url = isAbstractPath ? url : `${this.cache.basePath}/${url.replace(/^\.\//, '')}`.replace(/[\\/]+/ig, '/');
-        return this.getJsonConfig(_url);
+        const urlPath = isAbstractPath ? url : `${this.cache.basePath}/${url.replace(/^\.\//, '')}`.replace(/[\\/]+/ig, '/');
+        return this.getJsonConfig(urlPath);
     }
     preloaded(jsonConfig) {
         const { isPreloaded, fields } = jsonConfig;
@@ -91,8 +91,8 @@ export class ReadConfigExtension extends BasicExtension {
             return isFunction(executeHandler) ? executeHandler.bind(builder) : undefined;
         };
     }
-    destory() {
+    destroy() {
         this.unDefineProperty(this.builder, ['getExecuteHandler']);
-        return super.destory();
+        return super.destroy();
     }
 }
