@@ -1,9 +1,11 @@
+import { __decorate, __metadata } from "tslib";
+import { Injector, Prop } from '@fm/di';
 import { flatMap, isEmpty, uniq } from 'lodash';
 import { init } from './builder-utils';
 import { Visibility } from './consts';
+var transform = function (type, name, value) { return [type[name], value].includes(undefined) && (type[name] = value); };
 var BuilderModel = /** @class */ (function () {
-    function BuilderModel(injector) {
-        this.injector = injector;
+    function BuilderModel() {
         this.parent = null;
         this.children = [];
         this.$$cache = {};
@@ -69,6 +71,10 @@ var BuilderModel = /** @class */ (function () {
     BuilderModel.prototype.showField = function (visibility) {
         return visibility === undefined || visibility !== Visibility.none;
     };
+    __decorate([
+        Prop(Injector, { transform: transform }),
+        __metadata("design:type", Injector)
+    ], BuilderModel.prototype, "injector", void 0);
     return BuilderModel;
 }());
 export { BuilderModel };

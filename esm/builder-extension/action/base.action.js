@@ -1,8 +1,8 @@
 import { ACTION_INTERCEPT } from '../../token';
-export class BaseAction {
-    constructor(injector, context = {}) {
-        this.injector = injector;
-        this.context = context;
+import { BaseType } from '../context/base-type';
+export class BaseAction extends BaseType {
+    invoke(context = {}) {
+        return Object.assign(this, { context });
     }
     get builderField() {
         return this.context.builderField;

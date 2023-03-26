@@ -1,5 +1,5 @@
 import { __extends, __spreadArray } from "tslib";
-import { Injector } from '@fm/di';
+import { getInjectableDef, Injectable, Injector } from '@fm/di';
 import { BuilderContext as BasicBuilderContext } from '../../builder/builder-context';
 import { ACTION_INTERCEPT, ACTIONS_CONFIG, BUILDER_EXTENSION, CONVERT_CONFIG, CONVERT_INTERCEPT, FORM_CONTROL, GET_JSON_CONFIG, GET_TYPE, LAYOUT_ELEMENT, LOAD_BUILDER_CONFIG } from '../../token';
 import { Action } from '../action/actions';
@@ -25,6 +25,7 @@ var defaultExtensions = [
     ActionExtension,
     LifeCycleExtension
 ];
+export { BaseType } from './base-type';
 var BuilderContext = /** @class */ (function (_super) {
     __extends(BuilderContext, _super);
     function BuilderContext(parent) {
@@ -41,7 +42,6 @@ var BuilderContext = /** @class */ (function (_super) {
         _super.prototype.registryInjector.call(this, injector);
         this.map.forEach(function (_factory, token) { return _this.registryFactory(injector, token); });
         this.clsMap.forEach(function (cls, token) { return injector.set(token, { provide: token, useClass: cls }); });
-        this.typeMap.forEach(function (list, token) { return injector.set(token, { provide: token, multi: true, useValue: list }); });
         injector.set(BUILDER_EXTENSION, { provide: BUILDER_EXTENSION, multi: true, useValue: this.extensions });
     };
     BuilderContext.prototype.useFactory = function (useFactory) {
@@ -88,21 +88,22 @@ var BuilderContext = /** @class */ (function (_super) {
             if (list.some(function (_a) {
                 var typeName = _a.name;
                 return typeName === name;
-            })) {
+            }))
                 console.info("".concat(typeName, ": ").concat(name, "\u5DF2\u7ECF\u6CE8\u518C"));
-            }
+            if (!getInjectableDef(target))
+                Injectable({ providedIn: 'any' })(target);
             target["".concat(typeName, "Name")] = name;
             list.push((_a = { name: name, attr: typeName }, _a[typeName] = target, _a));
         }
     };
     BuilderContext.prototype.forwardGetJsonConfig = function (getJsonConfig) {
-        this.map.set(GET_JSON_CONFIG, getJsonConfig);
+        this.forwardFactory(GET_JSON_CONFIG, getJsonConfig);
     };
     BuilderContext.prototype.forwardFormControl = function (factoryFormControl) {
-        this.map.set(FORM_CONTROL, factoryFormControl);
+        this.forwardFactory(FORM_CONTROL, factoryFormControl);
     };
     BuilderContext.prototype.forwardBuilderLayout = function (createElement) {
-        this.map.set(LAYOUT_ELEMENT, createElement);
+        this.forwardFactory(LAYOUT_ELEMENT, createElement);
     };
     BuilderContext.prototype.forwardAction = function (name, action, options) {
         Object.assign(action, options);

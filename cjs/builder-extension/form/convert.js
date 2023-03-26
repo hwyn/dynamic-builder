@@ -23,7 +23,7 @@ var Convert = /** @class */ (function () {
         if (name && !convert) {
             console.info("convert: ".concat(name, "\u6CA1\u6709\u88AB\u6CE8\u518C!!"));
         }
-        var converter = convert && new convert(builder.injector || this.injector);
+        var converter = convert && this.injector.get(convert, di_1.InjectFlags.NonCache);
         return converter && converter.invoke({ covertConfig: covertConfig, builder: builder, builderField: builderField });
     };
     Convert = tslib_1.__decorate([

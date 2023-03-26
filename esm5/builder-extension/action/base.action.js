@@ -1,10 +1,15 @@
+import { __extends } from "tslib";
 import { ACTION_INTERCEPT } from '../../token';
-var BaseAction = /** @class */ (function () {
-    function BaseAction(injector, context) {
-        if (context === void 0) { context = {}; }
-        this.injector = injector;
-        this.context = context;
+import { BaseType } from '../context/base-type';
+var BaseAction = /** @class */ (function (_super) {
+    __extends(BaseAction, _super);
+    function BaseAction() {
+        return _super !== null && _super.apply(this, arguments) || this;
     }
+    BaseAction.prototype.invoke = function (context) {
+        if (context === void 0) { context = {}; }
+        return Object.assign(this, { context: context });
+    };
     Object.defineProperty(BaseAction.prototype, "builderField", {
         get: function () {
             return this.context.builderField;
@@ -55,5 +60,5 @@ var BaseAction = /** @class */ (function () {
         configurable: true
     });
     return BaseAction;
-}());
+}(BaseType));
 export { BaseAction };

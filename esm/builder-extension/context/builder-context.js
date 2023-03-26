@@ -1,4 +1,4 @@
-import { Injector } from '@fm/di';
+import { getInjectableDef, Injectable, Injector } from '@fm/di';
 import { BuilderContext as BasicBuilderContext } from '../../builder/builder-context';
 import { ACTION_INTERCEPT, ACTIONS_CONFIG, BUILDER_EXTENSION, CONVERT_CONFIG, CONVERT_INTERCEPT, FORM_CONTROL, GET_JSON_CONFIG, GET_TYPE, LAYOUT_ELEMENT, LOAD_BUILDER_CONFIG } from '../../token';
 import { Action } from '../action/actions';
@@ -24,6 +24,7 @@ const defaultExtensions = [
     ActionExtension,
     LifeCycleExtension
 ];
+export { BaseType } from './base-type';
 export class BuilderContext extends BasicBuilderContext {
     constructor(parent) {
         super();
@@ -37,7 +38,6 @@ export class BuilderContext extends BasicBuilderContext {
         super.registryInjector(injector);
         this.map.forEach((_factory, token) => this.registryFactory(injector, token));
         this.clsMap.forEach((cls, token) => injector.set(token, { provide: token, useClass: cls }));
-        this.typeMap.forEach((list, token) => injector.set(token, { provide: token, multi: true, useValue: list }));
         injector.set(BUILDER_EXTENSION, { provide: BUILDER_EXTENSION, multi: true, useValue: this.extensions });
     }
     useFactory(useFactory) {
@@ -73,21 +73,22 @@ export class BuilderContext extends BasicBuilderContext {
         if (!list)
             this.typeMap.set(token, list = []);
         if (name && target) {
-            if (list.some(({ name: typeName }) => typeName === name)) {
+            if (list.some(({ name: typeName }) => typeName === name))
                 console.info(`${typeName}: ${name}已经注册`);
-            }
+            if (!getInjectableDef(target))
+                Injectable({ providedIn: 'any' })(target);
             target[`${typeName}Name`] = name;
             list.push({ name, attr: typeName, [typeName]: target });
         }
     }
     forwardGetJsonConfig(getJsonConfig) {
-        this.map.set(GET_JSON_CONFIG, getJsonConfig);
+        this.forwardFactory(GET_JSON_CONFIG, getJsonConfig);
     }
     forwardFormControl(factoryFormControl) {
-        this.map.set(FORM_CONTROL, factoryFormControl);
+        this.forwardFactory(FORM_CONTROL, factoryFormControl);
     }
     forwardBuilderLayout(createElement) {
-        this.map.set(LAYOUT_ELEMENT, createElement);
+        this.forwardFactory(LAYOUT_ELEMENT, createElement);
     }
     forwardAction(name, action, options) {
         Object.assign(action, options);

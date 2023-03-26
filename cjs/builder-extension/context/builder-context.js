@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.useBuilderContext = exports.BuilderContext = void 0;
+exports.useBuilderContext = exports.BuilderContext = exports.BaseType = void 0;
 var tslib_1 = require("tslib");
 var di_1 = require("@fm/di");
 var builder_context_1 = require("../../builder/builder-context");
@@ -28,6 +28,8 @@ var defaultExtensions = [
     actions_extension_1.ActionExtension,
     life_cycle_extension_1.LifeCycleExtension
 ];
+var base_type_1 = require("./base-type");
+Object.defineProperty(exports, "BaseType", { enumerable: true, get: function () { return base_type_1.BaseType; } });
 var BuilderContext = /** @class */ (function (_super) {
     tslib_1.__extends(BuilderContext, _super);
     function BuilderContext(parent) {
@@ -44,7 +46,6 @@ var BuilderContext = /** @class */ (function (_super) {
         _super.prototype.registryInjector.call(this, injector);
         this.map.forEach(function (_factory, token) { return _this.registryFactory(injector, token); });
         this.clsMap.forEach(function (cls, token) { return injector.set(token, { provide: token, useClass: cls }); });
-        this.typeMap.forEach(function (list, token) { return injector.set(token, { provide: token, multi: true, useValue: list }); });
         injector.set(token_1.BUILDER_EXTENSION, { provide: token_1.BUILDER_EXTENSION, multi: true, useValue: this.extensions });
     };
     BuilderContext.prototype.useFactory = function (useFactory) {
@@ -91,21 +92,22 @@ var BuilderContext = /** @class */ (function (_super) {
             if (list.some(function (_a) {
                 var typeName = _a.name;
                 return typeName === name;
-            })) {
+            }))
                 console.info("".concat(typeName, ": ").concat(name, "\u5DF2\u7ECF\u6CE8\u518C"));
-            }
+            if (!(0, di_1.getInjectableDef)(target))
+                (0, di_1.Injectable)({ providedIn: 'any' })(target);
             target["".concat(typeName, "Name")] = name;
             list.push((_a = { name: name, attr: typeName }, _a[typeName] = target, _a));
         }
     };
     BuilderContext.prototype.forwardGetJsonConfig = function (getJsonConfig) {
-        this.map.set(token_1.GET_JSON_CONFIG, getJsonConfig);
+        this.forwardFactory(token_1.GET_JSON_CONFIG, getJsonConfig);
     };
     BuilderContext.prototype.forwardFormControl = function (factoryFormControl) {
-        this.map.set(token_1.FORM_CONTROL, factoryFormControl);
+        this.forwardFactory(token_1.FORM_CONTROL, factoryFormControl);
     };
     BuilderContext.prototype.forwardBuilderLayout = function (createElement) {
-        this.map.set(token_1.LAYOUT_ELEMENT, createElement);
+        this.forwardFactory(token_1.LAYOUT_ELEMENT, createElement);
     };
     BuilderContext.prototype.forwardAction = function (name, action, options) {
         Object.assign(action, options);

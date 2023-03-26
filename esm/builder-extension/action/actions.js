@@ -1,5 +1,5 @@
 import { __decorate, __metadata, __param } from "tslib";
-import { Inject, Injector } from '@fm/di';
+import { Inject, InjectFlags, Injector } from '@fm/di';
 import { groupBy, isEmpty, toArray } from 'lodash';
 import { forkJoin, of } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -12,19 +12,19 @@ let Action = class Action {
         this.injector = injector;
         this.getType = getType;
     }
-    getCacheAction(ActionType, context, baseAction) {
+    getCacheAction(ActionType, baseAction) {
         var _a;
-        const { builder, actionPropos: { _uid }, builderField } = baseAction;
+        const { builder, context, actionPropos: { _uid }, builderField } = baseAction;
         const { cacheAction = [] } = builderField || {};
         let cacheType = (_a = cacheAction.find(({ uid }) => _uid === uid)) === null || _a === void 0 ? void 0 : _a.action;
         if (!cacheType) {
-            cacheType = new ActionType((builder === null || builder === void 0 ? void 0 : builder.injector) || this.injector, context);
+            const injector = (builder === null || builder === void 0 ? void 0 : builder.injector) || this.injector;
+            cacheType = injector.get(ActionType, InjectFlags.NonCache).invoke(context);
             if (!ActionType.cache || !builderField || !_uid)
                 return cacheType;
             builderField.cacheAction && cacheAction.push({ uid: _uid, action: cacheType });
         }
-        cacheType.context = context;
-        return cacheType;
+        return cacheType.invoke(context);
     }
     createEvent(event, otherEventParam = []) {
         return [event, ...otherEventParam];
@@ -75,20 +75,20 @@ let Action = class Action {
     executeAction(actionPropos, actionContext, [actionEvent, ...otherEvent] = this.createEvent(void (0))) {
         const { name = ``, handler } = serializeAction(actionPropos);
         const [actionName, execute = 'execute'] = name.match(/([^.]+)/ig) || [name];
-        const context = Object.assign(Object.assign({}, actionContext), { actionPropos, actionEvent });
         let ActionType = null;
         let executeHandler = handler;
-        let action = new BaseAction(this.injector, context);
+        let action = new BaseAction().invoke(Object.assign(Object.assign({}, actionContext), { actionPropos, actionEvent }));
         let builder = action.builder;
-        if (!executeHandler && (ActionType = this.getType(ACTIONS_CONFIG, actionName))) {
-            action = this.getCacheAction(ActionType, context, action);
-            executeHandler = action && action[execute].bind(action);
-        }
+        action.injector = (builder === null || builder === void 0 ? void 0 : builder.injector) || this.injector;
         if (!executeHandler && builder) {
             while (builder) {
                 executeHandler = builder.getExecuteHandler(name) || executeHandler;
                 builder = builder.parent;
             }
+        }
+        if (!executeHandler && (ActionType = this.getType(ACTIONS_CONFIG, actionName))) {
+            action = this.getCacheAction(ActionType, action);
+            executeHandler = action[execute].bind(action);
         }
         if (!executeHandler) {
             throw new Error(`${name} not defined!`);

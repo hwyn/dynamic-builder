@@ -1,12 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BuilderModel = void 0;
+var tslib_1 = require("tslib");
+var di_1 = require("@fm/di");
 var lodash_1 = require("lodash");
 var builder_utils_1 = require("./builder-utils");
 var consts_1 = require("./consts");
+var transform = function (type, name, value) { return [type[name], value].includes(undefined) && (type[name] = value); };
 var BuilderModel = /** @class */ (function () {
-    function BuilderModel(injector) {
-        this.injector = injector;
+    function BuilderModel() {
         this.parent = null;
         this.children = [];
         this.$$cache = {};
@@ -72,6 +74,10 @@ var BuilderModel = /** @class */ (function () {
     BuilderModel.prototype.showField = function (visibility) {
         return visibility === undefined || visibility !== consts_1.Visibility.none;
     };
+    tslib_1.__decorate([
+        (0, di_1.Prop)(di_1.Injector, { transform: transform }),
+        tslib_1.__metadata("design:type", di_1.Injector)
+    ], BuilderModel.prototype, "injector", void 0);
     return BuilderModel;
 }());
 exports.BuilderModel = BuilderModel;

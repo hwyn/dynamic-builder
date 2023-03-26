@@ -1,5 +1,5 @@
 import { __rest } from "tslib";
-import { Injector } from '@fm/di';
+import { getInjectableDef, Injectable, InjectFlags, Injector } from '@fm/di';
 import { FACTORY_BUILDER, UI_ELEMENT } from '../token';
 import { BuilderEngine } from './builder-engine.service';
 import { BuilderModel } from './builder-model';
@@ -15,7 +15,9 @@ export class BuilderContext {
         return (_a) => {
             var _b;
             var { BuilderModel: NB = BuilderModel } = _a, props = __rest(_a, ["BuilderModel"]);
-            return new NB(((_b = props.builder) === null || _b === void 0 ? void 0 : _b.injector) || injector, props).loadForBuild(props);
+            if (!getInjectableDef(NB))
+                Injectable({ providedIn: 'any' })(NB);
+            return (((_b = props.builder) === null || _b === void 0 ? void 0 : _b.injector) || injector).get(NB, InjectFlags.NonCache).loadForBuild(props);
         };
     }
     registryInjector(injector) {

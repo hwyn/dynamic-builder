@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.serializeAction = exports.BuilderModel = exports.Grid = exports.BaseConvert = exports.useBuilderContext = exports.BuilderContext = void 0;
+exports.serializeAction = exports.BuilderModel = exports.Grid = exports.BaseConvert = exports.useBuilderContext = exports.BuilderContext = exports.BaseType = void 0;
 var tslib_1 = require("tslib");
 var basic_extension_1 = require("./basic/basic.extension");
 Object.defineProperty(exports, "serializeAction", { enumerable: true, get: function () { return basic_extension_1.serializeAction; } });
@@ -9,6 +9,7 @@ tslib_1.__exportStar(require("./action/create-actions"), exports);
 tslib_1.__exportStar(require("./basic/basic.extension"), exports);
 tslib_1.__exportStar(require("./constant/calculator.constant"), exports);
 var builder_context_1 = require("./context/builder-context");
+Object.defineProperty(exports, "BaseType", { enumerable: true, get: function () { return builder_context_1.BaseType; } });
 Object.defineProperty(exports, "BuilderContext", { enumerable: true, get: function () { return builder_context_1.BuilderContext; } });
 Object.defineProperty(exports, "useBuilderContext", { enumerable: true, get: function () { return builder_context_1.useBuilderContext; } });
 var base_convert_1 = require("./form/base-convert");

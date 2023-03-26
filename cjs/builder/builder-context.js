@@ -18,7 +18,9 @@ var BuilderContext = /** @class */ (function () {
         return function (_a) {
             var _b;
             var _c = _a.BuilderModel, NB = _c === void 0 ? builder_model_1.BuilderModel : _c, props = tslib_1.__rest(_a, ["BuilderModel"]);
-            return new NB(((_b = props.builder) === null || _b === void 0 ? void 0 : _b.injector) || injector, props).loadForBuild(props);
+            if (!(0, di_1.getInjectableDef)(NB))
+                (0, di_1.Injectable)({ providedIn: 'any' })(NB);
+            return (((_b = props.builder) === null || _b === void 0 ? void 0 : _b.injector) || injector).get(NB, di_1.InjectFlags.NonCache).loadForBuild(props);
         };
     };
     BuilderContext.prototype.registryInjector = function (injector) {

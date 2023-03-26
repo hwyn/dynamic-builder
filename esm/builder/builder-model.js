@@ -1,9 +1,11 @@
+import { __decorate, __metadata } from "tslib";
+import { Injector, Prop } from '@fm/di';
 import { flatMap, isEmpty, uniq } from 'lodash';
 import { init } from './builder-utils';
 import { Visibility } from './consts';
+const transform = (type, name, value) => [type[name], value].includes(undefined) && (type[name] = value);
 export class BuilderModel {
-    constructor(injector) {
-        this.injector = injector;
+    constructor() {
         this.parent = null;
         this.children = [];
         this.$$cache = {};
@@ -48,3 +50,7 @@ export class BuilderModel {
         return visibility === undefined || visibility !== Visibility.none;
     }
 }
+__decorate([
+    Prop(Injector, { transform }),
+    __metadata("design:type", Injector)
+], BuilderModel.prototype, "injector", void 0);

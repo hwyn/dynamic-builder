@@ -1,13 +1,18 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BaseAction = void 0;
+var tslib_1 = require("tslib");
 var token_1 = require("../../token");
-var BaseAction = /** @class */ (function () {
-    function BaseAction(injector, context) {
-        if (context === void 0) { context = {}; }
-        this.injector = injector;
-        this.context = context;
+var base_type_1 = require("../context/base-type");
+var BaseAction = /** @class */ (function (_super) {
+    tslib_1.__extends(BaseAction, _super);
+    function BaseAction() {
+        return _super !== null && _super.apply(this, arguments) || this;
     }
+    BaseAction.prototype.invoke = function (context) {
+        if (context === void 0) { context = {}; }
+        return Object.assign(this, { context: context });
+    };
     Object.defineProperty(BaseAction.prototype, "builderField", {
         get: function () {
             return this.context.builderField;
@@ -58,5 +63,5 @@ var BaseAction = /** @class */ (function () {
         configurable: true
     });
     return BaseAction;
-}());
+}(base_type_1.BaseType));
 exports.BaseAction = BaseAction;

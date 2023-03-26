@@ -1,5 +1,5 @@
 import { __assign, __decorate, __metadata, __param, __spreadArray } from "tslib";
-import { Inject, Injector } from '@fm/di';
+import { Inject, InjectFlags, Injector } from '@fm/di';
 import { groupBy, isEmpty, toArray } from 'lodash';
 import { forkJoin, of } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -12,22 +12,22 @@ var Action = /** @class */ (function () {
         this.injector = injector;
         this.getType = getType;
     }
-    Action.prototype.getCacheAction = function (ActionType, context, baseAction) {
+    Action.prototype.getCacheAction = function (ActionType, baseAction) {
         var _a;
-        var builder = baseAction.builder, _uid = baseAction.actionPropos._uid, builderField = baseAction.builderField;
-        var _b = (builderField || {}).cacheAction, cacheAction = _b === void 0 ? [] : _b;
+        var _b = baseAction, builder = _b.builder, context = _b.context, _uid = _b.actionPropos._uid, builderField = _b.builderField;
+        var _c = (builderField || {}).cacheAction, cacheAction = _c === void 0 ? [] : _c;
         var cacheType = (_a = cacheAction.find(function (_a) {
             var uid = _a.uid;
             return _uid === uid;
         })) === null || _a === void 0 ? void 0 : _a.action;
         if (!cacheType) {
-            cacheType = new ActionType((builder === null || builder === void 0 ? void 0 : builder.injector) || this.injector, context);
+            var injector = (builder === null || builder === void 0 ? void 0 : builder.injector) || this.injector;
+            cacheType = injector.get(ActionType, InjectFlags.NonCache).invoke(context);
             if (!ActionType.cache || !builderField || !_uid)
                 return cacheType;
             builderField.cacheAction && cacheAction.push({ uid: _uid, action: cacheType });
         }
-        cacheType.context = context;
-        return cacheType;
+        return cacheType.invoke(context);
     };
     Action.prototype.createEvent = function (event, otherEventParam) {
         if (otherEventParam === void 0) { otherEventParam = []; }
@@ -122,20 +122,20 @@ var Action = /** @class */ (function () {
         var _b = _a === void 0 ? this.createEvent(void (0)) : _a, actionEvent = _b[0], otherEvent = _b.slice(1);
         var _c = serializeAction(actionPropos), _d = _c.name, name = _d === void 0 ? "" : _d, handler = _c.handler;
         var _e = name.match(/([^.]+)/ig) || [name], actionName = _e[0], _f = _e[1], execute = _f === void 0 ? 'execute' : _f;
-        var context = __assign(__assign({}, actionContext), { actionPropos: actionPropos, actionEvent: actionEvent });
         var ActionType = null;
         var executeHandler = handler;
-        var action = new BaseAction(this.injector, context);
+        var action = new BaseAction().invoke(__assign(__assign({}, actionContext), { actionPropos: actionPropos, actionEvent: actionEvent }));
         var builder = action.builder;
-        if (!executeHandler && (ActionType = this.getType(ACTIONS_CONFIG, actionName))) {
-            action = this.getCacheAction(ActionType, context, action);
-            executeHandler = action && action[execute].bind(action);
-        }
+        action.injector = (builder === null || builder === void 0 ? void 0 : builder.injector) || this.injector;
         if (!executeHandler && builder) {
             while (builder) {
                 executeHandler = builder.getExecuteHandler(name) || executeHandler;
                 builder = builder.parent;
             }
+        }
+        if (!executeHandler && (ActionType = this.getType(ACTIONS_CONFIG, actionName))) {
+            action = this.getCacheAction(ActionType, action);
+            executeHandler = action[execute].bind(action);
         }
         if (!executeHandler) {
             throw new Error("".concat(name, " not defined!"));

@@ -7,6 +7,7 @@ import { BaseConvert } from '../form/base-convert';
 import { FormOptions } from '../form/type-api';
 import { Grid } from '../grid/grid';
 import { BuilderModelExtensions } from '../type-api';
+export { BaseType } from './base-type';
 export declare class BuilderContext extends BasicBuilderContext {
     private parent?;
     private extensions;
