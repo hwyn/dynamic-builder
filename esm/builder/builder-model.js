@@ -33,8 +33,11 @@ export class BuilderModel {
     }
     detectChanges() {
         if (!this.$$cache.destroyed && this.ready) {
-            this.$$cache.detectChanges.next(this);
+            this.listenerDetect.next(this);
         }
+    }
+    get listenerDetect() {
+        return this.$$cache.listenerDetect;
     }
     get ready() {
         return this.$$cache.ready;

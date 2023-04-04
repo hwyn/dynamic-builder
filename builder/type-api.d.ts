@@ -15,7 +15,7 @@ export interface CacheObj {
     destroy: () => void;
     addChild: (child: BuilderModelImplements) => void;
     removeChild: (child: BuilderModelImplements) => void;
-    detectChanges: Subject<any>;
+    listenerDetect: Subject<any>;
     extensionDestroys: any[];
 }
 interface Field {
@@ -26,6 +26,7 @@ export interface Instance {
     destroy: Subject<any>;
     onMounted: (id: string) => void;
     onDestroy: (id: string) => void;
+    listenerDetect: Subject<any>;
     detectChanges(): void;
 }
 export interface BuilderElement {
@@ -91,6 +92,7 @@ export declare interface BuilderModelInterface {
     readonly injector: Injector;
     readonly privateExtension?: PrivateExtension[];
     showField(visibility: Visibility | undefined): boolean;
+    listenerDetect: Subject<any>;
     detectChanges(): void;
 }
 export interface BuilderModelImplements extends BuilderModelInterface, Model<BuilderModelImplements, BuilderField> {

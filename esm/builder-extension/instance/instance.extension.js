@@ -1,22 +1,28 @@
 import { isEmpty } from 'lodash';
 import { Observable, shareReplay, Subject, tap } from 'rxjs';
 import { BuilderModel } from '../../builder/builder-model';
-import { observableMap, toForkJoin, transformObservable } from '../../utility';
+import { observableMap, toForkJoin, transformObservable, withValue } from '../../utility';
 import { BasicExtension } from '../basic/basic.extension';
 import { CURRENT, DESTROY, INSTANCE, LOAD_ACTION, MOUNTED } from '../constant/calculator.constant';
+const LISTENER_DETECT = 'listenerDetect';
+const DETECT_CHANGES = 'detectChanges';
 export class InstanceExtension extends BasicExtension {
     constructor() {
         super(...arguments);
         this.buildFieldList = [];
     }
     static createInstance() {
-        return {
+        const listenerDetect = new Subject();
+        const detectChanges = () => listenerDetect.next(null);
+        const instance = {
             current: null,
             onMounted: () => void (0),
             onDestroy: () => void (0),
-            detectChanges: () => undefined,
             destroy: new Subject().pipe(shareReplay(1))
         };
+        Object.defineProperty(instance, LISTENER_DETECT, withValue(listenerDetect));
+        Object.defineProperty(instance, DETECT_CHANGES, withValue(detectChanges));
+        return instance;
     }
     extension() {
         this.buildFieldList = this.mapFields(this.jsonFields, this.addInstance.bind(this));
@@ -61,7 +67,6 @@ export class InstanceExtension extends BasicExtension {
     instanceDestroy({ actionEvent, builderField: { instance } }) {
         const currentIsBuildModel = instance.current instanceof BuilderModel;
         instance.current && (instance.current = null);
-        instance.detectChanges = () => undefined;
         return !currentIsBuildModel && instance.destroy.next(actionEvent);
     }
     beforeDestroy() {
@@ -80,7 +85,8 @@ export class InstanceExtension extends BasicExtension {
         this.buildFieldList.forEach((buildField) => {
             const { instance } = buildField;
             instance.destroy.unsubscribe();
-            this.unDefineProperty(instance, ['detectChanges', this.getEventType(DESTROY), this.getEventType(MOUNTED), CURRENT]);
+            instance.listenerDetect.unsubscribe();
+            this.unDefineProperty(instance, [DETECT_CHANGES, LISTENER_DETECT, this.getEventType(DESTROY), this.getEventType(MOUNTED), CURRENT]);
             this.defineProperty(buildField, INSTANCE, null);
         });
         return super.destroy();

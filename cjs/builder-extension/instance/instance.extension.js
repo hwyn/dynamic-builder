@@ -8,6 +8,8 @@ var builder_model_1 = require("../../builder/builder-model");
 var utility_1 = require("../../utility");
 var basic_extension_1 = require("../basic/basic.extension");
 var calculator_constant_1 = require("../constant/calculator.constant");
+var LISTENER_DETECT = 'listenerDetect';
+var DETECT_CHANGES = 'detectChanges';
 var InstanceExtension = /** @class */ (function (_super) {
     tslib_1.__extends(InstanceExtension, _super);
     function InstanceExtension() {
@@ -16,13 +18,17 @@ var InstanceExtension = /** @class */ (function (_super) {
         return _this;
     }
     InstanceExtension.createInstance = function () {
-        return {
+        var listenerDetect = new rxjs_1.Subject();
+        var detectChanges = function () { return listenerDetect.next(null); };
+        var instance = {
             current: null,
             onMounted: function () { return void (0); },
             onDestroy: function () { return void (0); },
-            detectChanges: function () { return undefined; },
             destroy: new rxjs_1.Subject().pipe((0, rxjs_1.shareReplay)(1))
         };
+        Object.defineProperty(instance, LISTENER_DETECT, (0, utility_1.withValue)(listenerDetect));
+        Object.defineProperty(instance, DETECT_CHANGES, (0, utility_1.withValue)(detectChanges));
+        return instance;
     };
     InstanceExtension.prototype.extension = function () {
         this.buildFieldList = this.mapFields(this.jsonFields, this.addInstance.bind(this));
@@ -72,7 +78,6 @@ var InstanceExtension = /** @class */ (function (_super) {
         var actionEvent = _a.actionEvent, instance = _a.builderField.instance;
         var currentIsBuildModel = instance.current instanceof builder_model_1.BuilderModel;
         instance.current && (instance.current = null);
-        instance.detectChanges = function () { return undefined; };
         return !currentIsBuildModel && instance.destroy.next(actionEvent);
     };
     InstanceExtension.prototype.beforeDestroy = function () {
@@ -99,7 +104,8 @@ var InstanceExtension = /** @class */ (function (_super) {
         this.buildFieldList.forEach(function (buildField) {
             var instance = buildField.instance;
             instance.destroy.unsubscribe();
-            _this.unDefineProperty(instance, ['detectChanges', _this.getEventType(calculator_constant_1.DESTROY), _this.getEventType(calculator_constant_1.MOUNTED), calculator_constant_1.CURRENT]);
+            instance.listenerDetect.unsubscribe();
+            _this.unDefineProperty(instance, [DETECT_CHANGES, LISTENER_DETECT, _this.getEventType(calculator_constant_1.DESTROY), _this.getEventType(calculator_constant_1.MOUNTED), calculator_constant_1.CURRENT]);
             _this.defineProperty(buildField, calculator_constant_1.INSTANCE, null);
         });
         return _super.prototype.destroy.call(this);

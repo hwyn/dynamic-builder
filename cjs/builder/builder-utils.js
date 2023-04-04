@@ -49,12 +49,12 @@ function loadForBuild(props) {
 }
 function getCacheObj(props) {
     var _a = props.config, _b = _a === void 0 ? {} : _a, _c = _b.fields, fields = _c === void 0 ? [] : _c;
-    var _d = this.$$cache || {}, _e = _d.bindFn, bindFn = _e === void 0 ? [] : _e, _f = _d.ready, ready = _f === void 0 ? false : _f, _g = _d.destroyed, destroyed = _g === void 0 ? false : _g, _h = _d.detectChanges, detectChanges = _h === void 0 ? new rxjs_1.Subject() : _h, _j = _d.destroy, modelDestroy = _j === void 0 ? destroy.bind(this) : _j, _k = _d.addChild, modelAddChild = _k === void 0 ? addChild.bind(this) : _k, _l = _d.removeChild, modelRemoveChild = _l === void 0 ? removeChild.bind(this) : _l;
+    var _d = this.$$cache || {}, _e = _d.bindFn, bindFn = _e === void 0 ? [] : _e, _f = _d.ready, ready = _f === void 0 ? false : _f, _g = _d.destroyed, destroyed = _g === void 0 ? false : _g, _h = _d.listenerDetect, listenerDetect = _h === void 0 ? new rxjs_1.Subject() : _h, _j = _d.destroy, modelDestroy = _j === void 0 ? destroy.bind(this) : _j, _k = _d.addChild, modelAddChild = _k === void 0 ? addChild.bind(this) : _k, _l = _d.removeChild, modelRemoveChild = _l === void 0 ? removeChild.bind(this) : _l;
     return Object.assign(this.$$cache, {
         ready: ready,
         bindFn: bindFn,
         destroyed: destroyed,
-        detectChanges: detectChanges,
+        listenerDetect: listenerDetect,
         destroy: modelDestroy,
         addChild: modelAddChild,
         removeChild: modelRemoveChild,
@@ -79,7 +79,7 @@ function destroy() {
                 next: function () {
                     var _a;
                     cacheObj.fields.splice(0);
-                    cacheObj.detectChanges.unsubscribe();
+                    cacheObj.listenerDetect.unsubscribe();
                     cacheObj.beforeDestroys.splice(0);
                     _this.children.splice(0);
                     (_a = _this.privateExtension) === null || _a === void 0 ? void 0 : _a.splice(0);

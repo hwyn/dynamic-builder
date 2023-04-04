@@ -14,6 +14,7 @@ export declare class BuilderModel<S extends BuilderModelImplements = BuilderMode
     getFieldById<T = M>(id: string): T;
     getAllFieldById<T = M>(id: string): T[];
     detectChanges(): void;
+    get listenerDetect(): import("rxjs").Subject<any>;
     get ready(): boolean;
     get root(): S;
     get fields(): M[];

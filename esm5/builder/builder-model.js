@@ -39,9 +39,16 @@ var BuilderModel = /** @class */ (function () {
     };
     BuilderModel.prototype.detectChanges = function () {
         if (!this.$$cache.destroyed && this.ready) {
-            this.$$cache.detectChanges.next(this);
+            this.listenerDetect.next(this);
         }
     };
+    Object.defineProperty(BuilderModel.prototype, "listenerDetect", {
+        get: function () {
+            return this.$$cache.listenerDetect;
+        },
+        enumerable: false,
+        configurable: true
+    });
     Object.defineProperty(BuilderModel.prototype, "ready", {
         get: function () {
             return this.$$cache.ready;

@@ -2,9 +2,11 @@ import { __extends } from "tslib";
 import { isEmpty } from 'lodash';
 import { Observable, shareReplay, Subject, tap } from 'rxjs';
 import { BuilderModel } from '../../builder/builder-model';
-import { observableMap, toForkJoin, transformObservable } from '../../utility';
+import { observableMap, toForkJoin, transformObservable, withValue } from '../../utility';
 import { BasicExtension } from '../basic/basic.extension';
 import { CURRENT, DESTROY, INSTANCE, LOAD_ACTION, MOUNTED } from '../constant/calculator.constant';
+var LISTENER_DETECT = 'listenerDetect';
+var DETECT_CHANGES = 'detectChanges';
 var InstanceExtension = /** @class */ (function (_super) {
     __extends(InstanceExtension, _super);
     function InstanceExtension() {
@@ -13,13 +15,17 @@ var InstanceExtension = /** @class */ (function (_super) {
         return _this;
     }
     InstanceExtension.createInstance = function () {
-        return {
+        var listenerDetect = new Subject();
+        var detectChanges = function () { return listenerDetect.next(null); };
+        var instance = {
             current: null,
             onMounted: function () { return void (0); },
             onDestroy: function () { return void (0); },
-            detectChanges: function () { return undefined; },
             destroy: new Subject().pipe(shareReplay(1))
         };
+        Object.defineProperty(instance, LISTENER_DETECT, withValue(listenerDetect));
+        Object.defineProperty(instance, DETECT_CHANGES, withValue(detectChanges));
+        return instance;
     };
     InstanceExtension.prototype.extension = function () {
         this.buildFieldList = this.mapFields(this.jsonFields, this.addInstance.bind(this));
@@ -69,7 +75,6 @@ var InstanceExtension = /** @class */ (function (_super) {
         var actionEvent = _a.actionEvent, instance = _a.builderField.instance;
         var currentIsBuildModel = instance.current instanceof BuilderModel;
         instance.current && (instance.current = null);
-        instance.detectChanges = function () { return undefined; };
         return !currentIsBuildModel && instance.destroy.next(actionEvent);
     };
     InstanceExtension.prototype.beforeDestroy = function () {
@@ -96,7 +101,8 @@ var InstanceExtension = /** @class */ (function (_super) {
         this.buildFieldList.forEach(function (buildField) {
             var instance = buildField.instance;
             instance.destroy.unsubscribe();
-            _this.unDefineProperty(instance, ['detectChanges', _this.getEventType(DESTROY), _this.getEventType(MOUNTED), CURRENT]);
+            instance.listenerDetect.unsubscribe();
+            _this.unDefineProperty(instance, [DETECT_CHANGES, LISTENER_DETECT, _this.getEventType(DESTROY), _this.getEventType(MOUNTED), CURRENT]);
             _this.defineProperty(buildField, INSTANCE, null);
         });
         return _super.prototype.destroy.call(this);

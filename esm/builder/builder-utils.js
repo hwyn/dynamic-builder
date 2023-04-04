@@ -40,12 +40,12 @@ function loadForBuild(props) {
 }
 function getCacheObj(props) {
     const { config: { fields = [] } = {} } = props;
-    const { bindFn = [], ready = false, destroyed = false, detectChanges = new Subject(), destroy: modelDestroy = destroy.bind(this), addChild: modelAddChild = addChild.bind(this), removeChild: modelRemoveChild = removeChild.bind(this) } = this.$$cache || {};
+    const { bindFn = [], ready = false, destroyed = false, listenerDetect = new Subject(), destroy: modelDestroy = destroy.bind(this), addChild: modelAddChild = addChild.bind(this), removeChild: modelRemoveChild = removeChild.bind(this) } = this.$$cache || {};
     return Object.assign(this.$$cache, {
         ready,
         bindFn,
         destroyed,
-        detectChanges,
+        listenerDetect,
         destroy: modelDestroy,
         addChild: modelAddChild,
         removeChild: modelRemoveChild,
@@ -69,7 +69,7 @@ function destroy() {
                 next: () => {
                     var _a;
                     cacheObj.fields.splice(0);
-                    cacheObj.detectChanges.unsubscribe();
+                    cacheObj.listenerDetect.unsubscribe();
                     cacheObj.beforeDestroys.splice(0);
                     this.children.splice(0);
                     (_a = this.privateExtension) === null || _a === void 0 ? void 0 : _a.splice(0);
