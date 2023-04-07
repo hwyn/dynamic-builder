@@ -12,7 +12,7 @@ export declare abstract class BaseAction<T = any> extends BaseType {
     get actionIntercept(): ActionIntercept;
     get builder(): BuilderModelExtensions;
     get instance(): InstanceExtensions;
-    get actionPropos(): Action;
+    get actionProps(): Action;
     get callLink(): [{
         fieldId: string;
         type: TypeEvent;

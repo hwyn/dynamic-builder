@@ -24,7 +24,7 @@ export class ActionExtension extends BasicExtension {
     }
     create([jsonField, builderField]) {
         const { actions = [] } = jsonField;
-        this.definePropertys(builderField, { [ADD_EVENT_LISTENER]: this.addFieldEvent.bind(this, builderField), [CACHE_ACTION]: [] });
+        this.defineProperties(builderField, { [ADD_EVENT_LISTENER]: this.addFieldEvent.bind(this, builderField), [CACHE_ACTION]: [] });
         if (!isEmpty(actions))
             builderField.addEventListener(actions);
         this.fields.push(builderField);

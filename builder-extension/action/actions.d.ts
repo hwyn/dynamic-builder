@@ -14,5 +14,5 @@ export declare class Action implements ActionIntercept {
     private execute;
     invoke(actions: InvokeAction | InvokeAction[], props?: ActionInterceptProps, event?: Event | any, ...otherEventParam: any[]): Observable<any>;
     callAction(actionName: InvokeAction, context: ActionInterceptProps, ...events: any[]): Observable<any>;
-    executeAction(actionPropos: ActionProps, actionContext?: ActionContext, [actionEvent, ...otherEvent]?: any[]): Observable<any>;
+    executeAction(actionProps: ActionProps, actionContext?: ActionContext, [actionEvent, ...otherEvent]?: any[]): Observable<any>;
 }

@@ -14,7 +14,7 @@ let Action = class Action {
     }
     getCacheAction(ActionType, baseAction) {
         var _a;
-        const { builder, context, actionPropos: { _uid }, builderField } = baseAction;
+        const { builder, context, actionProps: { _uid }, builderField } = baseAction;
         const { cacheAction = [] } = builderField || {};
         let cacheType = (_a = cacheAction.find(({ uid }) => _uid === uid)) === null || _a === void 0 ? void 0 : _a.action;
         if (!cacheType) {
@@ -72,12 +72,12 @@ let Action = class Action {
     callAction(actionName, context, ...events) {
         return this.invoke(serializeAction(actionName), context, ...events);
     }
-    executeAction(actionPropos, actionContext, [actionEvent, ...otherEvent] = this.createEvent(void (0))) {
-        const { name = ``, handler } = serializeAction(actionPropos);
+    executeAction(actionProps, actionContext, [actionEvent, ...otherEvent] = this.createEvent(void (0))) {
+        const { name = ``, handler } = serializeAction(actionProps);
         const [actionName, execute = 'execute'] = name.match(/([^.]+)/ig) || [name];
         let ActionType = null;
         let executeHandler = handler;
-        let action = new BaseAction().invoke(Object.assign(Object.assign({}, actionContext), { actionPropos, actionEvent }));
+        let action = new BaseAction().invoke(Object.assign(Object.assign({}, actionContext), { actionProps, actionEvent }));
         let builder = action.builder;
         action.injector = (builder === null || builder === void 0 ? void 0 : builder.injector) || this.injector;
         if (!executeHandler && builder) {

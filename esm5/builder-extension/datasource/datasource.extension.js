@@ -1,7 +1,7 @@
 import { __extends } from "tslib";
 import { isEmpty, isUndefined } from 'lodash';
 import { BasicExtension } from '../basic/basic.extension';
-import { DATD_SOURCE, LOAD_ACTION, LOAD_VIEW_MODEL } from '../constant/calculator.constant';
+import { DATA_SOURCE, LOAD_ACTION, LOAD_VIEW_MODEL } from '../constant/calculator.constant';
 var DataSourceExtension = /** @class */ (function (_super) {
     __extends(DataSourceExtension, _super);
     function DataSourceExtension() {
@@ -41,7 +41,7 @@ var DataSourceExtension = /** @class */ (function (_super) {
     DataSourceExtension.prototype.serializeDataSourceConfig = function (jsonField) {
         var jsonDataSource = jsonField.dataSource;
         var defaultDependents = { type: LOAD_VIEW_MODEL, fieldId: this.builder.id };
-        var dataSource = this.serializeCalculatorConfig(jsonDataSource, DATD_SOURCE, defaultDependents);
+        var dataSource = this.serializeCalculatorConfig(jsonDataSource, DATA_SOURCE, defaultDependents);
         var action = dataSource.action, source = dataSource.source;
         if (!isEmpty(source) && !action.handler) {
             action.handler = function () { return source; };
@@ -53,9 +53,9 @@ var DataSourceExtension = /** @class */ (function (_super) {
         if (isEmpty(metadata)) {
             return sources;
         }
-        var metdataKeys = Object.keys(metadata);
+        var metadataKeys = Object.keys(metadata);
         this.toArray(sources).forEach(function (source) {
-            metdataKeys.forEach(function (key) {
+            metadataKeys.forEach(function (key) {
                 var value = source[metadata[key]];
                 if (![undefined].includes(value)) {
                     source[key] = value;

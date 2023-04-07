@@ -82,7 +82,7 @@ export class BasicExtension {
     defineProperty(object, prototypeName, value) {
         Object.defineProperty(object, prototypeName, withValue(value));
     }
-    definePropertys(object, prototype) {
+    defineProperties(object, prototype) {
         Object.keys(prototype).forEach((key) => this.defineProperty(object, key, prototype[key]));
     }
     definePropertyGet(object, prototypeName, get) {

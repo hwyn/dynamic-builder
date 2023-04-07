@@ -1,6 +1,6 @@
 import { isEmpty, isUndefined } from 'lodash';
 import { BasicExtension } from '../basic/basic.extension';
-import { DATD_SOURCE, LOAD_ACTION, LOAD_VIEW_MODEL } from '../constant/calculator.constant';
+import { DATA_SOURCE, LOAD_ACTION, LOAD_VIEW_MODEL } from '../constant/calculator.constant';
 export class DataSourceExtension extends BasicExtension {
     extension() {
         const jsonFields = this.jsonFields.filter(({ dataSource }) => !isUndefined(dataSource));
@@ -31,7 +31,7 @@ export class DataSourceExtension extends BasicExtension {
     serializeDataSourceConfig(jsonField) {
         const { dataSource: jsonDataSource } = jsonField;
         const defaultDependents = { type: LOAD_VIEW_MODEL, fieldId: this.builder.id };
-        const dataSource = this.serializeCalculatorConfig(jsonDataSource, DATD_SOURCE, defaultDependents);
+        const dataSource = this.serializeCalculatorConfig(jsonDataSource, DATA_SOURCE, defaultDependents);
         const { action, source } = dataSource;
         if (!isEmpty(source) && !action.handler) {
             action.handler = () => source;
@@ -42,9 +42,9 @@ export class DataSourceExtension extends BasicExtension {
         if (isEmpty(metadata)) {
             return sources;
         }
-        const metdataKeys = Object.keys(metadata);
+        const metadataKeys = Object.keys(metadata);
         this.toArray(sources).forEach((source) => {
-            metdataKeys.forEach((key) => {
+            metadataKeys.forEach((key) => {
                 const value = source[metadata[key]];
                 if (![undefined].includes(value)) {
                     source[key] = value;

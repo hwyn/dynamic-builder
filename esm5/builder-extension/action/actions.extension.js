@@ -30,7 +30,7 @@ var ActionExtension = /** @class */ (function (_super) {
         var _b;
         var jsonField = _a[0], builderField = _a[1];
         var _c = jsonField.actions, actions = _c === void 0 ? [] : _c;
-        this.definePropertys(builderField, (_b = {}, _b[ADD_EVENT_LISTENER] = this.addFieldEvent.bind(this, builderField), _b[CACHE_ACTION] = [], _b));
+        this.defineProperties(builderField, (_b = {}, _b[ADD_EVENT_LISTENER] = this.addFieldEvent.bind(this, builderField), _b[CACHE_ACTION] = [], _b));
         if (!isEmpty(actions))
             builderField.addEventListener(actions);
         this.fields.push(builderField);

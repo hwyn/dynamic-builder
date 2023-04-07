@@ -31,5 +31,5 @@ export interface ActionContext {
 export interface ActionIntercept {
     callAction(actionName: InvokeAction, context: ActionInterceptProps, ...events: any[]): Observable<any>;
     invoke(action: Action | string, props?: ActionInterceptProps, event?: any, otherEventParam?: any[]): Observable<any>;
-    executeAction(actionPropos: Action, actionContext?: ActionContext, event?: any[]): Observable<any>;
+    executeAction(actionProps: Action, actionContext?: ActionContext, event?: any[]): Observable<any>;
 }

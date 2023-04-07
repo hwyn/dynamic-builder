@@ -1,7 +1,7 @@
 import { __rest } from "tslib";
 import { groupBy, merge, toArray } from 'lodash';
 import { cloneDeepPlain } from '../../utility';
-import { LATOUT_ID } from '../constant/calculator.constant';
+import { LAYOUT_ID } from '../constant/calculator.constant';
 const defaultGrid = {
     spacing: 0,
     justify: 'flex-start',
@@ -20,7 +20,7 @@ export class Grid {
         this.config = this.serializationConfig(json.grid);
     }
     serializationConfig(gridConfig) {
-        const _a = merge(cloneDeepPlain(defaultGrid), gridConfig), { id = LATOUT_ID, groups, additional = [] } = _a, other = __rest(_a, ["id", "groups", "additional"]);
+        const _a = merge(cloneDeepPlain(defaultGrid), gridConfig), { id = LAYOUT_ID, groups, additional = [] } = _a, other = __rest(_a, ["id", "groups", "additional"]);
         const { justify, alignItems, spacing } = other;
         const groupLayout = groupBy(additional, ({ group }) => group);
         const defaultGroupAdditional = { justify, alignItems, spacing };

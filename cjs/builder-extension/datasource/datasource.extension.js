@@ -44,7 +44,7 @@ var DataSourceExtension = /** @class */ (function (_super) {
     DataSourceExtension.prototype.serializeDataSourceConfig = function (jsonField) {
         var jsonDataSource = jsonField.dataSource;
         var defaultDependents = { type: calculator_constant_1.LOAD_VIEW_MODEL, fieldId: this.builder.id };
-        var dataSource = this.serializeCalculatorConfig(jsonDataSource, calculator_constant_1.DATD_SOURCE, defaultDependents);
+        var dataSource = this.serializeCalculatorConfig(jsonDataSource, calculator_constant_1.DATA_SOURCE, defaultDependents);
         var action = dataSource.action, source = dataSource.source;
         if (!(0, lodash_1.isEmpty)(source) && !action.handler) {
             action.handler = function () { return source; };
@@ -56,9 +56,9 @@ var DataSourceExtension = /** @class */ (function (_super) {
         if ((0, lodash_1.isEmpty)(metadata)) {
             return sources;
         }
-        var metdataKeys = Object.keys(metadata);
+        var metadataKeys = Object.keys(metadata);
         this.toArray(sources).forEach(function (source) {
-            metdataKeys.forEach(function (key) {
+            metadataKeys.forEach(function (key) {
                 var value = source[metadata[key]];
                 if (![undefined].includes(value)) {
                     source[key] = value;

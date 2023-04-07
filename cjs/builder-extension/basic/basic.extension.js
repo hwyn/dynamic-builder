@@ -98,7 +98,7 @@ var BasicExtension = /** @class */ (function () {
     BasicExtension.prototype.defineProperty = function (object, prototypeName, value) {
         Object.defineProperty(object, prototypeName, (0, utility_1.withValue)(value));
     };
-    BasicExtension.prototype.definePropertys = function (object, prototype) {
+    BasicExtension.prototype.defineProperties = function (object, prototype) {
         var _this = this;
         Object.keys(prototype).forEach(function (key) { return _this.defineProperty(object, key, prototype[key]); });
     };

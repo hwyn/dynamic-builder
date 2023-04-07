@@ -56,7 +56,7 @@ export class FormExtension extends BasicExtension {
         const value = this.getValueToModel(binding);
         const control = this.getControl(value, { builder: this.builder, builderField });
         this.defineProperty(builderField, CONTROL, control);
-        this.excuteChangeEvent(jsonField, value);
+        this.executeChangeEvent(jsonField, value);
         this.changeVisibility(builderField, binding, builderField.visibility);
         delete builderField.field.binding;
     }
@@ -81,13 +81,13 @@ export class FormExtension extends BasicExtension {
             visibility === none ? this.deleteValueToModel(binding) : this.setValueToModel(binding, control.value);
         }
     }
-    excuteChangeEvent(jsonField, value) {
+    executeChangeEvent(jsonField, value) {
         const { events = {} } = this.getBuilderFieldById(jsonField.id);
         return events[this.getEventType(this.getChangeType(jsonField))](value);
     }
     createNotifyChange(jsonField, { actionEvent, builderField }) {
         if (!actionEvent || actionEvent === builderField) {
-            this.excuteChangeEvent(jsonField, this.getValueToModel(jsonField.binding));
+            this.executeChangeEvent(jsonField, this.getValueToModel(jsonField.binding));
         }
     }
     detectChanges(id) {

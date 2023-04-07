@@ -13,7 +13,7 @@ export declare class FormExtension extends BasicExtension {
     private createValidity;
     private createVisibility;
     private changeVisibility;
-    private excuteChangeEvent;
+    private executeChangeEvent;
     private createNotifyChange;
     private detectChanges;
     private getChangeType;

@@ -21,7 +21,7 @@ var LifeCycleExtension = /** @class */ (function (_super) {
     }
     LifeCycleExtension.prototype.extension = function () {
         var nonSelfBuilders = this.builder.root.$$cache.nonSelfBuilders;
-        this.defineProperty(this.cache, calculator_constant_1.NON_SELF_BUILSERS, nonSelfBuilders || []);
+        this.defineProperty(this.cache, calculator_constant_1.NON_SELF_BUILDERS, nonSelfBuilders || []);
     };
     LifeCycleExtension.prototype.afterExtension = function () {
         this.serializeCalculators();
@@ -123,7 +123,7 @@ var LifeCycleExtension = /** @class */ (function (_super) {
         var _a;
         this.builder.calculators = this.calculators;
         this.builder.nonSelfCalculators = this.nonSelfCalculators;
-        this.definePropertys(this.cache, (_a = {}, _a[calculator_constant_1.ORIGIN_CALCULATORS] = this.calculators, _a[calculator_constant_1.ORIGIN_NON_SELF_CALCULATORS] = this.nonSelfCalculators, _a));
+        this.defineProperties(this.cache, (_a = {}, _a[calculator_constant_1.ORIGIN_CALCULATORS] = this.calculators, _a[calculator_constant_1.ORIGIN_NON_SELF_CALCULATORS] = this.nonSelfCalculators, _a));
         this.nonSelfCalculators.length && this.nonSelfBuilders.push(this.builder);
     };
     LifeCycleExtension.prototype.beforeDestroy = function () {
@@ -136,7 +136,7 @@ var LifeCycleExtension = /** @class */ (function (_super) {
             this.nonSelfBuilders.splice(this.nonSelfBuilders.indexOf(this.builder), 1);
         }
         this.unDefineProperty(this.builder, ['calculators', 'nonSelfCalculators', this.getEventType(calculator_constant_1.CHANGE)]);
-        this.unDefineProperty(this.cache, ['lifeType', calculator_constant_1.ORIGIN_CALCULATORS, calculator_constant_1.ORIGIN_NON_SELF_CALCULATORS, calculator_constant_1.NON_SELF_BUILSERS]);
+        this.unDefineProperty(this.cache, ['lifeType', calculator_constant_1.ORIGIN_CALCULATORS, calculator_constant_1.ORIGIN_NON_SELF_CALCULATORS, calculator_constant_1.NON_SELF_BUILDERS]);
         this.unDefineProperty(this, ['lifeActions']);
         return (0, utility_1.transformObservable)(_super.prototype.destroy.call(this)).pipe((0, operators_1.tap)(function () {
             var _a, _b;

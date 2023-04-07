@@ -67,7 +67,7 @@ var FormExtension = /** @class */ (function (_super) {
         var value = this.getValueToModel(binding);
         var control = this.getControl(value, { builder: this.builder, builderField: builderField });
         this.defineProperty(builderField, calculator_constant_1.CONTROL, control);
-        this.excuteChangeEvent(jsonField, value);
+        this.executeChangeEvent(jsonField, value);
         this.changeVisibility(builderField, binding, builderField.visibility);
         delete builderField.field.binding;
     };
@@ -98,14 +98,14 @@ var FormExtension = /** @class */ (function (_super) {
             visibility === none ? this.deleteValueToModel(binding) : this.setValueToModel(binding, control.value);
         }
     };
-    FormExtension.prototype.excuteChangeEvent = function (jsonField, value) {
+    FormExtension.prototype.executeChangeEvent = function (jsonField, value) {
         var _a = this.getBuilderFieldById(jsonField.id).events, events = _a === void 0 ? {} : _a;
         return events[this.getEventType(this.getChangeType(jsonField))](value);
     };
     FormExtension.prototype.createNotifyChange = function (jsonField, _a) {
         var actionEvent = _a.actionEvent, builderField = _a.builderField;
         if (!actionEvent || actionEvent === builderField) {
-            this.excuteChangeEvent(jsonField, this.getValueToModel(jsonField.binding));
+            this.executeChangeEvent(jsonField, this.getValueToModel(jsonField.binding));
         }
     };
     FormExtension.prototype.detectChanges = function (id) {

@@ -34,7 +34,7 @@ export class InstanceExtension extends BasicExtension {
     }
     createInstanceLife([, builderField]) {
         const { instance, events = {} } = builderField;
-        this.definePropertys(instance, {
+        this.defineProperties(instance, {
             [this.getEventType(MOUNTED)]: events.onMounted,
             [this.getEventType(DESTROY)]: events.onDestroy
         });

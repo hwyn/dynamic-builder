@@ -33,7 +33,7 @@ export declare abstract class BasicExtension {
     protected pushAction(fieldConfig: BuilderFieldExtensions, actions: Action | Action[]): void;
     protected toArray<T = any>(obj: any): T[];
     protected defineProperty(object: any, prototypeName: string, value: any): void;
-    protected definePropertys(object: any, prototype: {
+    protected defineProperties(object: any, prototype: {
         [key: string]: any;
     }): void;
     protected definePropertyGet(object: any, prototypeName: string, get: () => any): void;

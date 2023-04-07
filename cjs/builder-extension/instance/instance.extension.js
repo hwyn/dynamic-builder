@@ -42,7 +42,7 @@ var InstanceExtension = /** @class */ (function (_super) {
         var _b;
         var builderField = _a[1];
         var instance = builderField.instance, _c = builderField.events, events = _c === void 0 ? {} : _c;
-        this.definePropertys(instance, (_b = {},
+        this.defineProperties(instance, (_b = {},
             _b[this.getEventType(calculator_constant_1.MOUNTED)] = events.onMounted,
             _b[this.getEventType(calculator_constant_1.DESTROY)] = events.onDestroy,
             _b));

@@ -38,16 +38,16 @@ var BaseAction = /** @class */ (function (_super) {
         enumerable: false,
         configurable: true
     });
-    Object.defineProperty(BaseAction.prototype, "actionPropos", {
+    Object.defineProperty(BaseAction.prototype, "actionProps", {
         get: function () {
-            return this.context.actionPropos;
+            return this.context.actionProps;
         },
         enumerable: false,
         configurable: true
     });
     Object.defineProperty(BaseAction.prototype, "callLink", {
         get: function () {
-            return this.context.actionPropos.callLink || [];
+            return this.context.actionProps.callLink || [];
         },
         enumerable: false,
         configurable: true

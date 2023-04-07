@@ -4,7 +4,7 @@ import { tap } from 'rxjs/operators';
 import { observableMap, transformObservable } from '../../utility';
 import { BasicExtension } from '../basic/basic.extension';
 // eslint-disable-next-line max-len
-import { CHANGE, DESTROY, LOAD, LOAD_SOURCE, NON_SELF_BUILSERS, ORIGIN_CALCULATORS, ORIGIN_NON_SELF_CALCULATORS } from '../constant/calculator.constant';
+import { CHANGE, DESTROY, LOAD, LOAD_SOURCE, NON_SELF_BUILDERS, ORIGIN_CALCULATORS, ORIGIN_NON_SELF_CALCULATORS } from '../constant/calculator.constant';
 export class LifeCycleExtension extends BasicExtension {
     constructor() {
         super(...arguments);
@@ -15,7 +15,7 @@ export class LifeCycleExtension extends BasicExtension {
     }
     extension() {
         const nonSelfBuilders = this.builder.root.$$cache.nonSelfBuilders;
-        this.defineProperty(this.cache, NON_SELF_BUILSERS, nonSelfBuilders || []);
+        this.defineProperty(this.cache, NON_SELF_BUILDERS, nonSelfBuilders || []);
     }
     afterExtension() {
         this.serializeCalculators();
@@ -98,7 +98,7 @@ export class LifeCycleExtension extends BasicExtension {
     bindCalculator() {
         this.builder.calculators = this.calculators;
         this.builder.nonSelfCalculators = this.nonSelfCalculators;
-        this.definePropertys(this.cache, { [ORIGIN_CALCULATORS]: this.calculators, [ORIGIN_NON_SELF_CALCULATORS]: this.nonSelfCalculators });
+        this.defineProperties(this.cache, { [ORIGIN_CALCULATORS]: this.calculators, [ORIGIN_NON_SELF_CALCULATORS]: this.nonSelfCalculators });
         this.nonSelfCalculators.length && this.nonSelfBuilders.push(this.builder);
     }
     beforeDestroy() {
@@ -109,7 +109,7 @@ export class LifeCycleExtension extends BasicExtension {
             this.nonSelfBuilders.splice(this.nonSelfBuilders.indexOf(this.builder), 1);
         }
         this.unDefineProperty(this.builder, ['calculators', 'nonSelfCalculators', this.getEventType(CHANGE)]);
-        this.unDefineProperty(this.cache, ['lifeType', ORIGIN_CALCULATORS, ORIGIN_NON_SELF_CALCULATORS, NON_SELF_BUILSERS]);
+        this.unDefineProperty(this.cache, ['lifeType', ORIGIN_CALCULATORS, ORIGIN_NON_SELF_CALCULATORS, NON_SELF_BUILDERS]);
         this.unDefineProperty(this, ['lifeActions']);
         return transformObservable(super.destroy()).pipe(tap(() => {
             var _a, _b;

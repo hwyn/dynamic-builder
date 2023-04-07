@@ -14,7 +14,7 @@ var Action = /** @class */ (function () {
     }
     Action.prototype.getCacheAction = function (ActionType, baseAction) {
         var _a;
-        var _b = baseAction, builder = _b.builder, context = _b.context, _uid = _b.actionPropos._uid, builderField = _b.builderField;
+        var _b = baseAction, builder = _b.builder, context = _b.context, _uid = _b.actionProps._uid, builderField = _b.builderField;
         var _c = (builderField || {}).cacheAction, cacheAction = _c === void 0 ? [] : _c;
         var cacheType = (_a = cacheAction.find(function (_a) {
             var uid = _a.uid;
@@ -118,13 +118,13 @@ var Action = /** @class */ (function () {
         }
         return this.invoke.apply(this, __spreadArray([serializeAction(actionName), context], events, false));
     };
-    Action.prototype.executeAction = function (actionPropos, actionContext, _a) {
+    Action.prototype.executeAction = function (actionProps, actionContext, _a) {
         var _b = _a === void 0 ? this.createEvent(void (0)) : _a, actionEvent = _b[0], otherEvent = _b.slice(1);
-        var _c = serializeAction(actionPropos), _d = _c.name, name = _d === void 0 ? "" : _d, handler = _c.handler;
+        var _c = serializeAction(actionProps), _d = _c.name, name = _d === void 0 ? "" : _d, handler = _c.handler;
         var _e = name.match(/([^.]+)/ig) || [name], actionName = _e[0], _f = _e[1], execute = _f === void 0 ? 'execute' : _f;
         var ActionType = null;
         var executeHandler = handler;
-        var action = new BaseAction().invoke(__assign(__assign({}, actionContext), { actionPropos: actionPropos, actionEvent: actionEvent }));
+        var action = new BaseAction().invoke(__assign(__assign({}, actionContext), { actionProps: actionProps, actionEvent: actionEvent }));
         var builder = action.builder;
         action.injector = (builder === null || builder === void 0 ? void 0 : builder.injector) || this.injector;
         if (!executeHandler && builder) {

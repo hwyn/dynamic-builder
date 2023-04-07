@@ -29,7 +29,7 @@ var Grid = /** @class */ (function () {
         this.config = this.serializationConfig(json.grid);
     }
     Grid.prototype.serializationConfig = function (gridConfig) {
-        var _a = (0, lodash_1.merge)((0, utility_1.cloneDeepPlain)(defaultGrid), gridConfig), _b = _a.id, id = _b === void 0 ? calculator_constant_1.LATOUT_ID : _b, groups = _a.groups, _c = _a.additional, additional = _c === void 0 ? [] : _c, other = tslib_1.__rest(_a, ["id", "groups", "additional"]);
+        var _a = (0, lodash_1.merge)((0, utility_1.cloneDeepPlain)(defaultGrid), gridConfig), _b = _a.id, id = _b === void 0 ? calculator_constant_1.LAYOUT_ID : _b, groups = _a.groups, _c = _a.additional, additional = _c === void 0 ? [] : _c, other = tslib_1.__rest(_a, ["id", "groups", "additional"]);
         var justify = other.justify, alignItems = other.alignItems, spacing = other.spacing;
         var groupLayout = (0, lodash_1.groupBy)(additional, function (_a) {
             var group = _a.group;

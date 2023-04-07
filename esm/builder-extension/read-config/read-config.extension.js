@@ -13,7 +13,7 @@ export class ReadConfigExtension extends BasicExtension {
     extension() {
         var _a, _b;
         this.cache.basePath = ((_a = this.props) === null || _a === void 0 ? void 0 : _a.basePath) || ((_b = this.builder.parent) === null || _b === void 0 ? void 0 : _b.$$cache.basePath) || '';
-        this.definePropertys(this.builder, { id: this.props.id, getExecuteHandler: this.createGetExecuteHandler() });
+        this.defineProperties(this.builder, { id: this.props.id, getExecuteHandler: this.createGetExecuteHandler() });
         return this.getConfigJson(this.props).pipe(tap((jsonConfig) => this.props.config = jsonConfig));
     }
     getConfig(url) {

@@ -16,11 +16,11 @@ export class BaseAction extends BaseType {
     get instance() {
         return this.builderField && this.builderField.instance;
     }
-    get actionPropos() {
-        return this.context.actionPropos;
+    get actionProps() {
+        return this.context.actionProps;
     }
     get callLink() {
-        return this.context.actionPropos.callLink || [];
+        return this.context.actionProps.callLink || [];
     }
     get actionEvent() {
         return this.context.actionEvent;
