@@ -53,20 +53,19 @@ export class LifeCycleExtension extends BasicExtension {
         this.getNonSelfCalculators().forEach((calculator) => this.linkCalculator(calculator, true));
         this.calculators = this.calculators.filter((c) => !this.nonSelfCalculators.includes(c));
     }
-    // eslint-disable-next-line complexity
     linkCalculator(calculator, nonSelfCalculator) {
         const { type, fieldId } = calculator.dependent;
         const sourceField = this.getJsonFieldById(fieldId) || this.json;
         sourceField.actions = this.toArray(sourceField.actions || []);
         const { actions = [], id: sourceId } = sourceField;
-        const isDependentField = fieldId !== sourceId;
         const isBuildCalculator = this.isBuildField(sourceField) && this.cache.lifeType.includes(type);
-        if ((isBuildCalculator || isDependentField) && !nonSelfCalculator) {
+        const nonCalculator = isBuildCalculator || fieldId !== sourceId;
+        if (nonCalculator && !nonSelfCalculator) {
             this.nonSelfCalculators.push(calculator);
             !isBuildCalculator && this.linkOtherCalculator(calculator);
         }
-        if (!isDependentField && !actions.some((action) => action.type === type) && !isBuildCalculator) {
-            sourceField.actions.unshift({ type });
+        if (!nonCalculator && !actions.some((action) => action.type === type)) {
+            actions.unshift({ type });
         }
     }
     linkOtherCalculator(calculator) {

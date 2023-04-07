@@ -64,20 +64,19 @@ var LifeCycleExtension = /** @class */ (function (_super) {
         this.getNonSelfCalculators().forEach(function (calculator) { return _this.linkCalculator(calculator, true); });
         this.calculators = this.calculators.filter(function (c) { return !_this.nonSelfCalculators.includes(c); });
     };
-    // eslint-disable-next-line complexity
     LifeCycleExtension.prototype.linkCalculator = function (calculator, nonSelfCalculator) {
         var _a = calculator.dependent, type = _a.type, fieldId = _a.fieldId;
         var sourceField = this.getJsonFieldById(fieldId) || this.json;
         sourceField.actions = this.toArray(sourceField.actions || []);
         var _b = sourceField.actions, actions = _b === void 0 ? [] : _b, sourceId = sourceField.id;
-        var isDependentField = fieldId !== sourceId;
         var isBuildCalculator = this.isBuildField(sourceField) && this.cache.lifeType.includes(type);
-        if ((isBuildCalculator || isDependentField) && !nonSelfCalculator) {
+        var nonCalculator = isBuildCalculator || fieldId !== sourceId;
+        if (nonCalculator && !nonSelfCalculator) {
             this.nonSelfCalculators.push(calculator);
             !isBuildCalculator && this.linkOtherCalculator(calculator);
         }
-        if (!isDependentField && !actions.some(function (action) { return action.type === type; }) && !isBuildCalculator) {
-            sourceField.actions.unshift({ type: type });
+        if (!nonCalculator && !actions.some(function (action) { return action.type === type; })) {
+            actions.unshift({ type: type });
         }
     };
     LifeCycleExtension.prototype.linkOtherCalculator = function (calculator) {
