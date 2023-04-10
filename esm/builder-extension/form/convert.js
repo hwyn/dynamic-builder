@@ -9,19 +9,27 @@ let Convert = class Convert {
         this.getType = getType;
     }
     toModel(convertObj, value) {
-        return (convertObj === null || convertObj === void 0 ? void 0 : convertObj.toModel(value)) || value;
+        return (convertObj === null || convertObj === void 0 ? void 0 : convertObj.toModel) ? convertObj.toModel(value) : value;
     }
     toView(convertObj, value) {
-        return (convertObj === null || convertObj === void 0 ? void 0 : convertObj.toView(value)) || value;
+        return (convertObj === null || convertObj === void 0 ? void 0 : convertObj.toView) ? convertObj.toView(value) : value;
     }
-    getConvertObj(covertConfig, builder, builderField) {
-        const name = isString(covertConfig) ? covertConfig : covertConfig === null || covertConfig === void 0 ? void 0 : covertConfig.name;
-        const convert = covertConfig instanceof BaseConvert ? covertConfig : this.getType(CONVERT_CONFIG, name);
-        if (name && !convert) {
-            console.info(`convert: ${name}没有被注册!!`);
+    getConvertObj(convertConfig, builder, builderField) {
+        let converter;
+        const context = { convertConfig, builder, builderField };
+        const name = isString(convertConfig) ? convertConfig : convertConfig === null || convertConfig === void 0 ? void 0 : convertConfig.name;
+        const builderHandler = builder.getExecuteHandler(name, false);
+        if (builderHandler) {
+            converter = builderHandler(new BaseConvert().invoke(Object.assign({ injector: this.injector }, context)));
         }
-        const converter = convert && this.injector.get(convert, InjectFlags.NonCache);
-        return converter && converter.invoke({ covertConfig, builder, builderField });
+        if (!converter) {
+            const convert = convertConfig instanceof BaseConvert ? convertConfig : this.getType(CONVERT_CONFIG, name);
+            if (name && !convert) {
+                console.info(`convert: ${name}没有被注册!!`);
+            }
+            converter = convert && this.injector.get(convert, InjectFlags.NonCache).invoke(context);
+        }
+        return converter;
     }
 };
 Convert = __decorate([

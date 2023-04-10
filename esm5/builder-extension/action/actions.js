@@ -128,10 +128,7 @@ var Action = /** @class */ (function () {
         var builder = action.builder;
         action.injector = (builder === null || builder === void 0 ? void 0 : builder.injector) || this.injector;
         if (!executeHandler && builder) {
-            while (builder) {
-                executeHandler = builder.getExecuteHandler(name) || executeHandler;
-                builder = builder.parent;
-            }
+            executeHandler = builder.getExecuteHandler(name, false);
         }
         if (!executeHandler && (ActionType = this.getType(ACTIONS_CONFIG, actionName))) {
             action = this.getCacheAction(ActionType, action);

@@ -84,6 +84,6 @@ export interface BuilderModelExtensions extends BuilderModelInterface, BuilderVi
     readonly grid: GridType;
     calculators: OriginCalculators[];
     nonSelfCalculators: OriginCalculators[];
-    getExecuteHandler: (actionName: string) => undefined | ExecuteHandler;
+    getExecuteHandler: (actionName: string, isSelf?: boolean) => undefined | ExecuteHandler;
 }
 export {};

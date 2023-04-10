@@ -7,5 +7,5 @@ export declare class Convert {
     constructor(injector: Injector, getType: any);
     toModel(convertObj: BaseConvertImpl | undefined, value: any): any;
     toView(convertObj: BaseConvertImpl | undefined, value: any): any;
-    getConvertObj(covertConfig: any, builder: BuilderModelExtensions, builderField: BuilderFieldExtensions): BaseConvertImpl;
+    getConvertObj(convertConfig: any, builder: BuilderModelExtensions, builderField: BuilderFieldExtensions): BaseConvertImpl;
 }

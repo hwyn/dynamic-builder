@@ -12,19 +12,27 @@ var Convert = /** @class */ (function () {
         this.getType = getType;
     }
     Convert.prototype.toModel = function (convertObj, value) {
-        return (convertObj === null || convertObj === void 0 ? void 0 : convertObj.toModel(value)) || value;
+        return (convertObj === null || convertObj === void 0 ? void 0 : convertObj.toModel) ? convertObj.toModel(value) : value;
     };
     Convert.prototype.toView = function (convertObj, value) {
-        return (convertObj === null || convertObj === void 0 ? void 0 : convertObj.toView(value)) || value;
+        return (convertObj === null || convertObj === void 0 ? void 0 : convertObj.toView) ? convertObj.toView(value) : value;
     };
-    Convert.prototype.getConvertObj = function (covertConfig, builder, builderField) {
-        var name = (0, lodash_1.isString)(covertConfig) ? covertConfig : covertConfig === null || covertConfig === void 0 ? void 0 : covertConfig.name;
-        var convert = covertConfig instanceof base_convert_1.BaseConvert ? covertConfig : this.getType(token_1.CONVERT_CONFIG, name);
-        if (name && !convert) {
-            console.info("convert: ".concat(name, "\u6CA1\u6709\u88AB\u6CE8\u518C!!"));
+    Convert.prototype.getConvertObj = function (convertConfig, builder, builderField) {
+        var converter;
+        var context = { convertConfig: convertConfig, builder: builder, builderField: builderField };
+        var name = (0, lodash_1.isString)(convertConfig) ? convertConfig : convertConfig === null || convertConfig === void 0 ? void 0 : convertConfig.name;
+        var builderHandler = builder.getExecuteHandler(name, false);
+        if (builderHandler) {
+            converter = builderHandler(new base_convert_1.BaseConvert().invoke(tslib_1.__assign({ injector: this.injector }, context)));
         }
-        var converter = convert && this.injector.get(convert, di_1.InjectFlags.NonCache);
-        return converter && converter.invoke({ covertConfig: covertConfig, builder: builder, builderField: builderField });
+        if (!converter) {
+            var convert = convertConfig instanceof base_convert_1.BaseConvert ? convertConfig : this.getType(token_1.CONVERT_CONFIG, name);
+            if (name && !convert) {
+                console.info("convert: ".concat(name, "\u6CA1\u6709\u88AB\u6CE8\u518C!!"));
+            }
+            converter = convert && this.injector.get(convert, di_1.InjectFlags.NonCache).invoke(context);
+        }
+        return converter;
     };
     Convert = tslib_1.__decorate([
         tslib_1.__param(0, (0, di_1.Inject)(di_1.Injector)),

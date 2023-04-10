@@ -1,5 +1,4 @@
-import { BuilderModel } from '../../builder/builder-model';
-import { BuilderFieldExtensions } from '../type-api';
+import { BuilderFieldExtensions, BuilderModelExtensions } from '../type-api';
 export declare interface BaseConvertImpl {
     toModel(value: any): any;
     toView(value: any): any;
@@ -16,6 +15,6 @@ export declare interface BuilderFormField {
     control?: FormControl;
 }
 export interface FormOptions {
-    builder: BuilderModel;
+    builder: BuilderModelExtensions;
     builderField: BuilderFieldExtensions;
 }

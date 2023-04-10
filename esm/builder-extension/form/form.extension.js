@@ -33,7 +33,7 @@ export class FormExtension extends BasicExtension {
                 }] : [],
             ...validators && validators.length ? [{
                     action: this.bindCalculatorAction(this.createValidity.bind(this)),
-                    dependents: { type: updateOn, fieldId: id }
+                    dependents: this.toArray(updateOn).map((type) => ({ type: type, fieldId: id }))
                 }] : []]);
     }
     addChangeAction(changeType, jsonField, builderField) {

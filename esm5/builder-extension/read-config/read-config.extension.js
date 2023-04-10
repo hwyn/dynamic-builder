@@ -95,8 +95,12 @@ var ReadConfigExtension = /** @class */ (function (_super) {
         var _this = this;
         var builder = this.builder;
         var getExecuteHandler = this.builder.getExecuteHandler;
-        return function (actionName) {
-            var executeHandler;
+        return function (actionName, isSelf) {
+            var _a;
+            if (isSelf === void 0) { isSelf = true; }
+            var executeHandler = !isSelf && ((_a = builder.parent) === null || _a === void 0 ? void 0 : _a.getExecuteHandler(actionName, isSelf));
+            if (executeHandler)
+                return executeHandler;
             if (isFunction(getExecuteHandler)) {
                 executeHandler = getExecuteHandler.call(_this.builder, actionName);
             }
