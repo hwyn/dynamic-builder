@@ -1,4 +1,4 @@
-import { getInjectableDef, Injectable, Injector } from '@fm/di';
+import { getInjectableDef, Injector, setInjectableDef } from '@fm/di';
 import { BuilderContext as BasicBuilderContext } from '../../builder/builder-context';
 import { ACTION_INTERCEPT, ACTIONS_CONFIG, BUILDER_EXTENSION, CONVERT_CONFIG, CONVERT_INTERCEPT, FORM_CONTROL, GET_JSON_CONFIG, GET_TYPE, LAYOUT_ELEMENT, LOAD_BUILDER_CONFIG } from '../../token';
 import { Action } from '../action/actions';
@@ -76,7 +76,7 @@ export class BuilderContext extends BasicBuilderContext {
             if (list.some(({ name: typeName }) => typeName === name))
                 console.info(`${typeName}: ${name}已经注册`);
             if (!getInjectableDef(target))
-                Injectable({ providedIn: 'any' })(target);
+                setInjectableDef(target, { providedIn: 'any' });
             target[`${typeName}Name`] = name;
             list.push({ name, attr: typeName, [typeName]: target });
         }

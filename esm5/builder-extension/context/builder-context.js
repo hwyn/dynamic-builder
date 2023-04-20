@@ -1,5 +1,5 @@
 import { __extends, __spreadArray } from "tslib";
-import { getInjectableDef, Injectable, Injector } from '@fm/di';
+import { getInjectableDef, Injector, setInjectableDef } from '@fm/di';
 import { BuilderContext as BasicBuilderContext } from '../../builder/builder-context';
 import { ACTION_INTERCEPT, ACTIONS_CONFIG, BUILDER_EXTENSION, CONVERT_CONFIG, CONVERT_INTERCEPT, FORM_CONTROL, GET_JSON_CONFIG, GET_TYPE, LAYOUT_ELEMENT, LOAD_BUILDER_CONFIG } from '../../token';
 import { Action } from '../action/actions';
@@ -91,7 +91,7 @@ var BuilderContext = /** @class */ (function (_super) {
             }))
                 console.info("".concat(typeName, ": ").concat(name, "\u5DF2\u7ECF\u6CE8\u518C"));
             if (!getInjectableDef(target))
-                Injectable({ providedIn: 'any' })(target);
+                setInjectableDef(target, { providedIn: 'any' });
             target["".concat(typeName, "Name")] = name;
             list.push((_a = { name: name, attr: typeName }, _a[typeName] = target, _a));
         }

@@ -95,7 +95,7 @@ var BuilderContext = /** @class */ (function (_super) {
             }))
                 console.info("".concat(typeName, ": ").concat(name, "\u5DF2\u7ECF\u6CE8\u518C"));
             if (!(0, di_1.getInjectableDef)(target))
-                (0, di_1.Injectable)({ providedIn: 'any' })(target);
+                (0, di_1.setInjectableDef)(target, { providedIn: 'any' });
             target["".concat(typeName, "Name")] = name;
             list.push((_a = { name: name, attr: typeName }, _a[typeName] = target, _a));
         }
