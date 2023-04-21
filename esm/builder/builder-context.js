@@ -16,7 +16,7 @@ export class BuilderContext {
             var _b;
             var { BuilderModel: NB = BuilderModel } = _a, props = __rest(_a, ["BuilderModel"]);
             if (!getInjectableDef(NB))
-                setInjectableDef(NB, { providedIn: 'any' });
+                setInjectableDef(NB, { providedIn: 'any', nonSingle: true });
             return (((_b = props.builder) === null || _b === void 0 ? void 0 : _b.injector) || injector).get(NB, InjectFlags.NonCache).loadForBuild(props);
         };
     }

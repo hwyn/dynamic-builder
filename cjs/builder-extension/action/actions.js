@@ -25,7 +25,7 @@ var Action = /** @class */ (function () {
         })) === null || _a === void 0 ? void 0 : _a.action;
         if (!cacheType) {
             var injector = (builder === null || builder === void 0 ? void 0 : builder.injector) || this.injector;
-            cacheType = injector.get(ActionType, di_1.InjectFlags.NonCache).invoke(context);
+            cacheType = injector.get(ActionType).invoke(context);
             if (!ActionType.cache || !builderField || !_uid)
                 return cacheType;
             builderField.cacheAction && cacheAction.push({ uid: _uid, action: cacheType });

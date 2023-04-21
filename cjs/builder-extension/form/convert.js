@@ -30,7 +30,7 @@ var Convert = /** @class */ (function () {
             if (name && !convert) {
                 console.info("convert: ".concat(name, "\u6CA1\u6709\u88AB\u6CE8\u518C!!"));
             }
-            converter = convert && this.injector.get(convert, di_1.InjectFlags.NonCache).invoke(context);
+            converter = convert && this.injector.get(convert).invoke(context);
         }
         return converter;
     };

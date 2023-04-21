@@ -76,7 +76,7 @@ export class BuilderContext extends BasicBuilderContext {
             if (list.some(({ name: typeName }) => typeName === name))
                 console.info(`${typeName}: ${name}已经注册`);
             if (!getInjectableDef(target))
-                setInjectableDef(target, { providedIn: 'any' });
+                setInjectableDef(target, { providedIn: 'any', nonSingle: true });
             target[`${typeName}Name`] = name;
             list.push({ name, attr: typeName, [typeName]: target });
         }

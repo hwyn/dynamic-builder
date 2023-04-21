@@ -1,5 +1,5 @@
 import { __decorate, __metadata, __param } from "tslib";
-import { Inject, InjectFlags, Injector } from '@fm/di';
+import { Inject, Injector } from '@fm/di';
 import { groupBy, isEmpty, toArray } from 'lodash';
 import { forkJoin, of } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -19,7 +19,7 @@ let Action = class Action {
         let cacheType = (_a = cacheAction.find(({ uid }) => _uid === uid)) === null || _a === void 0 ? void 0 : _a.action;
         if (!cacheType) {
             const injector = (builder === null || builder === void 0 ? void 0 : builder.injector) || this.injector;
-            cacheType = injector.get(ActionType, InjectFlags.NonCache).invoke(context);
+            cacheType = injector.get(ActionType).invoke(context);
             if (!ActionType.cache || !builderField || !_uid)
                 return cacheType;
             builderField.cacheAction && cacheAction.push({ uid: _uid, action: cacheType });

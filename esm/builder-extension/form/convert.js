@@ -1,5 +1,5 @@
 import { __decorate, __metadata, __param } from "tslib";
-import { Inject, InjectFlags, Injector } from '@fm/di';
+import { Inject, Injector } from '@fm/di';
 import { isString } from 'lodash';
 import { CONVERT_CONFIG, GET_TYPE } from '../../token';
 import { BaseConvert } from './base-convert';
@@ -27,7 +27,7 @@ let Convert = class Convert {
             if (name && !convert) {
                 console.info(`convert: ${name}没有被注册!!`);
             }
-            converter = convert && this.injector.get(convert, InjectFlags.NonCache).invoke(context);
+            converter = convert && this.injector.get(convert).invoke(context);
         }
         return converter;
     }

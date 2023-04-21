@@ -1,5 +1,5 @@
 import { __assign, __decorate, __metadata, __param } from "tslib";
-import { Inject, InjectFlags, Injector } from '@fm/di';
+import { Inject, Injector } from '@fm/di';
 import { isString } from 'lodash';
 import { CONVERT_CONFIG, GET_TYPE } from '../../token';
 import { BaseConvert } from './base-convert';
@@ -27,7 +27,7 @@ var Convert = /** @class */ (function () {
             if (name && !convert) {
                 console.info("convert: ".concat(name, "\u6CA1\u6709\u88AB\u6CE8\u518C!!"));
             }
-            converter = convert && this.injector.get(convert, InjectFlags.NonCache).invoke(context);
+            converter = convert && this.injector.get(convert).invoke(context);
         }
         return converter;
     };
