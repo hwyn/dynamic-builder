@@ -6,7 +6,7 @@ var di_1 = require("@fm/di");
 var lodash_1 = require("lodash");
 var builder_utils_1 = require("./builder-utils");
 var consts_1 = require("./consts");
-var transform = function (type, name, value) { return [type[name], value].includes(undefined) && (type[name] = value); };
+var transform = function (type, name, value) { return type[name] || value; };
 var BuilderModel = /** @class */ (function () {
     function BuilderModel() {
         this.parent = null;

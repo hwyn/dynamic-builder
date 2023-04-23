@@ -3,7 +3,7 @@ import { Injector, Prop } from '@fm/di';
 import { flatMap, isEmpty, uniq } from 'lodash';
 import { init } from './builder-utils';
 import { Visibility } from './consts';
-var transform = function (type, name, value) { return [type[name], value].includes(undefined) && (type[name] = value); };
+var transform = function (type, name, value) { return type[name] || value; };
 var BuilderModel = /** @class */ (function () {
     function BuilderModel() {
         this.parent = null;

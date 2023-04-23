@@ -3,7 +3,7 @@ import { Injector, Prop } from '@fm/di';
 import { flatMap, isEmpty, uniq } from 'lodash';
 import { init } from './builder-utils';
 import { Visibility } from './consts';
-const transform = (type, name, value) => [type[name], value].includes(undefined) && (type[name] = value);
+const transform = (type, name, value) => type[name] || value;
 export class BuilderModel {
     constructor() {
         this.parent = null;
