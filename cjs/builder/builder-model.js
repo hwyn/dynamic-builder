@@ -82,7 +82,7 @@ var BuilderModel = /** @class */ (function () {
         return visibility === undefined || visibility !== consts_1.Visibility.none;
     };
     tslib_1.__decorate([
-        (0, di_1.Prop)(di_1.Injector, { transform: transform }),
+        (0, di_1.Inject)(di_1.Injector, { transform: transform }),
         tslib_1.__metadata("design:type", di_1.Injector)
     ], BuilderModel.prototype, "injector", void 0);
     return BuilderModel;

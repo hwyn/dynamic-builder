@@ -1,5 +1,5 @@
 import { __decorate, __metadata } from "tslib";
-import { Injector, Prop } from '@fm/di';
+import { Inject, Injector } from '@fm/di';
 import { flatMap, isEmpty, uniq } from 'lodash';
 import { init } from './builder-utils';
 import { Visibility } from './consts';
@@ -54,6 +54,6 @@ export class BuilderModel {
     }
 }
 __decorate([
-    Prop(Injector, { transform }),
+    Inject(Injector, { transform }),
     __metadata("design:type", Injector)
 ], BuilderModel.prototype, "injector", void 0);
