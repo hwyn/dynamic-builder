@@ -1,10 +1,11 @@
-import { Injector } from '@fm/di';
+import { Injector, MethodProxy } from '@fm/di';
 import { Observable } from 'rxjs';
 import { Action as ActionProps, ActionContext, ActionIntercept, ActionInterceptProps, InvokeAction } from './type-api';
 export declare class Action implements ActionIntercept {
-    private injector;
-    private getType;
-    constructor(injector: Injector, getType: any);
+    private readonly mp;
+    private readonly injector;
+    private readonly getType;
+    constructor(mp: MethodProxy, injector: Injector, getType: any);
     private getCacheAction;
     private createEvent;
     protected getActionContext({ builder, id }?: ActionInterceptProps): ActionContext;

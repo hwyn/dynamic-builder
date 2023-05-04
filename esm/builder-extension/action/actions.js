@@ -1,14 +1,15 @@
 import { __decorate, __metadata, __param } from "tslib";
-import { Inject, Injector } from '@fm/di';
+import { Inject, Injector, MethodProxy } from '@fm/di';
 import { groupBy, isEmpty, toArray } from 'lodash';
 import { forkJoin, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ACTIONS_CONFIG, GET_TYPE } from '../../token';
-import { observableMap, observableTap, toForkJoin, transformObservable } from '../../utility';
+import { funcToObservable, observableMap, observableTap, toForkJoin, transformObservable } from '../../utility';
 import { serializeAction } from '../basic/basic.extension';
 import { BaseAction } from './base.action';
 let Action = class Action {
-    constructor(injector, getType) {
+    constructor(mp, injector, getType) {
+        this.mp = mp;
         this.injector = injector;
         this.getType = getType;
     }
@@ -85,7 +86,7 @@ let Action = class Action {
         }
         if (!executeHandler && (ActionType = this.getType(ACTIONS_CONFIG, actionName))) {
             action = this.getCacheAction(ActionType, action);
-            executeHandler = action[execute].bind(action);
+            executeHandler = funcToObservable(this.mp.proxyMethodAsync(ActionType, execute, action[execute].bind(action)));
         }
         if (!executeHandler) {
             throw new Error(`${name} not defined!`);
@@ -94,8 +95,10 @@ let Action = class Action {
     }
 };
 Action = __decorate([
-    __param(0, Inject(Injector)),
-    __param(1, Inject(GET_TYPE)),
-    __metadata("design:paramtypes", [Injector, Object])
+    __param(0, Inject(MethodProxy)),
+    __param(1, Inject(Injector)),
+    __param(2, Inject(GET_TYPE)),
+    __metadata("design:paramtypes", [MethodProxy,
+        Injector, Object])
 ], Action);
 export { Action };

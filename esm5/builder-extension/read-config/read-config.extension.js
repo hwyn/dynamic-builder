@@ -1,9 +1,10 @@
 import { __assign, __extends } from "tslib";
+import { MethodProxy } from '@fm/di';
 import { isEmpty, isFunction, uniq } from 'lodash';
 import { of } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { GET_JSON_CONFIG } from '../../token';
-import { observableMap, observableTap, toForkJoin } from '../../utility';
+import { funcToObservable, observableMap, observableTap, toForkJoin } from '../../utility';
 import { BasicExtension } from "../basic/basic.extension";
 import { LOAD_CONFIG_ACTION } from '../constant/calculator.constant';
 var ReadConfigExtension = /** @class */ (function (_super) {
@@ -94,7 +95,9 @@ var ReadConfigExtension = /** @class */ (function (_super) {
     ReadConfigExtension.prototype.createGetExecuteHandler = function () {
         var _this = this;
         var builder = this.builder;
+        var mp = this.injector.get(MethodProxy);
         var getExecuteHandler = this.builder.getExecuteHandler;
+        var builderType = Object.getPrototypeOf(builder).constructor;
         return function (actionName, isSelf) {
             var _a;
             if (isSelf === void 0) { isSelf = true; }
@@ -105,7 +108,9 @@ var ReadConfigExtension = /** @class */ (function (_super) {
                 executeHandler = getExecuteHandler.call(_this.builder, actionName);
             }
             executeHandler = executeHandler || builder[actionName];
-            return isFunction(executeHandler) ? executeHandler.bind(builder) : undefined;
+            if (isFunction(executeHandler)) {
+                return funcToObservable(mp.proxyMethodAsync(builderType, actionName, executeHandler.bind(builder)));
+            }
         };
     };
     ReadConfigExtension.prototype.destroy = function () {

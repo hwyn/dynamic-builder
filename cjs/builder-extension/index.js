@@ -12,6 +12,7 @@ var builder_context_1 = require("./context/builder-context");
 Object.defineProperty(exports, "BaseType", { enumerable: true, get: function () { return builder_context_1.BaseType; } });
 Object.defineProperty(exports, "BuilderContext", { enumerable: true, get: function () { return builder_context_1.BuilderContext; } });
 Object.defineProperty(exports, "useBuilderContext", { enumerable: true, get: function () { return builder_context_1.useBuilderContext; } });
+tslib_1.__exportStar(require("./decorator"), exports);
 var base_convert_1 = require("./form/base-convert");
 Object.defineProperty(exports, "BaseConvert", { enumerable: true, get: function () { return base_convert_1.BaseConvert; } });
 tslib_1.__exportStar(require("./form/type-api"), exports);

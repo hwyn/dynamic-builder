@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ReadConfigExtension = void 0;
 var tslib_1 = require("tslib");
+var di_1 = require("@fm/di");
 var lodash_1 = require("lodash");
 var rxjs_1 = require("rxjs");
 var operators_1 = require("rxjs/operators");
@@ -97,7 +98,9 @@ var ReadConfigExtension = /** @class */ (function (_super) {
     ReadConfigExtension.prototype.createGetExecuteHandler = function () {
         var _this = this;
         var builder = this.builder;
+        var mp = this.injector.get(di_1.MethodProxy);
         var getExecuteHandler = this.builder.getExecuteHandler;
+        var builderType = Object.getPrototypeOf(builder).constructor;
         return function (actionName, isSelf) {
             var _a;
             if (isSelf === void 0) { isSelf = true; }
@@ -108,7 +111,9 @@ var ReadConfigExtension = /** @class */ (function (_super) {
                 executeHandler = getExecuteHandler.call(_this.builder, actionName);
             }
             executeHandler = executeHandler || builder[actionName];
-            return (0, lodash_1.isFunction)(executeHandler) ? executeHandler.bind(builder) : undefined;
+            if ((0, lodash_1.isFunction)(executeHandler)) {
+                return (0, utility_1.funcToObservable)(mp.proxyMethodAsync(builderType, actionName, executeHandler.bind(builder)));
+            }
         };
     };
     ReadConfigExtension.prototype.destroy = function () {

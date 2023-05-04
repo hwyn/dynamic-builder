@@ -11,7 +11,8 @@ var utility_1 = require("../../utility");
 var basic_extension_1 = require("../basic/basic.extension");
 var base_action_1 = require("./base.action");
 var Action = /** @class */ (function () {
-    function Action(injector, getType) {
+    function Action(mp, injector, getType) {
+        this.mp = mp;
         this.injector = injector;
         this.getType = getType;
     }
@@ -135,7 +136,7 @@ var Action = /** @class */ (function () {
         }
         if (!executeHandler && (ActionType = this.getType(token_1.ACTIONS_CONFIG, actionName))) {
             action = this.getCacheAction(ActionType, action);
-            executeHandler = action[execute].bind(action);
+            executeHandler = (0, utility_1.funcToObservable)(this.mp.proxyMethodAsync(ActionType, execute, action[execute].bind(action)));
         }
         if (!executeHandler) {
             throw new Error("".concat(name, " not defined!"));
@@ -143,9 +144,11 @@ var Action = /** @class */ (function () {
         return (0, utility_1.transformObservable)(executeHandler.apply(undefined, tslib_1.__spreadArray([action], otherEvent, true)));
     };
     Action = tslib_1.__decorate([
-        tslib_1.__param(0, (0, di_1.Inject)(di_1.Injector)),
-        tslib_1.__param(1, (0, di_1.Inject)(token_1.GET_TYPE)),
-        tslib_1.__metadata("design:paramtypes", [di_1.Injector, Object])
+        tslib_1.__param(0, (0, di_1.Inject)(di_1.MethodProxy)),
+        tslib_1.__param(1, (0, di_1.Inject)(di_1.Injector)),
+        tslib_1.__param(2, (0, di_1.Inject)(token_1.GET_TYPE)),
+        tslib_1.__metadata("design:paramtypes", [di_1.MethodProxy,
+            di_1.Injector, Object])
     ], Action);
     return Action;
 }());
