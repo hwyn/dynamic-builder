@@ -30,12 +30,14 @@ function transform(annotation, value, baseAction, ...otherEvent) {
     }
     return value;
 }
-export const Builder = makeParamDecorator(ActionParams.builder, () => ({ transform }));
-export const Intercept = makeParamDecorator(ActionParams.intercept, () => ({ transform }));
-export const Event = makeParamDecorator(ActionParams.event, (key) => ({ key, transform }));
-export const Field = makeParamDecorator(ActionParams.field, (key) => ({ key, transform }));
-export const CallLink = makeParamDecorator(ActionParams.callLink, (key) => ({ key, transform }));
-export const ViewModel = makeParamDecorator(ActionParams.viewModel, (key) => ({ key, transform }));
-export const OtherEvent = makeParamDecorator(ActionParams.otherEvent, (key) => ({ key, transform }));
-export const ActionProps = makeParamDecorator(ActionParams.actionProps, (key) => ({ key, transform }));
-export const InstanceRef = makeParamDecorator(ActionParams.instanceRef, (key) => ({ key, transform }));
+const props = (obj = {}) => (Object.assign({ transform }, obj));
+const keyProps = (key) => props({ key });
+export const FieldRef = makeParamDecorator(ActionParams.field, keyProps);
+export const BuilderRef = makeParamDecorator(ActionParams.builder, props);
+export const InterceptRef = makeParamDecorator(ActionParams.intercept, props);
+export const ViewModelRef = makeParamDecorator(ActionParams.viewModel, keyProps);
+export const InstanceRef = makeParamDecorator(ActionParams.instanceRef, keyProps);
+export const Event = makeParamDecorator(ActionParams.event, keyProps);
+export const CallLink = makeParamDecorator(ActionParams.callLink, keyProps);
+export const OtherEvent = makeParamDecorator(ActionParams.otherEvent, keyProps);
+export const ActionProps = makeParamDecorator(ActionParams.actionProps, keyProps);

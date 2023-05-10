@@ -1,3 +1,4 @@
+import { __assign } from "tslib";
 import { makeParamDecorator } from '@fm/di';
 import { get } from 'lodash';
 var ActionParams;
@@ -35,12 +36,17 @@ function transform(annotation, value, baseAction) {
     }
     return value;
 }
-export var Builder = makeParamDecorator(ActionParams.builder, function () { return ({ transform: transform }); });
-export var Intercept = makeParamDecorator(ActionParams.intercept, function () { return ({ transform: transform }); });
-export var Event = makeParamDecorator(ActionParams.event, function (key) { return ({ key: key, transform: transform }); });
-export var Field = makeParamDecorator(ActionParams.field, function (key) { return ({ key: key, transform: transform }); });
-export var CallLink = makeParamDecorator(ActionParams.callLink, function (key) { return ({ key: key, transform: transform }); });
-export var ViewModel = makeParamDecorator(ActionParams.viewModel, function (key) { return ({ key: key, transform: transform }); });
-export var OtherEvent = makeParamDecorator(ActionParams.otherEvent, function (key) { return ({ key: key, transform: transform }); });
-export var ActionProps = makeParamDecorator(ActionParams.actionProps, function (key) { return ({ key: key, transform: transform }); });
-export var InstanceRef = makeParamDecorator(ActionParams.instanceRef, function (key) { return ({ key: key, transform: transform }); });
+var props = function (obj) {
+    if (obj === void 0) { obj = {}; }
+    return (__assign({ transform: transform }, obj));
+};
+var keyProps = function (key) { return props({ key: key }); };
+export var FieldRef = makeParamDecorator(ActionParams.field, keyProps);
+export var BuilderRef = makeParamDecorator(ActionParams.builder, props);
+export var InterceptRef = makeParamDecorator(ActionParams.intercept, props);
+export var ViewModelRef = makeParamDecorator(ActionParams.viewModel, keyProps);
+export var InstanceRef = makeParamDecorator(ActionParams.instanceRef, keyProps);
+export var Event = makeParamDecorator(ActionParams.event, keyProps);
+export var CallLink = makeParamDecorator(ActionParams.callLink, keyProps);
+export var OtherEvent = makeParamDecorator(ActionParams.otherEvent, keyProps);
+export var ActionProps = makeParamDecorator(ActionParams.actionProps, keyProps);

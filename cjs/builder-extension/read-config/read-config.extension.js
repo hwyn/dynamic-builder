@@ -32,10 +32,7 @@ var ReadConfigExtension = /** @class */ (function (_super) {
     ReadConfigExtension.prototype.preloaded = function (jsonConfig) {
         var isPreloaded = jsonConfig.isPreloaded, fields = jsonConfig.fields;
         var builderFields = !isPreloaded ? fields.filter(this.eligiblePreloaded.bind(this)) : [];
-        if (!builderFields.length) {
-            return (0, rxjs_1.of)(jsonConfig);
-        }
-        return (0, utility_1.toForkJoin)(builderFields.map(this.preloadedBuildField.bind(this)));
+        return !builderFields.length ? (0, rxjs_1.of)(jsonConfig) : (0, utility_1.toForkJoin)(builderFields.map(this.preloadedBuildField.bind(this)));
     };
     ReadConfigExtension.prototype.preloadedBuildField = function (jsonField) {
         return this.getConfigJson(jsonField).pipe((0, operators_1.tap)(function (jsonConfig) {

@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.InstanceRef = exports.ActionProps = exports.OtherEvent = exports.ViewModel = exports.CallLink = exports.Field = exports.Event = exports.Intercept = exports.Builder = void 0;
+exports.ActionProps = exports.OtherEvent = exports.CallLink = exports.Event = exports.InstanceRef = exports.ViewModelRef = exports.InterceptRef = exports.BuilderRef = exports.FieldRef = void 0;
+var tslib_1 = require("tslib");
 var di_1 = require("@fm/di");
 var lodash_1 = require("lodash");
 var ActionParams;
@@ -38,12 +39,17 @@ function transform(annotation, value, baseAction) {
     }
     return value;
 }
-exports.Builder = (0, di_1.makeParamDecorator)(ActionParams.builder, function () { return ({ transform: transform }); });
-exports.Intercept = (0, di_1.makeParamDecorator)(ActionParams.intercept, function () { return ({ transform: transform }); });
-exports.Event = (0, di_1.makeParamDecorator)(ActionParams.event, function (key) { return ({ key: key, transform: transform }); });
-exports.Field = (0, di_1.makeParamDecorator)(ActionParams.field, function (key) { return ({ key: key, transform: transform }); });
-exports.CallLink = (0, di_1.makeParamDecorator)(ActionParams.callLink, function (key) { return ({ key: key, transform: transform }); });
-exports.ViewModel = (0, di_1.makeParamDecorator)(ActionParams.viewModel, function (key) { return ({ key: key, transform: transform }); });
-exports.OtherEvent = (0, di_1.makeParamDecorator)(ActionParams.otherEvent, function (key) { return ({ key: key, transform: transform }); });
-exports.ActionProps = (0, di_1.makeParamDecorator)(ActionParams.actionProps, function (key) { return ({ key: key, transform: transform }); });
-exports.InstanceRef = (0, di_1.makeParamDecorator)(ActionParams.instanceRef, function (key) { return ({ key: key, transform: transform }); });
+var props = function (obj) {
+    if (obj === void 0) { obj = {}; }
+    return (tslib_1.__assign({ transform: transform }, obj));
+};
+var keyProps = function (key) { return props({ key: key }); };
+exports.FieldRef = (0, di_1.makeParamDecorator)(ActionParams.field, keyProps);
+exports.BuilderRef = (0, di_1.makeParamDecorator)(ActionParams.builder, props);
+exports.InterceptRef = (0, di_1.makeParamDecorator)(ActionParams.intercept, props);
+exports.ViewModelRef = (0, di_1.makeParamDecorator)(ActionParams.viewModel, keyProps);
+exports.InstanceRef = (0, di_1.makeParamDecorator)(ActionParams.instanceRef, keyProps);
+exports.Event = (0, di_1.makeParamDecorator)(ActionParams.event, keyProps);
+exports.CallLink = (0, di_1.makeParamDecorator)(ActionParams.callLink, keyProps);
+exports.OtherEvent = (0, di_1.makeParamDecorator)(ActionParams.otherEvent, keyProps);
+exports.ActionProps = (0, di_1.makeParamDecorator)(ActionParams.actionProps, keyProps);
