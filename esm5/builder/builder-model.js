@@ -3,6 +3,7 @@ import { Inject, Injector } from '@fm/di';
 import { flatMap, isEmpty, uniq } from 'lodash';
 import { init } from './builder-utils';
 import { Visibility } from './consts';
+import { DynamicModel } from './decorator';
 var transform = function (type, name, value) { return type[name] || value; };
 var BuilderModel = /** @class */ (function () {
     function BuilderModel() {
@@ -82,6 +83,10 @@ var BuilderModel = /** @class */ (function () {
         Inject(Injector, { transform: transform }),
         __metadata("design:type", Injector)
     ], BuilderModel.prototype, "injector", void 0);
+    BuilderModel = __decorate([
+        DynamicModel(),
+        __metadata("design:paramtypes", [])
+    ], BuilderModel);
     return BuilderModel;
 }());
 export { BuilderModel };

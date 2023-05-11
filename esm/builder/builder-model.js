@@ -3,8 +3,9 @@ import { Inject, Injector } from '@fm/di';
 import { flatMap, isEmpty, uniq } from 'lodash';
 import { init } from './builder-utils';
 import { Visibility } from './consts';
+import { DynamicModel } from './decorator';
 const transform = (type, name, value) => type[name] || value;
-export class BuilderModel {
+let BuilderModel = class BuilderModel {
     constructor() {
         this.parent = null;
         this.children = [];
@@ -52,8 +53,13 @@ export class BuilderModel {
     showField(visibility) {
         return visibility === undefined || visibility !== Visibility.none;
     }
-}
+};
 __decorate([
     Inject(Injector, { transform }),
     __metadata("design:type", Injector)
 ], BuilderModel.prototype, "injector", void 0);
+BuilderModel = __decorate([
+    DynamicModel(),
+    __metadata("design:paramtypes", [])
+], BuilderModel);
+export { BuilderModel };

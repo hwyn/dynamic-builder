@@ -6,6 +6,7 @@ var di_1 = require("@fm/di");
 var lodash_1 = require("lodash");
 var builder_utils_1 = require("./builder-utils");
 var consts_1 = require("./consts");
+var decorator_1 = require("./decorator");
 var transform = function (type, name, value) { return type[name] || value; };
 var BuilderModel = /** @class */ (function () {
     function BuilderModel() {
@@ -85,6 +86,10 @@ var BuilderModel = /** @class */ (function () {
         (0, di_1.Inject)(di_1.Injector, { transform: transform }),
         tslib_1.__metadata("design:type", di_1.Injector)
     ], BuilderModel.prototype, "injector", void 0);
+    BuilderModel = tslib_1.__decorate([
+        (0, decorator_1.DynamicModel)(),
+        tslib_1.__metadata("design:paramtypes", [])
+    ], BuilderModel);
     return BuilderModel;
 }());
 exports.BuilderModel = BuilderModel;
