@@ -5,7 +5,6 @@ export declare abstract class BaseConvert extends BaseType implements BaseConver
     static convertName?: string;
     protected builder: BuilderModelExtensions;
     protected builderField: BuilderFieldExtensions;
-    protected invoke(context: any): any;
     abstract toModel(value: any): any;
     abstract toView(value: any): any;
 }

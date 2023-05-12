@@ -5,9 +5,6 @@ var BaseConvert = /** @class */ (function (_super) {
     function BaseConvert() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
-    BaseConvert.prototype.invoke = function (context) {
-        return Object.assign(this, context);
-    };
     return BaseConvert;
 }(BaseType));
 export { BaseConvert };

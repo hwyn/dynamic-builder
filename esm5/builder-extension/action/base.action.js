@@ -6,10 +6,6 @@ var BaseAction = /** @class */ (function (_super) {
     function BaseAction() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
-    BaseAction.prototype.invoke = function (context) {
-        if (context === void 0) { context = {}; }
-        return Object.assign(this, { context: context });
-    };
     Object.defineProperty(BaseAction.prototype, "builderField", {
         get: function () {
             return this.context.builderField;

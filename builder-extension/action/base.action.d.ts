@@ -7,7 +7,6 @@ export declare abstract class BaseAction<T = any> extends BaseType {
     static actionName: string;
     private context;
     protected abstract execute(...params: any[]): T | Observable<T>;
-    protected invoke(context?: any): never;
     get builderField(): BuilderFieldExtensions;
     get actionIntercept(): ActionIntercept;
     get builder(): BuilderModelExtensions;
