@@ -87,11 +87,10 @@ export class ReadConfigExtension extends BasicExtension {
             let executeHandler = !isSelf && ((_a = builder.parent) === null || _a === void 0 ? void 0 : _a.getExecuteHandler(actionName, isSelf));
             if (executeHandler)
                 return executeHandler;
-            if (isFunction(getExecuteHandler)) {
-                executeHandler = getExecuteHandler.call(this.builder, actionName);
+            if (isFunction(getExecuteHandler) && (executeHandler = getExecuteHandler.call(this.builder, actionName))) {
+                return funcToObservable(executeHandler);
             }
-            executeHandler = executeHandler || builder[actionName];
-            if (isFunction(executeHandler)) {
+            if (isFunction(executeHandler = builder[actionName])) {
                 return funcToObservable(mp.proxyMethodAsync(builderType, actionName, executeHandler.bind(builder)));
             }
         };

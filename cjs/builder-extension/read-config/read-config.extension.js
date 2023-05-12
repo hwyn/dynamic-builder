@@ -104,11 +104,10 @@ var ReadConfigExtension = /** @class */ (function (_super) {
             var executeHandler = !isSelf && ((_a = builder.parent) === null || _a === void 0 ? void 0 : _a.getExecuteHandler(actionName, isSelf));
             if (executeHandler)
                 return executeHandler;
-            if ((0, lodash_1.isFunction)(getExecuteHandler)) {
-                executeHandler = getExecuteHandler.call(_this.builder, actionName);
+            if ((0, lodash_1.isFunction)(getExecuteHandler) && (executeHandler = getExecuteHandler.call(_this.builder, actionName))) {
+                return (0, utility_1.funcToObservable)(executeHandler);
             }
-            executeHandler = executeHandler || builder[actionName];
-            if ((0, lodash_1.isFunction)(executeHandler)) {
+            if ((0, lodash_1.isFunction)(executeHandler = builder[actionName])) {
                 return (0, utility_1.funcToObservable)(mp.proxyMethodAsync(builderType, actionName, executeHandler.bind(builder)));
             }
         };
