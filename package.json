@@ -1,5 +1,5 @@
 {
-	"name": "dynamic-builder",
+	"name": "@dynamic/builder",
 	"version": "1.0.0",
 	"description": "",
 	"main": "./cjs/index.js",

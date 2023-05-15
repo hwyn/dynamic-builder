@@ -6,4 +6,3 @@ export declare enum Visibility {
     disabled = "disabled",
     required = "required"
 }
-export declare const DYNAMIC_BUILDER = "DynamicBuilder";

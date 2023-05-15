@@ -7,4 +7,3 @@ export var Visibility;
     Visibility["disabled"] = "disabled";
     Visibility["required"] = "required";
 })(Visibility || (Visibility = {}));
-export var DYNAMIC_BUILDER = 'DynamicBuilder';

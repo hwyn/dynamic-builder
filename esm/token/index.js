@@ -7,6 +7,7 @@ export const ACTION_INTERCEPT = InjectorToken.get('ACTION_INTERCEPT');
 export const CONVERT_INTERCEPT = InjectorToken.get('CONVERT_INTERCEPT');
 export const BUILDER_EXTENSION = InjectorToken.get('BUILDER_EXTENSION');
 export const LOAD_BUILDER_CONFIG = InjectorToken.get('LOAD_BUILDER_CONFIG');
+export const META_TYPE = InjectorToken.get('META_TYPE');
 export const FACTORY_BUILDER = InjectorToken.get('FACTORY_BUILDER');
 export const FORM_CONTROL = InjectorToken.get('FORM_CONTROL');
 export const LAYOUT_ELEMENT = InjectorToken.get('LAYOUT_ELEMENT');

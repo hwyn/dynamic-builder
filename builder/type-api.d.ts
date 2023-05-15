@@ -1,7 +1,8 @@
-import { Injector, Type } from '@fm/di';
+import { Injector, Provider, Type } from '@fm/di';
 import { Observable, Subject } from 'rxjs';
 import { GridType } from '../builder-extension';
 import { Action, ExecuteHandler } from '../builder-extension/action';
+import { BuilderContext } from './builder-context';
 import { Visibility } from './consts';
 export interface CacheObj {
     [x: string]: any;
@@ -53,6 +54,8 @@ export type PrivateExtension = {
 export interface BuilderProps extends BuilderElement {
     id?: string;
     className?: string;
+    providers?: Provider[];
+    context?: BuilderContext;
     builder?: BuilderModelImplements;
     BuilderModel?: Type<BuilderModelImplements>;
     privateExtension?: (PrivateExtension | Type)[];

@@ -7,6 +7,7 @@ export declare const ACTION_INTERCEPT: InjectorToken;
 export declare const CONVERT_INTERCEPT: InjectorToken;
 export declare const BUILDER_EXTENSION: InjectorToken;
 export declare const LOAD_BUILDER_CONFIG: InjectorToken;
+export declare const META_TYPE: InjectorToken;
 export declare const FACTORY_BUILDER: InjectorToken;
 export declare const FORM_CONTROL: InjectorToken;
 export declare const LAYOUT_ELEMENT: InjectorToken;

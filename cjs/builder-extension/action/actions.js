@@ -136,7 +136,7 @@ var Action = /** @class */ (function () {
         }
         if (!executeHandler && (ActionType = this.getType(token_1.ACTIONS_CONFIG, actionName))) {
             action = this.getCacheAction(ActionType, action);
-            executeHandler = (0, utility_1.funcToObservable)(this.mp.proxyMethodAsync(ActionType, execute, action[execute].bind(action)));
+            executeHandler = (0, utility_1.funcToObservable)(this.mp.proxyMethodAsync(action, execute));
         }
         if (!executeHandler) {
             throw new Error("".concat(name, " not defined!"));

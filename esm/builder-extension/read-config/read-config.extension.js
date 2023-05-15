@@ -2,7 +2,7 @@ import { MethodProxy } from '@fm/di';
 import { isEmpty, isFunction, uniq } from 'lodash';
 import { of } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
-import { GET_JSON_CONFIG } from '../../token';
+import { GET_JSON_CONFIG, META_TYPE } from '../../token';
 import { funcToObservable, observableMap, observableTap, toForkJoin } from '../../utility';
 import { BasicExtension } from "../basic/basic.extension";
 import { LOAD_CONFIG_ACTION } from '../constant/calculator.constant';
@@ -78,20 +78,26 @@ export class ReadConfigExtension extends BasicExtension {
         return preloaded && !isPreloaded && this.isBuildField(props);
     }
     createGetExecuteHandler() {
+        const empty = {};
+        let metaType = empty;
         const builder = this.builder;
         const mp = this.injector.get(MethodProxy);
         const getExecuteHandler = this.builder.getExecuteHandler;
-        const builderType = Object.getPrototypeOf(builder).constructor;
         return (actionName, isSelf = true) => {
             var _a;
-            let executeHandler = !isSelf && ((_a = builder.parent) === null || _a === void 0 ? void 0 : _a.getExecuteHandler(actionName, isSelf));
-            if (executeHandler)
+            let executeHandler;
+            metaType = metaType !== empty ? metaType : this.injector.get(META_TYPE);
+            if (metaType && (executeHandler = metaType[actionName])) {
+                return funcToObservable(mp.proxyMethodAsync(metaType, actionName));
+            }
+            if (!isSelf && (executeHandler = (_a = builder.parent) === null || _a === void 0 ? void 0 : _a.getExecuteHandler(actionName, isSelf))) {
                 return executeHandler;
+            }
             if (isFunction(getExecuteHandler) && (executeHandler = getExecuteHandler.call(this.builder, actionName))) {
                 return funcToObservable(executeHandler);
             }
             if (isFunction(executeHandler = builder[actionName])) {
-                return funcToObservable(mp.proxyMethodAsync(builderType, actionName, executeHandler.bind(builder)));
+                return funcToObservable(mp.proxyMethodAsync(builder, actionName));
             }
         };
     }

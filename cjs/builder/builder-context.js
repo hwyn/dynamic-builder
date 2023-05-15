@@ -6,6 +6,8 @@ var di_1 = require("@fm/di");
 var token_1 = require("../token");
 var builder_engine_service_1 = require("./builder-engine.service");
 var builder_model_1 = require("./builder-model");
+var builder_scope_1 = require("./builder-scope");
+var decorator_1 = require("./decorator");
 var BuilderContext = /** @class */ (function () {
     function BuilderContext() {
         this.uiElements = [];
@@ -17,8 +19,14 @@ var BuilderContext = /** @class */ (function () {
     BuilderContext.prototype.factoryBuilder = function (injector) {
         return function (_a) {
             var _b;
-            var _c = _a.BuilderModel, NB = _c === void 0 ? builder_model_1.BuilderModel : _c, props = tslib_1.__rest(_a, ["BuilderModel"]);
-            return (((_b = props.builder) === null || _b === void 0 ? void 0 : _b.injector) || injector).get(NB, di_1.InjectFlags.NonCache).loadForBuild(props);
+            var _c = _a.BuilderModel, NB = _c === void 0 ? builder_model_1.BuilderModel : _c, _d = _a.providers, providers = _d === void 0 ? [] : _d, context = _a.context, props = tslib_1.__rest(_a, ["BuilderModel", "providers", "context"]);
+            var _injector = ((_b = props.builder) === null || _b === void 0 ? void 0 : _b.injector) || injector;
+            if (NB[decorator_1.BUILDER_DEF] && !(Object.create(NB.prototype) instanceof builder_model_1.BuilderModel)) {
+                _injector = di_1.Injector.create([providers, NB, { provide: token_1.META_TYPE, useExisting: NB }], _injector);
+                context === null || context === void 0 ? void 0 : context.registryInjector(_injector);
+                NB = builder_scope_1.BuilderScope;
+            }
+            return _injector.get(NB, di_1.InjectFlags.NonCache).loadForBuild(props);
         };
     };
     BuilderContext.prototype.registryInjector = function (injector) {

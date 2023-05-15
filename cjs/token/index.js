@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.GET_JSON_CONFIG = exports.LAYOUT_ELEMENT = exports.FORM_CONTROL = exports.FACTORY_BUILDER = exports.LOAD_BUILDER_CONFIG = exports.BUILDER_EXTENSION = exports.CONVERT_INTERCEPT = exports.ACTION_INTERCEPT = exports.CONVERT_CONFIG = exports.ACTIONS_CONFIG = exports.GET_TYPE = exports.UI_ELEMENT = void 0;
+exports.GET_JSON_CONFIG = exports.LAYOUT_ELEMENT = exports.FORM_CONTROL = exports.FACTORY_BUILDER = exports.META_TYPE = exports.LOAD_BUILDER_CONFIG = exports.BUILDER_EXTENSION = exports.CONVERT_INTERCEPT = exports.ACTION_INTERCEPT = exports.CONVERT_CONFIG = exports.ACTIONS_CONFIG = exports.GET_TYPE = exports.UI_ELEMENT = void 0;
 var di_1 = require("@fm/di");
 exports.UI_ELEMENT = di_1.InjectorToken.get('UI_ELEMENT');
 exports.GET_TYPE = di_1.InjectorToken.get('GET_TYPE');
@@ -10,6 +10,7 @@ exports.ACTION_INTERCEPT = di_1.InjectorToken.get('ACTION_INTERCEPT');
 exports.CONVERT_INTERCEPT = di_1.InjectorToken.get('CONVERT_INTERCEPT');
 exports.BUILDER_EXTENSION = di_1.InjectorToken.get('BUILDER_EXTENSION');
 exports.LOAD_BUILDER_CONFIG = di_1.InjectorToken.get('LOAD_BUILDER_CONFIG');
+exports.META_TYPE = di_1.InjectorToken.get('META_TYPE');
 exports.FACTORY_BUILDER = di_1.InjectorToken.get('FACTORY_BUILDER');
 exports.FORM_CONTROL = di_1.InjectorToken.get('FORM_CONTROL');
 exports.LAYOUT_ELEMENT = di_1.InjectorToken.get('LAYOUT_ELEMENT');

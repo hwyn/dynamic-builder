@@ -94,21 +94,27 @@ var ReadConfigExtension = /** @class */ (function (_super) {
     };
     ReadConfigExtension.prototype.createGetExecuteHandler = function () {
         var _this = this;
+        var empty = {};
+        var metaType = empty;
         var builder = this.builder;
         var mp = this.injector.get(di_1.MethodProxy);
         var getExecuteHandler = this.builder.getExecuteHandler;
-        var builderType = Object.getPrototypeOf(builder).constructor;
         return function (actionName, isSelf) {
             var _a;
             if (isSelf === void 0) { isSelf = true; }
-            var executeHandler = !isSelf && ((_a = builder.parent) === null || _a === void 0 ? void 0 : _a.getExecuteHandler(actionName, isSelf));
-            if (executeHandler)
+            var executeHandler;
+            metaType = metaType !== empty ? metaType : _this.injector.get(token_1.META_TYPE);
+            if (metaType && (executeHandler = metaType[actionName])) {
+                return (0, utility_1.funcToObservable)(mp.proxyMethodAsync(metaType, actionName));
+            }
+            if (!isSelf && (executeHandler = (_a = builder.parent) === null || _a === void 0 ? void 0 : _a.getExecuteHandler(actionName, isSelf))) {
                 return executeHandler;
+            }
             if ((0, lodash_1.isFunction)(getExecuteHandler) && (executeHandler = getExecuteHandler.call(_this.builder, actionName))) {
                 return (0, utility_1.funcToObservable)(executeHandler);
             }
             if ((0, lodash_1.isFunction)(executeHandler = builder[actionName])) {
-                return (0, utility_1.funcToObservable)(mp.proxyMethodAsync(builderType, actionName, executeHandler.bind(builder)));
+                return (0, utility_1.funcToObservable)(mp.proxyMethodAsync(builder, actionName));
             }
         };
     };

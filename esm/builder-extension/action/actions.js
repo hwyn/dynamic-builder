@@ -86,7 +86,7 @@ let Action = class Action {
         }
         if (!executeHandler && (ActionType = this.getType(ACTIONS_CONFIG, actionName))) {
             action = this.getCacheAction(ActionType, action);
-            executeHandler = funcToObservable(this.mp.proxyMethodAsync(ActionType, execute, action[execute].bind(action)));
+            executeHandler = funcToObservable(this.mp.proxyMethodAsync(action, execute));
         }
         if (!executeHandler) {
             throw new Error(`${name} not defined!`);
