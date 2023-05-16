@@ -14,7 +14,7 @@ export declare class LifeCycleExtension extends BasicExtension {
     protected afterExtension(): Observable<any>;
     protected createLoadAction(json: any): any;
     protected createLife(): Observable<any>;
-    protected onLifeChange(props: BuilderProps): void;
+    protected onLifeChange(onChange: any, props: BuilderProps): void;
     protected invokeLifeCycle(type: string, event?: any, otherEvent?: any): Observable<any>;
     protected serializeCalculators(): void;
     protected linkCalculators(): void;

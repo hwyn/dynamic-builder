@@ -46,11 +46,12 @@ var LifeCycleExtension = /** @class */ (function (_super) {
         });
         lifeActionsType.forEach(function (action) { return action.runObservable = true; });
         this.lifeActions = this.createLifeActions(lifeActionsType);
-        this.defineProperty(this.builder, this.getEventType(calculator_constant_1.CHANGE), this.onLifeChange.bind(this));
+        this.defineProperty(this.builder, this.getEventType(calculator_constant_1.CHANGE), this.onLifeChange.bind(this, this.builder.onChange));
         return this.invokeLifeCycle(this.getEventType(calculator_constant_1.LOAD), this.props);
     };
-    LifeCycleExtension.prototype.onLifeChange = function (props) {
-        this.invokeLifeCycle(this.getEventType(calculator_constant_1.CHANGE), props).subscribe();
+    LifeCycleExtension.prototype.onLifeChange = function (onChange, props) {
+        var _this = this;
+        this.invokeLifeCycle(this.getEventType(calculator_constant_1.CHANGE), props).pipe((0, operators_1.tap)(function () { return onChange.call(_this.builder, props); })).subscribe();
     };
     LifeCycleExtension.prototype.invokeLifeCycle = function (type, event, otherEvent) {
         return this.lifeActions[type] ? this.lifeActions[type](event, otherEvent) : (0, rxjs_1.of)(event);

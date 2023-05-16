@@ -98,6 +98,9 @@ export declare interface BuilderModelInterface {
     listenerDetect: Subject<any>;
     detectChanges(): void;
 }
+export declare interface BuilderOnChange {
+    onChange(props: any): void;
+}
 export interface BuilderModelImplements extends BuilderModelInterface, Model<BuilderModelImplements, BuilderField> {
 }
 export {};

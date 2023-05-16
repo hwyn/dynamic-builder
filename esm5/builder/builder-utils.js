@@ -106,7 +106,7 @@ export function init() {
     var _this = this;
     Object.defineProperty(this, CACHE, withValue(getCacheObj.call(this, {})));
     Object.defineProperties(this, {
-        onChange: withValue(function () { return void (0); }),
+        onChange: withValue(this.onChange || (function () { return void (0); })),
         onDestroy: withValue(function () { var _a; return (_a = _this.$$cache) === null || _a === void 0 ? void 0 : _a.destroy(); }),
         loadForBuild: withValue(function (props) {
             delete _this.loadForBuild;

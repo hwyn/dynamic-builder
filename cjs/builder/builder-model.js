@@ -7,7 +7,7 @@ var lodash_1 = require("lodash");
 var builder_utils_1 = require("./builder-utils");
 var consts_1 = require("./consts");
 var decorator_1 = require("./decorator");
-var transform = function (type, name, value) { return type[name] || value; };
+var transform = function (_meta, value, type, prop) { var _a; return (_a = type[prop]) !== null && _a !== void 0 ? _a : value; };
 var BuilderModel = /** @class */ (function () {
     function BuilderModel() {
         this.parent = null;

@@ -4,7 +4,7 @@ import { flatMap, isEmpty, uniq } from 'lodash';
 import { init } from './builder-utils';
 import { Visibility } from './consts';
 import { DynamicModel } from './decorator';
-const transform = (type, name, value) => type[name] || value;
+const transform = (_meta, value, type, prop) => { var _a; return (_a = type[prop]) !== null && _a !== void 0 ? _a : value; };
 let BuilderModel = class BuilderModel {
     constructor() {
         this.parent = null;

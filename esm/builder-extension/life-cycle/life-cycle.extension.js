@@ -33,11 +33,11 @@ export class LifeCycleExtension extends BasicExtension {
         const lifeActionsType = actions.filter(({ type }) => this.lifeEvent.includes(type));
         lifeActionsType.forEach((action) => action.runObservable = true);
         this.lifeActions = this.createLifeActions(lifeActionsType);
-        this.defineProperty(this.builder, this.getEventType(CHANGE), this.onLifeChange.bind(this));
+        this.defineProperty(this.builder, this.getEventType(CHANGE), this.onLifeChange.bind(this, this.builder.onChange));
         return this.invokeLifeCycle(this.getEventType(LOAD), this.props);
     }
-    onLifeChange(props) {
-        this.invokeLifeCycle(this.getEventType(CHANGE), props).subscribe();
+    onLifeChange(onChange, props) {
+        this.invokeLifeCycle(this.getEventType(CHANGE), props).pipe(tap(() => onChange.call(this.builder, props))).subscribe();
     }
     invokeLifeCycle(type, event, otherEvent) {
         return this.lifeActions[type] ? this.lifeActions[type](event, otherEvent) : of(event);

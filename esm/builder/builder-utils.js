@@ -97,7 +97,7 @@ function loadForBuild(props) {
 export function init() {
     Object.defineProperty(this, CACHE, withValue(getCacheObj.call(this, {})));
     Object.defineProperties(this, {
-        onChange: withValue(() => void (0)),
+        onChange: withValue(this.onChange || (() => void (0))),
         onDestroy: withValue(() => { var _a; return (_a = this.$$cache) === null || _a === void 0 ? void 0 : _a.destroy(); }),
         loadForBuild: withValue((props) => {
             delete this.loadForBuild;
