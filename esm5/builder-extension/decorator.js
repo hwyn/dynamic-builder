@@ -1,6 +1,7 @@
 import { __assign } from "tslib";
 import { makeParamDecorator } from '@fm/di';
 import { get } from 'lodash';
+import { makeCustomInputProps } from '../builder/decorator';
 var ActionParams;
 (function (ActionParams) {
     ActionParams["event"] = "event";
@@ -50,3 +51,4 @@ export var Event = makeParamDecorator(ActionParams.event, keyProps);
 export var CallLink = makeParamDecorator(ActionParams.callLink, keyProps);
 export var OtherEvent = makeParamDecorator(ActionParams.otherEvent, keyProps);
 export var ActionProps = makeParamDecorator(ActionParams.actionProps, keyProps);
+export var Output = makeCustomInputProps(function (_m, props, type, prop) { var _a; return (_a = get(props === null || props === void 0 ? void 0 : props.events, prop)) !== null && _a !== void 0 ? _a : type[prop]; });

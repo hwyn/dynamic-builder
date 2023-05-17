@@ -1,5 +1,6 @@
 import { __assign } from "tslib";
-import { Inject, Injector, makeDecorator, makeMethodDecorator, setInjectableDef } from '@fm/di';
+import { Inject, Injector, makeDecorator, makePropDecorator, setInjectableDef } from '@fm/di';
+import { get } from 'lodash';
 import { SCOPE_MODEL, SCOPE_PROPS } from '../token';
 export var BUILDER_DEF = '__builder_def__';
 export var INPUT_PROPS = 'InputProps';
@@ -19,11 +20,16 @@ export function makeBuilderDecorator(name, forward) {
         return forward(builderDecorator(props)(cls), props);
     }; };
 }
-var methodToProp = function (typeDecorator) { return function (ctor, method, decorator) {
-    return typeDecorator(ctor.prototype, method, typeof decorator === 'number' ? decorator : undefined);
+var methodToProp = function (typeDecorator) { return function (ctor, method, index) {
+    var isParams = typeof index === 'number';
+    var meta = ctor[isParams ? '__parameters__' : '__prop__metadata__'];
+    typeDecorator(meta.shift().annotationInstance)(isParams ? ctor : ctor.prototype, method, index);
 }; };
-var inputTransform = function (_meta, injector, _type, prop) { var _a; return (_a = injector.get(SCOPE_PROPS)) === null || _a === void 0 ? void 0 : _a.props[prop]; };
-var _InputProps = Inject(Injector, { metadataName: INPUT_PROPS, transform: inputTransform });
+export var makeCustomInputProps = function (transform) {
+    var inputTransform = function (meta, _, type, prop) { var _a; return transform(meta, (_a = _.get(SCOPE_PROPS)) === null || _a === void 0 ? void 0 : _a.props, type, prop); };
+    var inputProps = function (annotation) { return Inject(Injector, __assign(__assign({}, annotation), { metadataName: INPUT_PROPS, transform: inputTransform })); };
+    return makePropDecorator(INPUT_PROPS, function (key) { return ({ key: key }); }, methodToProp(inputProps));
+};
 export var DynamicModel = makeBuilderDecorator(DYNAMIC_BUILDER);
-export var RootModel = makeMethodDecorator(ROOT_MODEL, undefined, methodToProp(Inject(SCOPE_MODEL, { metadataName: ROOT_MODEL })));
-export var InputProps = makeMethodDecorator(INPUT_PROPS, undefined, methodToProp(_InputProps));
+export var RootModel = makePropDecorator(ROOT_MODEL, undefined, methodToProp(function () { return Inject(SCOPE_MODEL, { metadataName: ROOT_MODEL }); }));
+export var InputProps = makeCustomInputProps(function (meta, p, type, prop) { var _a, _b; return (_b = get(p, (_a = meta.key) !== null && _a !== void 0 ? _a : prop)) !== null && _b !== void 0 ? _b : type[prop]; });

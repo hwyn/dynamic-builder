@@ -2,7 +2,7 @@ import { __assign, __extends, __spreadArray } from "tslib";
 import { flatMap, isEmpty } from 'lodash';
 import { of } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { observableMap, transformObservable } from '../../utility';
+import { observableMap, observableTap, transformObservable } from '../../utility';
 import { BasicExtension } from '../basic/basic.extension';
 // eslint-disable-next-line max-len
 import { CHANGE, DESTROY, LOAD, LOAD_SOURCE, NON_SELF_BUILDERS, ORIGIN_CALCULATORS, ORIGIN_NON_SELF_CALCULATORS } from '../constant/calculator.constant';
@@ -48,7 +48,7 @@ var LifeCycleExtension = /** @class */ (function (_super) {
     };
     LifeCycleExtension.prototype.onLifeChange = function (onChange, props) {
         var _this = this;
-        this.invokeLifeCycle(this.getEventType(CHANGE), props).pipe(tap(function () { return onChange.call(_this.builder, props); })).subscribe();
+        transformObservable(onChange.call(this.builder, props)).pipe(observableTap(function () { return _this.invokeLifeCycle(_this.getEventType(CHANGE), props); })).subscribe();
     };
     LifeCycleExtension.prototype.invokeLifeCycle = function (type, event, otherEvent) {
         return this.lifeActions[type] ? this.lifeActions[type](event, otherEvent) : of(event);

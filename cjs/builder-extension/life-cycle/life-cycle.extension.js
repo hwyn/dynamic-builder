@@ -51,7 +51,7 @@ var LifeCycleExtension = /** @class */ (function (_super) {
     };
     LifeCycleExtension.prototype.onLifeChange = function (onChange, props) {
         var _this = this;
-        this.invokeLifeCycle(this.getEventType(calculator_constant_1.CHANGE), props).pipe((0, operators_1.tap)(function () { return onChange.call(_this.builder, props); })).subscribe();
+        (0, utility_1.transformObservable)(onChange.call(this.builder, props)).pipe((0, utility_1.observableTap)(function () { return _this.invokeLifeCycle(_this.getEventType(calculator_constant_1.CHANGE), props); })).subscribe();
     };
     LifeCycleExtension.prototype.invokeLifeCycle = function (type, event, otherEvent) {
         return this.lifeActions[type] ? this.lifeActions[type](event, otherEvent) : (0, rxjs_1.of)(event);

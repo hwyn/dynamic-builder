@@ -53,9 +53,16 @@ function withGetOrSet(get, set) {
 exports.withGetOrSet = withGetOrSet;
 function cloneDeepPlain(value) {
     return (0, lodash_1.cloneDeepWith)(value, function (obj) {
-        if (type(obj) === 'Object' && !(0, lodash_1.isPlainObject)(obj)) {
-            return obj;
+        var _type = type(obj);
+        if (_type === 'Array')
+            return obj.map(cloneDeepPlain);
+        if (_type === 'Object' && (0, lodash_1.isPlainObject)(obj)) {
+            return Object.keys(obj).reduce(function (o, key) {
+                var _a;
+                return Object.assign(o, (_a = {}, _a[key] = cloneDeepPlain(obj[key]), _a));
+            }, {});
         }
+        return obj;
     });
 }
 exports.cloneDeepPlain = cloneDeepPlain;

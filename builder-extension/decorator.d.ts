@@ -7,3 +7,4 @@ export declare const Event: (this: unknown, ...args: any[]) => any;
 export declare const CallLink: (this: unknown, ...args: any[]) => any;
 export declare const OtherEvent: (this: unknown, ...args: any[]) => any;
 export declare const ActionProps: (this: unknown, ...args: any[]) => any;
+export declare const Output: (this: unknown, ...args: any[]) => any;

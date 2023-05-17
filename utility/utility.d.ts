@@ -12,4 +12,4 @@ export declare function withGetOrSet(get: () => any, set?: (value: any) => void)
     enumerable: boolean;
     configurable: boolean;
 };
-export declare function cloneDeepPlain<T>(value: T): any;
+export declare function cloneDeepPlain<T>(value: T): T;

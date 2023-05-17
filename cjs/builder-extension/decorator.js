@@ -1,9 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ActionProps = exports.OtherEvent = exports.CallLink = exports.Event = exports.InstanceRef = exports.ViewModelRef = exports.InterceptRef = exports.BuilderRef = exports.FieldRef = void 0;
+exports.Output = exports.ActionProps = exports.OtherEvent = exports.CallLink = exports.Event = exports.InstanceRef = exports.ViewModelRef = exports.InterceptRef = exports.BuilderRef = exports.FieldRef = void 0;
 var tslib_1 = require("tslib");
 var di_1 = require("@fm/di");
 var lodash_1 = require("lodash");
+var decorator_1 = require("../builder/decorator");
 var ActionParams;
 (function (ActionParams) {
     ActionParams["event"] = "event";
@@ -53,3 +54,4 @@ exports.Event = (0, di_1.makeParamDecorator)(ActionParams.event, keyProps);
 exports.CallLink = (0, di_1.makeParamDecorator)(ActionParams.callLink, keyProps);
 exports.OtherEvent = (0, di_1.makeParamDecorator)(ActionParams.otherEvent, keyProps);
 exports.ActionProps = (0, di_1.makeParamDecorator)(ActionParams.actionProps, keyProps);
+exports.Output = (0, decorator_1.makeCustomInputProps)(function (_m, props, type, prop) { var _a; return (_a = (0, lodash_1.get)(props === null || props === void 0 ? void 0 : props.events, prop)) !== null && _a !== void 0 ? _a : type[prop]; });

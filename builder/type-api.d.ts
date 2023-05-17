@@ -44,7 +44,9 @@ export interface BuilderField extends Field {
 export interface BuilderJsonField {
     id: string;
     type: string | any;
-    actions?: Action[];
+    actions?: Action[] | {
+        [key: string]: Action | ExecuteHandler | string;
+    };
     [key: string]: any;
 }
 export type PrivateExtension = {
@@ -73,7 +75,9 @@ export interface BuilderProps extends BuilderElement {
     config?: BuilderJsonField[] | {
         grid?: GridType;
         fields: BuilderJsonField[];
-        actions?: Action[];
+        actions?: Action[] | {
+            [key: string]: Action | ExecuteHandler | string;
+        };
     };
 }
 export declare interface Model<S, M> {

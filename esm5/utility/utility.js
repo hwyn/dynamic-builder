@@ -42,8 +42,15 @@ export function withGetOrSet(get, set) {
 }
 export function cloneDeepPlain(value) {
     return cloneDeepWith(value, function (obj) {
-        if (type(obj) === 'Object' && !isPlainObject(obj)) {
-            return obj;
+        var _type = type(obj);
+        if (_type === 'Array')
+            return obj.map(cloneDeepPlain);
+        if (_type === 'Object' && isPlainObject(obj)) {
+            return Object.keys(obj).reduce(function (o, key) {
+                var _a;
+                return Object.assign(o, (_a = {}, _a[key] = cloneDeepPlain(obj[key]), _a));
+            }, {});
         }
+        return obj;
     });
 }
