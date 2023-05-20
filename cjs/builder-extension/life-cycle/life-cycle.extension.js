@@ -13,7 +13,6 @@ var LifeCycleExtension = /** @class */ (function (_super) {
     tslib_1.__extends(LifeCycleExtension, _super);
     function LifeCycleExtension() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.hasChange = false;
         _this.lifeEvent = [calculator_constant_1.LOAD, calculator_constant_1.CHANGE, calculator_constant_1.DESTROY];
         _this.calculators = [];
         _this.nonSelfCalculators = [];

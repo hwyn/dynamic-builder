@@ -22,6 +22,9 @@ export interface CacheObj {
 interface Field {
     [key: string]: any;
 }
+type Actions = Action[] | {
+    [key: string]: Action | ExecuteHandler | string;
+};
 export interface Instance {
     current: any;
     destroy: Subject<any>;
@@ -44,9 +47,7 @@ export interface BuilderField extends Field {
 export interface BuilderJsonField {
     id: string;
     type: string | any;
-    actions?: Action[] | {
-        [key: string]: Action | ExecuteHandler | string;
-    };
+    actions?: Actions;
     [key: string]: any;
 }
 export type PrivateExtension = {
@@ -75,9 +76,7 @@ export interface BuilderProps extends BuilderElement {
     config?: BuilderJsonField[] | {
         grid?: GridType;
         fields: BuilderJsonField[];
-        actions?: Action[] | {
-            [key: string]: Action | ExecuteHandler | string;
-        };
+        actions?: Actions;
     };
 }
 export declare interface Model<S, M> {

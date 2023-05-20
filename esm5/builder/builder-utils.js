@@ -3,7 +3,7 @@ import { flatMap, isEmpty } from 'lodash';
 import { Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { BUILDER_EXTENSION, LOAD_BUILDER_CONFIG } from '../token';
-import { cloneDeepPlain, observableMap, toForkJoin, transformObservable, withValue } from '../utility';
+import { cloneDeepPlain, createDetectChanges, observableMap, toForkJoin, transformObservable, withValue } from '../utility';
 import { BuilderEngine } from './builder-engine.service';
 var CACHE = "$$cache";
 function createField(field) {
@@ -70,7 +70,7 @@ function destroy() {
 }
 function getCacheObj(props) {
     var _a = props.config, _b = _a === void 0 ? {} : _a, _c = _b.fields, fields = _c === void 0 ? [] : _c;
-    var _d = this.$$cache || {}, _e = _d.bindFn, bindFn = _e === void 0 ? [] : _e, _f = _d.ready, ready = _f === void 0 ? false : _f, _g = _d.destroyed, destroyed = _g === void 0 ? false : _g, _h = _d.listenerDetect, listenerDetect = _h === void 0 ? new Subject() : _h, _j = _d.destroy, modelDestroy = _j === void 0 ? destroy.bind(this) : _j, _k = _d.addChild, modelAddChild = _k === void 0 ? addChild.bind(this) : _k, _l = _d.removeChild, modelRemoveChild = _l === void 0 ? removeChild.bind(this) : _l;
+    var _d = this.$$cache || {}, _e = _d.bindFn, bindFn = _e === void 0 ? [] : _e, _f = _d.ready, ready = _f === void 0 ? false : _f, _g = _d.destroyed, destroyed = _g === void 0 ? false : _g, detectChanges = _d.detectChanges, _h = _d.listenerDetect, listenerDetect = _h === void 0 ? new Subject() : _h, _j = _d.destroy, modelDestroy = _j === void 0 ? destroy.bind(this) : _j, _k = _d.addChild, modelAddChild = _k === void 0 ? addChild.bind(this) : _k, _l = _d.removeChild, modelRemoveChild = _l === void 0 ? removeChild.bind(this) : _l;
     return Object.assign(this.$$cache, {
         ready: ready,
         bindFn: bindFn,
@@ -80,6 +80,7 @@ function getCacheObj(props) {
         addChild: modelAddChild,
         removeChild: modelRemoveChild,
         fields: fields.map(createField.bind(this)),
+        detectChanges: detectChanges !== null && detectChanges !== void 0 ? detectChanges : createDetectChanges(listenerDetect)
     });
 }
 function loadForBuild(props) {

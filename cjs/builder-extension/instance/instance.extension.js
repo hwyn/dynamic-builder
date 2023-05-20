@@ -18,17 +18,18 @@ var InstanceExtension = /** @class */ (function (_super) {
         return _this;
     }
     InstanceExtension.createInstance = function () {
+        var _a;
         var listenerDetect = new rxjs_1.Subject();
-        var detectChanges = function () { return listenerDetect.next(null); };
         var instance = {
             current: null,
             onMounted: function () { return void (0); },
             onDestroy: function () { return void (0); },
             destroy: new rxjs_1.Subject().pipe((0, rxjs_1.shareReplay)(1))
         };
-        Object.defineProperty(instance, LISTENER_DETECT, (0, utility_1.withValue)(listenerDetect));
-        Object.defineProperty(instance, DETECT_CHANGES, (0, utility_1.withValue)(detectChanges));
-        return instance;
+        return Object.defineProperties(instance, (_a = {},
+            _a[LISTENER_DETECT] = (0, utility_1.withValue)(listenerDetect),
+            _a[DETECT_CHANGES] = (0, utility_1.withValue)((0, utility_1.createDetectChanges)(listenerDetect)),
+            _a));
     };
     InstanceExtension.prototype.extension = function () {
         this.buildFieldList = this.mapFields(this.jsonFields, this.addInstance.bind(this));

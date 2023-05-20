@@ -10,7 +10,6 @@ var LifeCycleExtension = /** @class */ (function (_super) {
     __extends(LifeCycleExtension, _super);
     function LifeCycleExtension() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.hasChange = false;
         _this.lifeEvent = [LOAD, CHANGE, DESTROY];
         _this.calculators = [];
         _this.nonSelfCalculators = [];

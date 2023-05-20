@@ -3,7 +3,7 @@ import { flatMap, isEmpty } from 'lodash';
 import { Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { BUILDER_EXTENSION, LOAD_BUILDER_CONFIG } from '../token';
-import { cloneDeepPlain, observableMap, toForkJoin, transformObservable, withValue } from '../utility';
+import { cloneDeepPlain, createDetectChanges, observableMap, toForkJoin, transformObservable, withValue } from '../utility';
 import { BuilderEngine } from './builder-engine.service';
 const CACHE = `$$cache`;
 function createField(field) {
@@ -66,7 +66,7 @@ function destroy() {
 }
 function getCacheObj(props) {
     const { config: { fields = [] } = {} } = props;
-    const { bindFn = [], ready = false, destroyed = false, listenerDetect = new Subject(), destroy: modelDestroy = destroy.bind(this), addChild: modelAddChild = addChild.bind(this), removeChild: modelRemoveChild = removeChild.bind(this) } = this.$$cache || {};
+    const { bindFn = [], ready = false, destroyed = false, detectChanges, listenerDetect = new Subject(), destroy: modelDestroy = destroy.bind(this), addChild: modelAddChild = addChild.bind(this), removeChild: modelRemoveChild = removeChild.bind(this) } = this.$$cache || {};
     return Object.assign(this.$$cache, {
         ready,
         bindFn,
@@ -76,6 +76,7 @@ function getCacheObj(props) {
         addChild: modelAddChild,
         removeChild: modelRemoveChild,
         fields: fields.map(createField.bind(this)),
+        detectChanges: detectChanges !== null && detectChanges !== void 0 ? detectChanges : createDetectChanges(listenerDetect)
     });
 }
 function loadForBuild(props) {

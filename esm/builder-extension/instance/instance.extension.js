@@ -1,7 +1,7 @@
 import { isEmpty } from 'lodash';
 import { Observable, shareReplay, Subject, tap } from 'rxjs';
 import { BuilderModel } from '../../builder/builder-model';
-import { observableMap, toForkJoin, transformObservable, withValue } from '../../utility';
+import { createDetectChanges, observableMap, toForkJoin, transformObservable, withValue } from '../../utility';
 import { BasicExtension } from '../basic/basic.extension';
 import { CURRENT, DESTROY, INSTANCE, LOAD_ACTION, MOUNTED } from '../constant/calculator.constant';
 const LISTENER_DETECT = 'listenerDetect';
@@ -13,16 +13,16 @@ export class InstanceExtension extends BasicExtension {
     }
     static createInstance() {
         const listenerDetect = new Subject();
-        const detectChanges = () => listenerDetect.next(null);
         const instance = {
             current: null,
             onMounted: () => void (0),
             onDestroy: () => void (0),
             destroy: new Subject().pipe(shareReplay(1))
         };
-        Object.defineProperty(instance, LISTENER_DETECT, withValue(listenerDetect));
-        Object.defineProperty(instance, DETECT_CHANGES, withValue(detectChanges));
-        return instance;
+        return Object.defineProperties(instance, {
+            [LISTENER_DETECT]: withValue(listenerDetect),
+            [DETECT_CHANGES]: withValue(createDetectChanges(listenerDetect))
+        });
     }
     extension() {
         this.buildFieldList = this.mapFields(this.jsonFields, this.addInstance.bind(this));

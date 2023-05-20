@@ -34,7 +34,7 @@ let BuilderModel = class BuilderModel {
     }
     detectChanges() {
         if (!this.$$cache.destroyed && this.ready) {
-            this.listenerDetect.next(this);
+            this.$$cache.detectChanges(this);
         }
     }
     get listenerDetect() {

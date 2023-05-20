@@ -1,4 +1,4 @@
-import { cloneDeepWith, isPlainObject } from 'lodash';
+import { isPlainObject } from 'lodash';
 import { from, Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { observableMap } from './operators/exec-observable';
@@ -18,6 +18,16 @@ export function transformObj(result, returnValue) {
     const notTransform = !isObservable(result) || typeof returnValue === 'undefined';
     return notTransform ? returnValue : result.pipe(map(() => returnValue));
 }
+export function createDetectChanges(subject) {
+    let isRun = false;
+    return (value) => {
+        if (isRun)
+            return;
+        isRun = true;
+        subject.next(value);
+        isRun = false;
+    };
+}
 export function funcToObservable(func) {
     return (...args) => new Observable(observer => {
         const handler = (result) => {
@@ -34,13 +44,12 @@ export function withGetOrSet(get, set) {
     return { get, set, enumerable: true, configurable: true };
 }
 export function cloneDeepPlain(value) {
-    return cloneDeepWith(value, (obj) => {
-        const _type = type(obj);
-        if (_type === 'Array')
-            return obj.map(cloneDeepPlain);
-        if (_type === 'Object' && isPlainObject(obj)) {
-            return Object.keys(obj).reduce((o, key) => Object.assign(o, { [key]: cloneDeepPlain(obj[key]) }), {});
-        }
-        return obj;
-    });
+    const obj = value;
+    const _type = type(obj);
+    if (_type === 'Array')
+        return obj.map(cloneDeepPlain);
+    if (_type === 'Object' && isPlainObject(obj)) {
+        return Object.keys(obj).reduce((o, key) => Object.assign(o, { [key]: cloneDeepPlain(obj[key]) }), {});
+    }
+    return obj;
 }

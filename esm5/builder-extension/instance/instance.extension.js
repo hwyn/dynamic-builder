@@ -2,7 +2,7 @@ import { __extends } from "tslib";
 import { isEmpty } from 'lodash';
 import { Observable, shareReplay, Subject, tap } from 'rxjs';
 import { BuilderModel } from '../../builder/builder-model';
-import { observableMap, toForkJoin, transformObservable, withValue } from '../../utility';
+import { createDetectChanges, observableMap, toForkJoin, transformObservable, withValue } from '../../utility';
 import { BasicExtension } from '../basic/basic.extension';
 import { CURRENT, DESTROY, INSTANCE, LOAD_ACTION, MOUNTED } from '../constant/calculator.constant';
 var LISTENER_DETECT = 'listenerDetect';
@@ -15,17 +15,18 @@ var InstanceExtension = /** @class */ (function (_super) {
         return _this;
     }
     InstanceExtension.createInstance = function () {
+        var _a;
         var listenerDetect = new Subject();
-        var detectChanges = function () { return listenerDetect.next(null); };
         var instance = {
             current: null,
             onMounted: function () { return void (0); },
             onDestroy: function () { return void (0); },
             destroy: new Subject().pipe(shareReplay(1))
         };
-        Object.defineProperty(instance, LISTENER_DETECT, withValue(listenerDetect));
-        Object.defineProperty(instance, DETECT_CHANGES, withValue(detectChanges));
-        return instance;
+        return Object.defineProperties(instance, (_a = {},
+            _a[LISTENER_DETECT] = withValue(listenerDetect),
+            _a[DETECT_CHANGES] = withValue(createDetectChanges(listenerDetect)),
+            _a));
     };
     InstanceExtension.prototype.extension = function () {
         this.buildFieldList = this.mapFields(this.jsonFields, this.addInstance.bind(this));

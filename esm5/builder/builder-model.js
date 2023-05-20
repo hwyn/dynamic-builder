@@ -40,7 +40,7 @@ var BuilderModel = /** @class */ (function () {
     };
     BuilderModel.prototype.detectChanges = function () {
         if (!this.$$cache.destroyed && this.ready) {
-            this.listenerDetect.next(this);
+            this.$$cache.detectChanges(this);
         }
     };
     Object.defineProperty(BuilderModel.prototype, "listenerDetect", {

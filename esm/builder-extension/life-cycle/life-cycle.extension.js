@@ -8,7 +8,6 @@ import { CHANGE, DESTROY, LOAD, LOAD_SOURCE, NON_SELF_BUILDERS, ORIGIN_CALCULATO
 export class LifeCycleExtension extends BasicExtension {
     constructor() {
         super(...arguments);
-        this.hasChange = false;
         this.lifeEvent = [LOAD, CHANGE, DESTROY];
         this.calculators = [];
         this.nonSelfCalculators = [];
