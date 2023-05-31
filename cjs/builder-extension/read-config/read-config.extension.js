@@ -111,7 +111,7 @@ var ReadConfigExtension = /** @class */ (function (_super) {
                 return executeHandler;
             }
             if ((0, lodash_1.isFunction)(getExecuteHandler) && (executeHandler = getExecuteHandler.call(_this.builder, actionName))) {
-                return (0, utility_1.funcToObservable)(executeHandler);
+                return executeHandler;
             }
             if ((0, lodash_1.isFunction)(executeHandler = builder[actionName])) {
                 return (0, utility_1.funcToObservable)(mp.proxyMethodAsync(builder, actionName));

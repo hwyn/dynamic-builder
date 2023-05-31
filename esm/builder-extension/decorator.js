@@ -42,4 +42,4 @@ export const Event = makeParamDecorator(ActionParams.event, keyProps);
 export const CallLink = makeParamDecorator(ActionParams.callLink, keyProps);
 export const OtherEvent = makeParamDecorator(ActionParams.otherEvent, keyProps);
 export const ActionProps = makeParamDecorator(ActionParams.actionProps, keyProps);
-export const Output = makeCustomInputProps((_m, props, type, prop) => { var _a; return (_a = get(props === null || props === void 0 ? void 0 : props.events, prop)) !== null && _a !== void 0 ? _a : type[prop]; });
+export const Output = makeCustomInputProps((_m, props, type, prop) => get(props === null || props === void 0 ? void 0 : props.events, prop, type[prop]));

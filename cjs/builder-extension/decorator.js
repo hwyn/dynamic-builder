@@ -54,4 +54,4 @@ exports.Event = (0, di_1.makeParamDecorator)(ActionParams.event, keyProps);
 exports.CallLink = (0, di_1.makeParamDecorator)(ActionParams.callLink, keyProps);
 exports.OtherEvent = (0, di_1.makeParamDecorator)(ActionParams.otherEvent, keyProps);
 exports.ActionProps = (0, di_1.makeParamDecorator)(ActionParams.actionProps, keyProps);
-exports.Output = (0, decorator_1.makeCustomInputProps)(function (_m, props, type, prop) { var _a; return (_a = (0, lodash_1.get)(props === null || props === void 0 ? void 0 : props.events, prop)) !== null && _a !== void 0 ? _a : type[prop]; });
+exports.Output = (0, decorator_1.makeCustomInputProps)(function (_m, props, type, prop) { return (0, lodash_1.get)(props === null || props === void 0 ? void 0 : props.events, prop, type[prop]); });

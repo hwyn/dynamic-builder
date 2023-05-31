@@ -30,4 +30,4 @@ export const makeCustomInputProps = (transform) => {
 };
 export const DynamicModel = makeBuilderDecorator(DYNAMIC_BUILDER);
 export const RootModel = makePropDecorator(ROOT_MODEL, undefined, methodToProp(() => Inject(SCOPE_MODEL, { metadataName: ROOT_MODEL })));
-export const InputProps = makeCustomInputProps((meta, p, type, prop) => { var _a, _b; return (_b = get(p, (_a = meta.key) !== null && _a !== void 0 ? _a : prop)) !== null && _b !== void 0 ? _b : type[prop]; });
+export const InputProps = makeCustomInputProps((meta, p, type, prop) => { var _a; return get(p, (_a = meta.key) !== null && _a !== void 0 ? _a : prop, type[prop]); });

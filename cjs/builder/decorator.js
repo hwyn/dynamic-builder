@@ -37,4 +37,4 @@ var makeCustomInputProps = function (transform) {
 exports.makeCustomInputProps = makeCustomInputProps;
 exports.DynamicModel = makeBuilderDecorator(exports.DYNAMIC_BUILDER);
 exports.RootModel = (0, di_1.makePropDecorator)(exports.ROOT_MODEL, undefined, methodToProp(function () { return (0, di_1.Inject)(token_1.SCOPE_MODEL, { metadataName: exports.ROOT_MODEL }); }));
-exports.InputProps = (0, exports.makeCustomInputProps)(function (meta, p, type, prop) { var _a, _b; return (_b = (0, lodash_1.get)(p, (_a = meta.key) !== null && _a !== void 0 ? _a : prop)) !== null && _b !== void 0 ? _b : type[prop]; });
+exports.InputProps = (0, exports.makeCustomInputProps)(function (meta, p, type, prop) { var _a; return (0, lodash_1.get)(p, (_a = meta.key) !== null && _a !== void 0 ? _a : prop, type[prop]); });

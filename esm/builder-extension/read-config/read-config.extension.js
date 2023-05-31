@@ -94,7 +94,7 @@ export class ReadConfigExtension extends BasicExtension {
                 return executeHandler;
             }
             if (isFunction(getExecuteHandler) && (executeHandler = getExecuteHandler.call(this.builder, actionName))) {
-                return funcToObservable(executeHandler);
+                return executeHandler;
             }
             if (isFunction(executeHandler = builder[actionName])) {
                 return funcToObservable(mp.proxyMethodAsync(builder, actionName));
