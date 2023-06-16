@@ -59,6 +59,7 @@ export class FormExtension extends BasicExtension {
         this.executeChangeEvent(jsonField, value);
         this.changeVisibility(builderField, binding, builderField.visibility);
         delete builderField.field.binding;
+        delete builderField.field.updateOn;
     }
     createChange({ binding }, { builderField, actionEvent }) {
         var _a;

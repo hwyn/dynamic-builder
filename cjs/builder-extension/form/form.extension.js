@@ -70,6 +70,7 @@ var FormExtension = /** @class */ (function (_super) {
         this.executeChangeEvent(jsonField, value);
         this.changeVisibility(builderField, binding, builderField.visibility);
         delete builderField.field.binding;
+        delete builderField.field.updateOn;
     };
     FormExtension.prototype.createChange = function (_a, _b) {
         var _c;
