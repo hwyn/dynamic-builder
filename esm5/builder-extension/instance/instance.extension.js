@@ -1,6 +1,7 @@
 import { __extends } from "tslib";
 import { isEmpty } from 'lodash';
-import { Observable, shareReplay, Subject, tap } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
+import { shareReplay, tap } from 'rxjs/operators';
 import { BuilderModel } from '../../builder/builder-model';
 import { createDetectChanges, observableMap, toForkJoin, transformObservable, withValue } from '../../utility';
 import { BasicExtension } from '../basic/basic.extension';

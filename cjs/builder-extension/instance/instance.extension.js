@@ -4,6 +4,7 @@ exports.InstanceExtension = void 0;
 var tslib_1 = require("tslib");
 var lodash_1 = require("lodash");
 var rxjs_1 = require("rxjs");
+var operators_1 = require("rxjs/operators");
 var builder_model_1 = require("../../builder/builder-model");
 var utility_1 = require("../../utility");
 var basic_extension_1 = require("../basic/basic.extension");
@@ -24,7 +25,7 @@ var InstanceExtension = /** @class */ (function (_super) {
             current: null,
             onMounted: function () { return void (0); },
             onDestroy: function () { return void (0); },
-            destroy: new rxjs_1.Subject().pipe((0, rxjs_1.shareReplay)(1))
+            destroy: new rxjs_1.Subject().pipe((0, operators_1.shareReplay)(1))
         };
         return Object.defineProperties(instance, (_a = {},
             _a[LISTENER_DETECT] = (0, utility_1.withValue)(listenerDetect),
@@ -97,7 +98,7 @@ var InstanceExtension = /** @class */ (function (_super) {
                         subscribe.complete();
                     }));
                 });
-            })).pipe((0, rxjs_1.tap)(function () { return subscriptions_1.forEach(function (s) { return s.unsubscribe(); }); }), (0, utility_1.observableMap)(function () { return (0, utility_1.transformObservable)(_super.prototype.beforeDestroy.call(_this)); }));
+            })).pipe((0, operators_1.tap)(function () { return subscriptions_1.forEach(function (s) { return s.unsubscribe(); }); }), (0, utility_1.observableMap)(function () { return (0, utility_1.transformObservable)(_super.prototype.beforeDestroy.call(_this)); }));
         }
     };
     InstanceExtension.prototype.destroy = function () {
