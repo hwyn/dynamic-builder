@@ -1,4 +1,4 @@
-import { get, omit, set } from 'lodash';
+import { get, set } from 'lodash';
 var BaseView = /** @class */ (function () {
     function BaseView(injector, _store) {
         this.injector = injector;
@@ -11,7 +11,11 @@ var BaseView = /** @class */ (function () {
         set(this._store, path, value);
     };
     BaseView.prototype.deleteBindValue = function (path) {
-        omit(this._store, [path]);
+        var store = this._store;
+        var pathArr = path.split('.');
+        while (pathArr.length > 1)
+            store = store[pathArr.shift()];
+        delete store[pathArr.pop()];
     };
     BaseView.prototype.refreshData = function (model) {
         this._store = model;

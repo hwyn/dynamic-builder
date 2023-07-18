@@ -1,32 +1,10 @@
 import { isEmpty, isUndefined } from 'lodash';
 import { BasicExtension } from '../basic/basic.extension';
-import { CHANGE, CHECK_VISIBILITY, LOAD, LOAD_ACTION, REFRESH_VISIBILITY } from '../constant/calculator.constant';
-function filterNoneCalculators(originCalculators, hiddenList) {
-    return originCalculators.filter(({ targetId, action: { type }, dependent: { type: dType } }) => {
-        return !hiddenList.includes(targetId) || [type, dType].includes(CHECK_VISIBILITY);
-    });
-}
+import { CHECK_VISIBILITY, LOAD, LOAD_ACTION, REFRESH_VISIBILITY } from '../constant/calculator.constant';
 function getParentVisibility(builder) {
     var _a;
     const { id, parent } = builder;
     return parent && ((_a = parent.getFieldById(id)) === null || _a === void 0 ? void 0 : _a.visibility);
-}
-export function createCheckVisibility() {
-    const cache = {};
-    return ({ builder }) => {
-        const { ids } = cache;
-        const $$cache = builder.$$cache;
-        const { fields, ready } = $$cache;
-        const hiddenList = fields.filter(({ visibility }) => !builder.showField(visibility)).map(({ id }) => id);
-        const newIds = hiddenList.join('');
-        if (ids !== newIds && ready) {
-            cache.ids = newIds;
-            builder.calculators = filterNoneCalculators($$cache.originCalculators, hiddenList);
-            $$cache.nonSelfBuilders.forEach((nonBuild) => {
-                nonBuild.nonSelfCalculators = filterNoneCalculators(nonBuild.$$cache.originNonSelfCalculators, hiddenList);
-            });
-        }
-    };
 }
 export class CheckVisibilityExtension extends BasicExtension {
     extension() {
@@ -35,9 +13,6 @@ export class CheckVisibilityExtension extends BasicExtension {
         if (!isEmpty(visibilityList)) {
             this.eachFields(visibilityList, this.addFieldCalculators.bind(this));
             this.pushCalculators(this.json, [{
-                    action: this.bindCalculatorAction(createCheckVisibility()),
-                    dependents: this.createDependents([LOAD, CHANGE])
-                }, {
                     action: this.bindCalculatorAction(this.removeOnEvent),
                     dependents: { type: LOAD_ACTION, fieldId: this.builder.id }
                 }]);

@@ -1,46 +1,15 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CheckVisibilityExtension = exports.createCheckVisibility = void 0;
+exports.CheckVisibilityExtension = void 0;
 var tslib_1 = require("tslib");
 var lodash_1 = require("lodash");
 var basic_extension_1 = require("../basic/basic.extension");
 var calculator_constant_1 = require("../constant/calculator.constant");
-function filterNoneCalculators(originCalculators, hiddenList) {
-    return originCalculators.filter(function (_a) {
-        var targetId = _a.targetId, type = _a.action.type, dType = _a.dependent.type;
-        return !hiddenList.includes(targetId) || [type, dType].includes(calculator_constant_1.CHECK_VISIBILITY);
-    });
-}
 function getParentVisibility(builder) {
     var _a;
     var id = builder.id, parent = builder.parent;
     return parent && ((_a = parent.getFieldById(id)) === null || _a === void 0 ? void 0 : _a.visibility);
 }
-function createCheckVisibility() {
-    var cache = {};
-    return function (_a) {
-        var builder = _a.builder;
-        var ids = cache.ids;
-        var $$cache = builder.$$cache;
-        var fields = $$cache.fields, ready = $$cache.ready;
-        var hiddenList = fields.filter(function (_a) {
-            var visibility = _a.visibility;
-            return !builder.showField(visibility);
-        }).map(function (_a) {
-            var id = _a.id;
-            return id;
-        });
-        var newIds = hiddenList.join('');
-        if (ids !== newIds && ready) {
-            cache.ids = newIds;
-            builder.calculators = filterNoneCalculators($$cache.originCalculators, hiddenList);
-            $$cache.nonSelfBuilders.forEach(function (nonBuild) {
-                nonBuild.nonSelfCalculators = filterNoneCalculators(nonBuild.$$cache.originNonSelfCalculators, hiddenList);
-            });
-        }
-    };
-}
-exports.createCheckVisibility = createCheckVisibility;
 var CheckVisibilityExtension = /** @class */ (function (_super) {
     tslib_1.__extends(CheckVisibilityExtension, _super);
     function CheckVisibilityExtension() {
@@ -52,9 +21,6 @@ var CheckVisibilityExtension = /** @class */ (function (_super) {
         if (!(0, lodash_1.isEmpty)(visibilityList)) {
             this.eachFields(visibilityList, this.addFieldCalculators.bind(this));
             this.pushCalculators(this.json, [{
-                    action: this.bindCalculatorAction(createCheckVisibility()),
-                    dependents: this.createDependents([calculator_constant_1.LOAD, calculator_constant_1.CHANGE])
-                }, {
                     action: this.bindCalculatorAction(this.removeOnEvent),
                     dependents: { type: calculator_constant_1.LOAD_ACTION, fieldId: this.builder.id }
                 }]);

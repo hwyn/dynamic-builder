@@ -16,11 +16,11 @@ let Convert = class Convert {
     }
     getConvertObj(convertConfig, builder, builderField) {
         let converter;
-        const context = { convertConfig, builder, builderField };
+        const context = { injector: this.injector, convertConfig, builder, builderField };
         const name = isString(convertConfig) ? convertConfig : convertConfig === null || convertConfig === void 0 ? void 0 : convertConfig.name;
         const builderHandler = builder.getExecuteHandler(name, false);
         if (builderHandler) {
-            converter = builderHandler(new BaseConvert().invoke(Object.assign({ injector: this.injector }, context)));
+            builderHandler(new BaseConvert().invoke(context)).subscribe((obj) => converter = obj);
         }
         if (!converter) {
             const convert = convertConfig instanceof BaseConvert ? convertConfig : this.getType(CONVERT_CONFIG, name);

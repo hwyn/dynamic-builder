@@ -5,7 +5,7 @@ var BaseType = /** @class */ (function () {
     }
     BaseType.prototype.invoke = function (context) {
         if (context === void 0) { context = {}; }
-        return Object.assign(this, { context: context });
+        return Object.assign(this, context);
     };
     __decorate([
         Inject(Injector),

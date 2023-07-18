@@ -67,7 +67,7 @@ let Action = class Action {
         }))), observableTap((result) => !props ? of(null) : toForkJoin(_actions.map((action, index) => {
             return action.type && this.invokeCalculators(action, props, result[index], ...otherEventParam);
         }))), observableTap((result) => toForkJoin(_actions.map(({ after }, index) => {
-            return after && this.invoke(after, props, typeof result[index] === 'undefined' ? event : result[index], ...otherEventParam);
+            return after && this.invoke(after, props, result[index], ...otherEventParam);
         }))), map((result) => result.pop()));
     }
     callAction(actionName, context, ...events) {

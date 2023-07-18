@@ -14,7 +14,11 @@ var BaseView = /** @class */ (function () {
         (0, lodash_1.set)(this._store, path, value);
     };
     BaseView.prototype.deleteBindValue = function (path) {
-        (0, lodash_1.omit)(this._store, [path]);
+        var store = this._store;
+        var pathArr = path.split('.');
+        while (pathArr.length > 1)
+            store = store[pathArr.shift()];
+        delete store[pathArr.pop()];
     };
     BaseView.prototype.refreshData = function (model) {
         this._store = model;

@@ -1,6 +1,4 @@
-import { BaseAction } from '../action';
 import { BasicExtension } from '../basic/basic.extension';
-export declare function createCheckVisibility(): ({ builder }: BaseAction) => void;
 export declare class CheckVisibilityExtension extends BasicExtension {
     protected extension(): void;
     private createDependents;

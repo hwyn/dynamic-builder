@@ -1,6 +1,9 @@
 import { ACTION_INTERCEPT } from '../../token';
 import { BaseType } from '../context/base-type';
 export class BaseAction extends BaseType {
+    invoke(context) {
+        return super.invoke({ context });
+    }
     get builderField() {
         return this.context.builderField;
     }

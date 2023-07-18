@@ -112,7 +112,7 @@ var Action = /** @class */ (function () {
             return action.type && _this.invokeCalculators.apply(_this, tslib_1.__spreadArray([action, props, result[index]], otherEventParam, false));
         })); }), (0, utility_1.observableTap)(function (result) { return (0, utility_1.toForkJoin)(_actions.map(function (_a, index) {
             var after = _a.after;
-            return after && _this.invoke.apply(_this, tslib_1.__spreadArray([after, props, typeof result[index] === 'undefined' ? event : result[index]], otherEventParam, false));
+            return after && _this.invoke.apply(_this, tslib_1.__spreadArray([after, props, result[index]], otherEventParam, false));
         })); }), (0, operators_1.map)(function (result) { return result.pop(); }));
     };
     Action.prototype.callAction = function (actionName, context) {

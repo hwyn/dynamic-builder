@@ -8,7 +8,7 @@ var BaseType = /** @class */ (function () {
     }
     BaseType.prototype.invoke = function (context) {
         if (context === void 0) { context = {}; }
-        return Object.assign(this, { context: context });
+        return Object.assign(this, context);
     };
     tslib_1.__decorate([
         (0, di_1.Inject)(di_1.Injector),

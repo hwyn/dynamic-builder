@@ -9,7 +9,7 @@ const defaultGrid = {
     groups: [12]
 };
 function groupByFields(fields) {
-    return groupBy(fields, ({ layout: { group } }) => group);
+    return groupBy(fields, ({ layout: { group = 1 } }) => group);
 }
 function groupFieldsToArray(fields) {
     return toArray(groupBy(fields, ({ layout: { row } }) => row));

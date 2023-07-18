@@ -2,7 +2,7 @@ import { __decorate, __metadata } from "tslib";
 import { Inject, Injector } from '@fm/di';
 export class BaseType {
     invoke(context = {}) {
-        return Object.assign(this, { context });
+        return Object.assign(this, context);
     }
 }
 __decorate([

@@ -76,9 +76,11 @@ var FormExtension = /** @class */ (function (_super) {
         var _c;
         var binding = _a.binding;
         var builderField = _b.builderField, actionEvent = _b.actionEvent;
+        var visibility = builderField.visibility;
         var value = this.isDomEvent(actionEvent) ? actionEvent.target.value : actionEvent;
-        this.setValueToModel(binding, value);
+        this.builder.showField(visibility) && this.setValueToModel(binding, value);
         (_c = builderField.control) === null || _c === void 0 ? void 0 : _c.patchValue(value);
+        return actionEvent;
     };
     FormExtension.prototype.createValidity = function (_a) {
         var control = _a.builderField.control;
@@ -96,7 +98,7 @@ var FormExtension = /** @class */ (function (_super) {
             var none = builder_1.Visibility.none, disabled = builder_1.Visibility.disabled, hidden = builder_1.Visibility.hidden, readonly = builder_1.Visibility.readonly;
             var isDisabled = [none, hidden, disabled, readonly].includes(visibility);
             isDisabled ? control.disable() : control.enable();
-            visibility === none ? this.deleteValueToModel(binding) : this.setValueToModel(binding, control.value);
+            this.builder.showField(visibility) ? this.setValueToModel(binding, control.value) : this.deleteValueToModel(binding);
         }
     };
     FormExtension.prototype.executeChangeEvent = function (jsonField, value) {
@@ -135,7 +137,9 @@ var FormExtension = /** @class */ (function (_super) {
         this.convertMap.clear();
         this.builderFields.forEach(function (builderField) {
             var _a;
-            (_a = builderField.control) === null || _a === void 0 ? void 0 : _a.destroy();
+            if ((_a = builderField.control) === null || _a === void 0 ? void 0 : _a.destroy) {
+                builderField.control.destroy();
+            }
             _this.unDefineProperty(builderField, [calculator_constant_1.CONTROL]);
         });
         return _super.prototype.destroy.call(this);

@@ -1,4 +1,4 @@
-import { get, omit, set } from 'lodash';
+import { get, set } from 'lodash';
 export class BaseView {
     constructor(injector, _store) {
         this.injector = injector;
@@ -11,7 +11,11 @@ export class BaseView {
         set(this._store, path, value);
     }
     deleteBindValue(path) {
-        omit(this._store, [path]);
+        let store = this._store;
+        const pathArr = path.split('.');
+        while (pathArr.length > 1)
+            store = store[pathArr.shift()];
+        delete store[pathArr.pop()];
     }
     refreshData(model) {
         this._store = model;

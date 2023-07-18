@@ -1,4 +1,4 @@
-import { __assign, __decorate, __metadata, __param } from "tslib";
+import { __decorate, __metadata, __param } from "tslib";
 import { Inject, Injector } from '@fm/di';
 import { isString } from 'lodash';
 import { CONVERT_CONFIG, GET_TYPE } from '../../token';
@@ -16,11 +16,11 @@ var Convert = /** @class */ (function () {
     };
     Convert.prototype.getConvertObj = function (convertConfig, builder, builderField) {
         var converter;
-        var context = { convertConfig: convertConfig, builder: builder, builderField: builderField };
+        var context = { injector: this.injector, convertConfig: convertConfig, builder: builder, builderField: builderField };
         var name = isString(convertConfig) ? convertConfig : convertConfig === null || convertConfig === void 0 ? void 0 : convertConfig.name;
         var builderHandler = builder.getExecuteHandler(name, false);
         if (builderHandler) {
-            converter = builderHandler(new BaseConvert().invoke(__assign({ injector: this.injector }, context)));
+            builderHandler(new BaseConvert().invoke(context)).subscribe(function (obj) { return converter = obj; });
         }
         if (!converter) {
             var convert = convertConfig instanceof BaseConvert ? convertConfig : this.getType(CONVERT_CONFIG, name);

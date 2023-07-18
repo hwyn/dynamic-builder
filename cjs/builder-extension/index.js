@@ -6,6 +6,7 @@ var basic_extension_1 = require("./basic/basic.extension");
 Object.defineProperty(exports, "serializeAction", { enumerable: true, get: function () { return basic_extension_1.serializeAction; } });
 tslib_1.__exportStar(require("./action"), exports);
 tslib_1.__exportStar(require("./action/create-actions"), exports);
+tslib_1.__exportStar(require("./attribute/attribute.extension"), exports);
 tslib_1.__exportStar(require("./basic/basic.extension"), exports);
 tslib_1.__exportStar(require("./constant/calculator.constant"), exports);
 var builder_context_1 = require("./context/builder-context");

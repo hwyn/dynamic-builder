@@ -4,6 +4,7 @@ import { BuilderContext as BasicBuilderContext } from '../../builder/builder-con
 import { ACTION_INTERCEPT, ACTIONS_CONFIG, BUILDER_EXTENSION, CONVERT_CONFIG, CONVERT_INTERCEPT, FORM_CONTROL, GET_JSON_CONFIG, GET_TYPE, LAYOUT_ELEMENT, LOAD_BUILDER_CONFIG } from '../../token';
 import { Action } from '../action/actions';
 import { ActionExtension } from '../action/actions.extension';
+import { AttributeExtension } from '../attribute/attribute.extension';
 import { DataSourceExtension } from '../datasource/datasource.extension';
 import { Convert } from '../form/convert';
 import { FormExtension } from '../form/form.extension';
@@ -23,7 +24,8 @@ var defaultExtensions = [
     FormExtension,
     ViewModelExtension,
     ActionExtension,
-    LifeCycleExtension
+    LifeCycleExtension,
+    AttributeExtension
 ];
 export { BaseType } from './base-type';
 var BuilderContext = /** @class */ (function (_super) {

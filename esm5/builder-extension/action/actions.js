@@ -109,7 +109,7 @@ var Action = /** @class */ (function () {
             return action.type && _this.invokeCalculators.apply(_this, __spreadArray([action, props, result[index]], otherEventParam, false));
         })); }), observableTap(function (result) { return toForkJoin(_actions.map(function (_a, index) {
             var after = _a.after;
-            return after && _this.invoke.apply(_this, __spreadArray([after, props, typeof result[index] === 'undefined' ? event : result[index]], otherEventParam, false));
+            return after && _this.invoke.apply(_this, __spreadArray([after, props, result[index]], otherEventParam, false));
         })); }), map(function (result) { return result.pop(); }));
     };
     Action.prototype.callAction = function (actionName, context) {

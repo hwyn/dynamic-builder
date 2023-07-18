@@ -102,8 +102,10 @@ var LifeCycleExtension = /** @class */ (function (_super) {
             var targetId = _a.id, _c = _a.calculators, calculators = _c === void 0 ? [] : _c;
             _this.toArray(calculators).forEach(function (_a) {
                 var action = _a.action, dependents = _a.dependents;
-                _this.toArray(dependents).forEach(function (dependent) {
-                    _this.calculators.push({ targetId: targetId, action: _this.serializeAction(action), dependent: dependent });
+                _this.toArray(action).forEach(function (a) {
+                    _this.toArray(dependents).forEach(function (dependent) {
+                        _this.calculators.push({ targetId: targetId, action: _this.serializeAction(a), dependent: dependent });
+                    });
                 });
             });
             (_b = _this.getBuilderFieldById(targetId)) === null || _b === void 0 ? true : delete _b.field.calculators;

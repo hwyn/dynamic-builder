@@ -19,11 +19,11 @@ var Convert = /** @class */ (function () {
     };
     Convert.prototype.getConvertObj = function (convertConfig, builder, builderField) {
         var converter;
-        var context = { convertConfig: convertConfig, builder: builder, builderField: builderField };
+        var context = { injector: this.injector, convertConfig: convertConfig, builder: builder, builderField: builderField };
         var name = (0, lodash_1.isString)(convertConfig) ? convertConfig : convertConfig === null || convertConfig === void 0 ? void 0 : convertConfig.name;
         var builderHandler = builder.getExecuteHandler(name, false);
         if (builderHandler) {
-            converter = builderHandler(new base_convert_1.BaseConvert().invoke(tslib_1.__assign({ injector: this.injector }, context)));
+            builderHandler(new base_convert_1.BaseConvert().invoke(context)).subscribe(function (obj) { return converter = obj; });
         }
         if (!converter) {
             var convert = convertConfig instanceof base_convert_1.BaseConvert ? convertConfig : this.getType(token_1.CONVERT_CONFIG, name);

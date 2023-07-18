@@ -1,41 +1,11 @@
 import { __extends } from "tslib";
 import { isEmpty, isUndefined } from 'lodash';
 import { BasicExtension } from '../basic/basic.extension';
-import { CHANGE, CHECK_VISIBILITY, LOAD, LOAD_ACTION, REFRESH_VISIBILITY } from '../constant/calculator.constant';
-function filterNoneCalculators(originCalculators, hiddenList) {
-    return originCalculators.filter(function (_a) {
-        var targetId = _a.targetId, type = _a.action.type, dType = _a.dependent.type;
-        return !hiddenList.includes(targetId) || [type, dType].includes(CHECK_VISIBILITY);
-    });
-}
+import { CHECK_VISIBILITY, LOAD, LOAD_ACTION, REFRESH_VISIBILITY } from '../constant/calculator.constant';
 function getParentVisibility(builder) {
     var _a;
     var id = builder.id, parent = builder.parent;
     return parent && ((_a = parent.getFieldById(id)) === null || _a === void 0 ? void 0 : _a.visibility);
-}
-export function createCheckVisibility() {
-    var cache = {};
-    return function (_a) {
-        var builder = _a.builder;
-        var ids = cache.ids;
-        var $$cache = builder.$$cache;
-        var fields = $$cache.fields, ready = $$cache.ready;
-        var hiddenList = fields.filter(function (_a) {
-            var visibility = _a.visibility;
-            return !builder.showField(visibility);
-        }).map(function (_a) {
-            var id = _a.id;
-            return id;
-        });
-        var newIds = hiddenList.join('');
-        if (ids !== newIds && ready) {
-            cache.ids = newIds;
-            builder.calculators = filterNoneCalculators($$cache.originCalculators, hiddenList);
-            $$cache.nonSelfBuilders.forEach(function (nonBuild) {
-                nonBuild.nonSelfCalculators = filterNoneCalculators(nonBuild.$$cache.originNonSelfCalculators, hiddenList);
-            });
-        }
-    };
 }
 var CheckVisibilityExtension = /** @class */ (function (_super) {
     __extends(CheckVisibilityExtension, _super);
@@ -48,9 +18,6 @@ var CheckVisibilityExtension = /** @class */ (function (_super) {
         if (!isEmpty(visibilityList)) {
             this.eachFields(visibilityList, this.addFieldCalculators.bind(this));
             this.pushCalculators(this.json, [{
-                    action: this.bindCalculatorAction(createCheckVisibility()),
-                    dependents: this.createDependents([LOAD, CHANGE])
-                }, {
                     action: this.bindCalculatorAction(this.removeOnEvent),
                     dependents: { type: LOAD_ACTION, fieldId: this.builder.id }
                 }]);

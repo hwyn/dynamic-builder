@@ -1,6 +1,7 @@
 import { serializeAction } from './basic/basic.extension';
 export * from './action';
 export * from './action/create-actions';
+export * from './attribute/attribute.extension';
 export * from './basic/basic.extension';
 export * from './constant/calculator.constant';
 export { BaseType, BuilderContext, useBuilderContext } from './context/builder-context';

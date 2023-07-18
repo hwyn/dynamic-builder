@@ -10,7 +10,7 @@ var defaultGrid = {
 };
 function groupByFields(fields) {
     return groupBy(fields, function (_a) {
-        var group = _a.layout.group;
+        var _b = _a.layout.group, group = _b === void 0 ? 1 : _b;
         return group;
     });
 }

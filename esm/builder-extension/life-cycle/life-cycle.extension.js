@@ -81,8 +81,10 @@ export class LifeCycleExtension extends BasicExtension {
         fieldsWithCalculators.forEach(({ id: targetId, calculators = [] }) => {
             var _a;
             this.toArray(calculators).forEach(({ action, dependents }) => {
-                this.toArray(dependents).forEach((dependent) => {
-                    this.calculators.push({ targetId, action: this.serializeAction(action), dependent });
+                this.toArray(action).forEach((a) => {
+                    this.toArray(dependents).forEach((dependent) => {
+                        this.calculators.push({ targetId, action: this.serializeAction(a), dependent });
+                    });
                 });
             });
             (_a = this.getBuilderFieldById(targetId)) === null || _a === void 0 ? true : delete _a.field.calculators;

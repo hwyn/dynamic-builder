@@ -63,9 +63,11 @@ export class FormExtension extends BasicExtension {
     }
     createChange({ binding }, { builderField, actionEvent }) {
         var _a;
+        const { visibility } = builderField;
         const value = this.isDomEvent(actionEvent) ? actionEvent.target.value : actionEvent;
-        this.setValueToModel(binding, value);
+        this.builder.showField(visibility) && this.setValueToModel(binding, value);
         (_a = builderField.control) === null || _a === void 0 ? void 0 : _a.patchValue(value);
+        return actionEvent;
     }
     createValidity({ builderField: { control } }) {
         control === null || control === void 0 ? void 0 : control.updateValueAndValidity();
@@ -79,7 +81,7 @@ export class FormExtension extends BasicExtension {
             const { none, disabled, hidden, readonly } = Visibility;
             const isDisabled = [none, hidden, disabled, readonly].includes(visibility);
             isDisabled ? control.disable() : control.enable();
-            visibility === none ? this.deleteValueToModel(binding) : this.setValueToModel(binding, control.value);
+            this.builder.showField(visibility) ? this.setValueToModel(binding, control.value) : this.deleteValueToModel(binding);
         }
     }
     executeChangeEvent(jsonField, value) {
@@ -116,7 +118,9 @@ export class FormExtension extends BasicExtension {
         this.convertMap.clear();
         this.builderFields.forEach((builderField) => {
             var _a;
-            (_a = builderField.control) === null || _a === void 0 ? void 0 : _a.destroy();
+            if ((_a = builderField.control) === null || _a === void 0 ? void 0 : _a.destroy) {
+                builderField.control.destroy();
+            }
             this.unDefineProperty(builderField, [CONTROL]);
         });
         return super.destroy();
