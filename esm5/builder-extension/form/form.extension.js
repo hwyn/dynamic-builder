@@ -86,17 +86,17 @@ var FormExtension = /** @class */ (function (_super) {
     FormExtension.prototype.createVisibility = function (_a, _b) {
         var binding = _a.binding;
         var builderField = _b.builderField, actionEvent = _b.actionEvent;
-        this.changeVisibility(builderField, binding, actionEvent);
-    };
-    FormExtension.prototype.changeVisibility = function (builderField, binding, visibility) {
-        if (visibility === void 0) { visibility = Visibility.visible; }
-        var control = builderField.control, _a = builderField.visibility, v = _a === void 0 ? Visibility.visible : _a;
-        if (control && v !== visibility) {
-            var none = Visibility.none, disabled = Visibility.disabled, hidden = Visibility.hidden, readonly = Visibility.readonly;
-            var isDisabled = [none, hidden, disabled, readonly].includes(visibility);
-            isDisabled ? control.disable() : control.enable();
-            this.builder.showField(visibility) ? this.setValueToModel(binding, control.value) : this.deleteValueToModel(binding);
+        var control = builderField.control, _c = builderField.visibility, visibility = _c === void 0 ? Visibility.visible : _c;
+        if (control && visibility !== actionEvent) {
+            this.changeVisibility(builderField, binding, actionEvent);
         }
+    };
+    FormExtension.prototype.changeVisibility = function (_a, binding, visibility) {
+        var control = _a.control;
+        if (visibility === void 0) { visibility = Visibility.visible; }
+        var none = Visibility.none, disabled = Visibility.disabled, hidden = Visibility.hidden, readonly = Visibility.readonly;
+        [none, hidden, disabled, readonly].includes(visibility) ? control.disable() : control.enable();
+        this.builder.showField(visibility) ? this.setValueToModel(binding, control.value) : this.deleteValueToModel(binding);
     };
     FormExtension.prototype.executeChangeEvent = function (jsonField, value) {
         var _a = this.getBuilderFieldById(jsonField.id).events, events = _a === void 0 ? {} : _a;

@@ -73,16 +73,15 @@ export class FormExtension extends BasicExtension {
         control === null || control === void 0 ? void 0 : control.updateValueAndValidity();
     }
     createVisibility({ binding }, { builderField, actionEvent }) {
-        this.changeVisibility(builderField, binding, actionEvent);
-    }
-    changeVisibility(builderField, binding, visibility = Visibility.visible) {
-        const { control, visibility: v = Visibility.visible } = builderField;
-        if (control && v !== visibility) {
-            const { none, disabled, hidden, readonly } = Visibility;
-            const isDisabled = [none, hidden, disabled, readonly].includes(visibility);
-            isDisabled ? control.disable() : control.enable();
-            this.builder.showField(visibility) ? this.setValueToModel(binding, control.value) : this.deleteValueToModel(binding);
+        const { control, visibility = Visibility.visible } = builderField;
+        if (control && visibility !== actionEvent) {
+            this.changeVisibility(builderField, binding, actionEvent);
         }
+    }
+    changeVisibility({ control }, binding, visibility = Visibility.visible) {
+        const { none, disabled, hidden, readonly } = Visibility;
+        [none, hidden, disabled, readonly].includes(visibility) ? control.disable() : control.enable();
+        this.builder.showField(visibility) ? this.setValueToModel(binding, control.value) : this.deleteValueToModel(binding);
     }
     executeChangeEvent(jsonField, value) {
         const { events = {} } = this.getBuilderFieldById(jsonField.id);
