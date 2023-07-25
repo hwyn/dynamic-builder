@@ -33,7 +33,7 @@ var CheckVisibilityExtension = /** @class */ (function (_super) {
     CheckVisibilityExtension.prototype.addFieldCalculators = function (_a) {
         var jsonField = _a[0], field = _a[1].field;
         var _b = this.serializeCheckVisibilityConfig(jsonField), action = _b.action, dependents = _b.dependents;
-        action.after = this.bindCalculatorAction(this.checkVisibilityAfter);
+        action.after = this.bindCalculatorAction(this.checkVisibilityAfter(jsonField.visibility));
         this.pushCalculators(jsonField, [{ action: action, dependents: dependents }]);
         delete field.checkVisibility;
     };
@@ -41,12 +41,14 @@ var CheckVisibilityExtension = /** @class */ (function (_super) {
         var jsonCheckVisibility = jsonField.checkVisibility;
         return this.serializeCalculatorConfig(jsonCheckVisibility, calculator_constant_1.CHECK_VISIBILITY, this.createDependents([calculator_constant_1.LOAD, calculator_constant_1.REFRESH_VISIBILITY]));
     };
-    CheckVisibilityExtension.prototype.checkVisibilityAfter = function (_a) {
-        var actionEvent = _a.actionEvent, builderField = _a.builderField, builder = _a.builder;
-        if (actionEvent && builderField.visibility !== actionEvent) {
-            builderField.visibility = actionEvent;
-            builder.ready && builder.detectChanges();
-        }
+    CheckVisibilityExtension.prototype.checkVisibilityAfter = function (defaultVisibility) {
+        return function (_a) {
+            var _b = _a.actionEvent, actionEvent = _b === void 0 ? defaultVisibility : _b, builderField = _a.builderField, builder = _a.builder;
+            if (builderField.visibility !== actionEvent) {
+                builderField.visibility = actionEvent;
+                builder.ready && builder.detectChanges();
+            }
+        };
     };
     CheckVisibilityExtension.prototype.removeOnEvent = function (_a) {
         var builder = _a.builder;

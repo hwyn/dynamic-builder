@@ -23,7 +23,7 @@ export class CheckVisibilityExtension extends BasicExtension {
     }
     addFieldCalculators([jsonField, { field }]) {
         const { action, dependents } = this.serializeCheckVisibilityConfig(jsonField);
-        action.after = this.bindCalculatorAction(this.checkVisibilityAfter);
+        action.after = this.bindCalculatorAction(this.checkVisibilityAfter(jsonField.visibility));
         this.pushCalculators(jsonField, [{ action, dependents }]);
         delete field.checkVisibility;
     }
@@ -31,11 +31,13 @@ export class CheckVisibilityExtension extends BasicExtension {
         const { checkVisibility: jsonCheckVisibility } = jsonField;
         return this.serializeCalculatorConfig(jsonCheckVisibility, CHECK_VISIBILITY, this.createDependents([LOAD, REFRESH_VISIBILITY]));
     }
-    checkVisibilityAfter({ actionEvent, builderField, builder }) {
-        if (actionEvent && builderField.visibility !== actionEvent) {
-            builderField.visibility = actionEvent;
-            builder.ready && builder.detectChanges();
-        }
+    checkVisibilityAfter(defaultVisibility) {
+        return ({ actionEvent = defaultVisibility, builderField, builder }) => {
+            if (builderField.visibility !== actionEvent) {
+                builderField.visibility = actionEvent;
+                builder.ready && builder.detectChanges();
+            }
+        };
     }
     removeOnEvent({ builder }) {
         builder.$$cache.fields.forEach((field) => {

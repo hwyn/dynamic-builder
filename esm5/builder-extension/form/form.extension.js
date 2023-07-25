@@ -91,12 +91,12 @@ var FormExtension = /** @class */ (function (_super) {
             this.changeVisibility(builderField, binding, actionEvent);
         }
     };
-    FormExtension.prototype.changeVisibility = function (_a, binding, visibility) {
-        var control = _a.control;
+    FormExtension.prototype.changeVisibility = function (builderField, binding, visibility) {
         if (visibility === void 0) { visibility = Visibility.visible; }
+        var control = builderField.control;
         var none = Visibility.none, disabled = Visibility.disabled, hidden = Visibility.hidden, readonly = Visibility.readonly;
         [none, hidden, disabled, readonly].includes(visibility) ? control.disable() : control.enable();
-        this.builder.showField(visibility) ? this.setValueToModel(binding, control.value) : this.deleteValueToModel(binding);
+        this.builder.showField(visibility) ? this.setValueToModel(binding, control === null || control === void 0 ? void 0 : control.value) : this.deleteValueToModel(binding);
     };
     FormExtension.prototype.executeChangeEvent = function (jsonField, value) {
         var _a = this.getBuilderFieldById(jsonField.id).events, events = _a === void 0 ? {} : _a;
