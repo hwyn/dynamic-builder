@@ -30,7 +30,7 @@ export class Grid {
         });
         return Object.assign(Object.assign({ id }, other), { additional: groupAdditional });
     }
-    getViewGrip(props) {
+    getViewGrid(props) {
         const config = cloneDeepPlain(this.config);
         const { additional = [], className = '', style } = config;
         const { className: propsClassName = '', style: propsStyle } = props;

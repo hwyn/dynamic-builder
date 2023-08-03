@@ -4,6 +4,6 @@ export declare class Grid {
     private config;
     constructor(json: any, builder: BuilderModelExtensions);
     private serializationConfig;
-    getViewGrip(props: any): GridType;
+    getViewGrid(props: any): GridType;
     protected destroy(): void;
 }

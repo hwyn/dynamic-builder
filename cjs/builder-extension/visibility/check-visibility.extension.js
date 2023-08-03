@@ -38,8 +38,8 @@ var CheckVisibilityExtension = /** @class */ (function (_super) {
         delete field.checkVisibility;
     };
     CheckVisibilityExtension.prototype.serializeCheckVisibilityConfig = function (jsonField) {
-        var jsonCheckVisibility = jsonField.checkVisibility;
-        return this.serializeCalculatorConfig(jsonCheckVisibility, calculator_constant_1.CHECK_VISIBILITY, this.createDependents([calculator_constant_1.LOAD, calculator_constant_1.REFRESH_VISIBILITY]));
+        var checkVisibility = jsonField.checkVisibility;
+        return this.serializeCalculatorConfig(checkVisibility, calculator_constant_1.CHECK_VISIBILITY, this.createDependents([calculator_constant_1.LOAD, calculator_constant_1.REFRESH_VISIBILITY]));
     };
     CheckVisibilityExtension.prototype.checkVisibilityAfter = function (defaultVisibility) {
         return function (_a) {

@@ -80,7 +80,7 @@ var Action = /** @class */ (function () {
         return forkJoin(calculatorsInvokes.map(function (invokeCalculators) { return invokeCalculators.apply(void 0, __spreadArray([value], otherEventParam, false)); }));
     };
     Action.prototype.execute = function (action, props, event) {
-        if (event === void 0) { event = null; }
+        if (event === void 0) { event = void (0); }
         var otherEventParam = [];
         for (var _i = 3; _i < arguments.length; _i++) {
             otherEventParam[_i - 3] = arguments[_i];
@@ -94,7 +94,7 @@ var Action = /** @class */ (function () {
     };
     Action.prototype.invoke = function (actions, props, event) {
         var _this = this;
-        if (event === void 0) { event = null; }
+        if (event === void 0) { event = void (0); }
         var otherEventParam = [];
         for (var _i = 3; _i < arguments.length; _i++) {
             otherEventParam[_i - 3] = arguments[_i];
@@ -105,7 +105,7 @@ var Action = /** @class */ (function () {
             return before && _this.invoke.apply(_this, __spreadArray([before, props, event], otherEventParam, false));
         })).pipe(observableMap(function () { return forkJoin(_actions.map(function (action) {
             return _this.execute.apply(_this, __spreadArray([action, props, event], otherEventParam, false));
-        })); }), observableTap(function (result) { return !props ? of(null) : toForkJoin(_actions.map(function (action, index) {
+        })); }), observableTap(function (result) { return !props ? of(void (0)) : toForkJoin(_actions.map(function (action, index) {
             return action.type && _this.invokeCalculators.apply(_this, __spreadArray([action, props, result[index]], otherEventParam, false));
         })); }), observableTap(function (result) { return toForkJoin(_actions.map(function (_a, index) {
             var after = _a.after;

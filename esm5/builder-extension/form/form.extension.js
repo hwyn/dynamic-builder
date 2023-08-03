@@ -73,9 +73,8 @@ var FormExtension = /** @class */ (function (_super) {
         var _c;
         var binding = _a.binding;
         var builderField = _b.builderField, actionEvent = _b.actionEvent;
-        var visibility = builderField.visibility;
         var value = this.isDomEvent(actionEvent) ? actionEvent.target.value : actionEvent;
-        this.builder.showField(visibility) && this.setValueToModel(binding, value);
+        this.builder.showField(builderField.visibility) && this.setValueToModel(binding, value);
         (_c = builderField.control) === null || _c === void 0 ? void 0 : _c.patchValue(value);
         return actionEvent;
     };

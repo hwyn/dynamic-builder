@@ -42,7 +42,7 @@ var Grid = /** @class */ (function () {
         });
         return tslib_1.__assign(tslib_1.__assign({ id: id }, other), { additional: groupAdditional });
     };
-    Grid.prototype.getViewGrip = function (props) {
+    Grid.prototype.getViewGrid = function (props) {
         var config = (0, utility_1.cloneDeepPlain)(this.config);
         var _a = config.additional, additional = _a === void 0 ? [] : _a, _b = config.className, className = _b === void 0 ? '' : _b, style = config.style;
         var _c = props.className, propsClassName = _c === void 0 ? '' : _c, propsStyle = props.style;

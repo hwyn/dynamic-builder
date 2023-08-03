@@ -83,7 +83,7 @@ var Action = /** @class */ (function () {
         return (0, rxjs_1.forkJoin)(calculatorsInvokes.map(function (invokeCalculators) { return invokeCalculators.apply(void 0, tslib_1.__spreadArray([value], otherEventParam, false)); }));
     };
     Action.prototype.execute = function (action, props, event) {
-        if (event === void 0) { event = null; }
+        if (event === void 0) { event = void (0); }
         var otherEventParam = [];
         for (var _i = 3; _i < arguments.length; _i++) {
             otherEventParam[_i - 3] = arguments[_i];
@@ -97,7 +97,7 @@ var Action = /** @class */ (function () {
     };
     Action.prototype.invoke = function (actions, props, event) {
         var _this = this;
-        if (event === void 0) { event = null; }
+        if (event === void 0) { event = void (0); }
         var otherEventParam = [];
         for (var _i = 3; _i < arguments.length; _i++) {
             otherEventParam[_i - 3] = arguments[_i];
@@ -108,7 +108,7 @@ var Action = /** @class */ (function () {
             return before && _this.invoke.apply(_this, tslib_1.__spreadArray([before, props, event], otherEventParam, false));
         })).pipe((0, utility_1.observableMap)(function () { return (0, rxjs_1.forkJoin)(_actions.map(function (action) {
             return _this.execute.apply(_this, tslib_1.__spreadArray([action, props, event], otherEventParam, false));
-        })); }), (0, utility_1.observableTap)(function (result) { return !props ? (0, rxjs_1.of)(null) : (0, utility_1.toForkJoin)(_actions.map(function (action, index) {
+        })); }), (0, utility_1.observableTap)(function (result) { return !props ? (0, rxjs_1.of)(void (0)) : (0, utility_1.toForkJoin)(_actions.map(function (action, index) {
             return action.type && _this.invokeCalculators.apply(_this, tslib_1.__spreadArray([action, props, result[index]], otherEventParam, false));
         })); }), (0, utility_1.observableTap)(function (result) { return (0, utility_1.toForkJoin)(_actions.map(function (_a, index) {
             var after = _a.after;

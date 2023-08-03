@@ -35,8 +35,8 @@ var CheckVisibilityExtension = /** @class */ (function (_super) {
         delete field.checkVisibility;
     };
     CheckVisibilityExtension.prototype.serializeCheckVisibilityConfig = function (jsonField) {
-        var jsonCheckVisibility = jsonField.checkVisibility;
-        return this.serializeCalculatorConfig(jsonCheckVisibility, CHECK_VISIBILITY, this.createDependents([LOAD, REFRESH_VISIBILITY]));
+        var checkVisibility = jsonField.checkVisibility;
+        return this.serializeCalculatorConfig(checkVisibility, CHECK_VISIBILITY, this.createDependents([LOAD, REFRESH_VISIBILITY]));
     };
     CheckVisibilityExtension.prototype.checkVisibilityAfter = function (defaultVisibility) {
         return function (_a) {

@@ -28,8 +28,8 @@ export class CheckVisibilityExtension extends BasicExtension {
         delete field.checkVisibility;
     }
     serializeCheckVisibilityConfig(jsonField) {
-        const { checkVisibility: jsonCheckVisibility } = jsonField;
-        return this.serializeCalculatorConfig(jsonCheckVisibility, CHECK_VISIBILITY, this.createDependents([LOAD, REFRESH_VISIBILITY]));
+        const { checkVisibility } = jsonField;
+        return this.serializeCalculatorConfig(checkVisibility, CHECK_VISIBILITY, this.createDependents([LOAD, REFRESH_VISIBILITY]));
     }
     checkVisibilityAfter(defaultVisibility) {
         return ({ actionEvent = defaultVisibility, builderField, builder }) => {

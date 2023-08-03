@@ -52,7 +52,7 @@ let Action = class Action {
         calculatorsInvokes.push(this.invokeCallCalculators((builder === null || builder === void 0 ? void 0 : builder.calculators) || [], actionProps, props));
         return forkJoin(calculatorsInvokes.map((invokeCalculators) => invokeCalculators(value, ...otherEventParam)));
     }
-    execute(action, props, event = null, ...otherEventParam) {
+    execute(action, props, event = void (0), ...otherEventParam) {
         const { name, handler, stop } = action;
         const e = this.createEvent(event, otherEventParam);
         if (stop && !isEmpty(event) && (event === null || event === void 0 ? void 0 : event.stopPropagation)) {
@@ -60,11 +60,11 @@ let Action = class Action {
         }
         return name || handler ? this.executeAction(action, this.getActionContext(props), e) : of(event);
     }
-    invoke(actions, props, event = null, ...otherEventParam) {
+    invoke(actions, props, event = void (0), ...otherEventParam) {
         const _actions = (Array.isArray(actions) ? actions : [actions]).map(serializeAction);
         return toForkJoin(_actions.map(({ before }) => before && this.invoke(before, props, event, ...otherEventParam))).pipe(observableMap(() => forkJoin(_actions.map((action) => {
             return this.execute(action, props, event, ...otherEventParam);
-        }))), observableTap((result) => !props ? of(null) : toForkJoin(_actions.map((action, index) => {
+        }))), observableTap((result) => !props ? of(void (0)) : toForkJoin(_actions.map((action, index) => {
             return action.type && this.invokeCalculators(action, props, result[index], ...otherEventParam);
         }))), observableTap((result) => toForkJoin(_actions.map(({ after }, index) => {
             return after && this.invoke(after, props, result[index], ...otherEventParam);

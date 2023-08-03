@@ -63,9 +63,8 @@ export class FormExtension extends BasicExtension {
     }
     createChange({ binding }, { builderField, actionEvent }) {
         var _a;
-        const { visibility } = builderField;
         const value = this.isDomEvent(actionEvent) ? actionEvent.target.value : actionEvent;
-        this.builder.showField(visibility) && this.setValueToModel(binding, value);
+        this.builder.showField(builderField.visibility) && this.setValueToModel(binding, value);
         (_a = builderField.control) === null || _a === void 0 ? void 0 : _a.patchValue(value);
         return actionEvent;
     }
