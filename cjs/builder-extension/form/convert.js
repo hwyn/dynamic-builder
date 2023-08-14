@@ -3,8 +3,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Convert = void 0;
 var tslib_1 = require("tslib");
 var di_1 = require("@fm/di");
-var lodash_1 = require("lodash");
+var rxjs_1 = require("rxjs");
 var token_1 = require("../../token");
+var basic_extension_1 = require("../basic/basic.extension");
 var base_convert_1 = require("./base-convert");
 var Convert = /** @class */ (function () {
     function Convert(injector, getType) {
@@ -20,10 +21,10 @@ var Convert = /** @class */ (function () {
     Convert.prototype.getConvertObj = function (convertConfig, builder, builderField) {
         var converter;
         var context = { injector: this.injector, convertConfig: convertConfig, builder: builder, builderField: builderField };
-        var name = (0, lodash_1.isString)(convertConfig) ? convertConfig : convertConfig === null || convertConfig === void 0 ? void 0 : convertConfig.name;
-        var builderHandler = builder.getExecuteHandler(name, false);
-        if (builderHandler) {
-            builderHandler(new base_convert_1.BaseConvert().invoke(context)).subscribe(function (obj) { return converter = obj; });
+        var _a = (0, basic_extension_1.serializeAction)(convertConfig), name = _a.name, _b = _a.handler, handler = _b === void 0 ? name && builder.getExecuteHandler(name, false) : _b;
+        if (handler) {
+            var result = handler(new base_convert_1.BaseConvert().invoke(context));
+            ((0, rxjs_1.isObservable)(result) ? result : (0, rxjs_1.of)(result)).subscribe(function (obj) { return converter = obj; });
         }
         if (!converter) {
             var convert = convertConfig instanceof base_convert_1.BaseConvert ? convertConfig : this.getType(token_1.CONVERT_CONFIG, name);

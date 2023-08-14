@@ -17,7 +17,7 @@ export class FormExtension extends BasicExtension {
     }
     createMergeControl([jsonField, builderField]) {
         const changeType = this.getChangeType(jsonField);
-        const { id, updateOn = changeType, checkVisibility, validators } = jsonField;
+        const { id, checkVisibility } = jsonField;
         const builderId = this.builder.id;
         this.addChangeAction(changeType, jsonField, builderField);
         this.pushCalculators(jsonField, [{
@@ -30,17 +30,13 @@ export class FormExtension extends BasicExtension {
             ...checkVisibility ? [{
                     action: this.bindCalculatorAction(this.createVisibility.bind(this, jsonField)),
                     dependents: { type: CHECK_VISIBILITY, fieldId: id }
-                }] : [],
-            ...validators && validators.length ? [{
-                    action: this.bindCalculatorAction(this.createValidity.bind(this)),
-                    dependents: this.toArray(updateOn).map((type) => ({ type: type, fieldId: id }))
                 }] : []]);
     }
     addChangeAction(changeType, jsonField, builderField) {
-        const { id, actions = [], binding } = jsonField;
+        const { actions = [], binding } = jsonField;
         const { convert, intercept = '' } = binding;
         const actionIndex = actions.findIndex(({ type }) => type === changeType);
-        const changeAfter = this.bindCalculatorAction(this.detectChanges.bind(this, id));
+        const changeAfter = this.bindCalculatorAction(this.detectChanges.bind(this, builderField));
         const newAction = { type: changeType, after: changeAfter };
         const bindingAction = this.bindCalculatorAction(this.createChange.bind(this, jsonField));
         if (actions[actionIndex]) {
@@ -49,7 +45,9 @@ export class FormExtension extends BasicExtension {
         jsonField.actions = actions;
         newAction.before = intercept ? Object.assign(Object.assign({}, this.bindCalculatorAction(intercept)), { after: bindingAction }) : bindingAction;
         actionIndex === -1 ? actions.push(newAction) : actions[actionIndex] = newAction;
-        this.convertMap.set(binding, this.convertIntercept.getConvertObj(convert, this.builder, builderField));
+        if (convert) {
+            this.convertMap.set(binding, this.convertIntercept.getConvertObj(convert, this.builder, builderField));
+        }
     }
     addControl(jsonField, builderField) {
         const { binding } = jsonField;
@@ -59,7 +57,6 @@ export class FormExtension extends BasicExtension {
         this.executeChangeEvent(jsonField, value);
         this.changeVisibility(builderField, binding, builderField.visibility);
         delete builderField.field.binding;
-        delete builderField.field.updateOn;
     }
     createChange({ binding }, { builderField, actionEvent }) {
         var _a;
@@ -67,9 +64,6 @@ export class FormExtension extends BasicExtension {
         this.builder.showField(builderField.visibility) && this.setValueToModel(binding, value);
         (_a = builderField.control) === null || _a === void 0 ? void 0 : _a.patchValue(value);
         return actionEvent;
-    }
-    createValidity({ builderField: { control } }) {
-        control === null || control === void 0 ? void 0 : control.updateValueAndValidity();
     }
     createVisibility({ binding }, { builderField, actionEvent }) {
         const { control, visibility = Visibility.visible } = builderField;
@@ -92,8 +86,7 @@ export class FormExtension extends BasicExtension {
             this.executeChangeEvent(jsonField, this.getValueToModel(jsonField.binding));
         }
     }
-    detectChanges(id) {
-        const { instance } = this.builder.getFieldById(id);
+    detectChanges({ instance }) {
         instance === null || instance === void 0 ? void 0 : instance.detectChanges();
     }
     getChangeType(jsonField) {
@@ -105,7 +98,7 @@ export class FormExtension extends BasicExtension {
         return this.convertIntercept.toView(this.convertMap.get(binding), this.cache.viewModel.getBindValue(path, initialValue));
     }
     setValueToModel(binding, value) {
-        this.cache.viewModel.setBindValue(binding.path, this.convertIntercept.toModel(this.convertMap.get(binding), value));
+        binding.path && this.cache.viewModel.setBindValue(binding.path, this.convertIntercept.toModel(this.convertMap.get(binding), value));
     }
     deleteValueToModel(binding) {
         this.cache.viewModel.deleteBindValue(binding.path);

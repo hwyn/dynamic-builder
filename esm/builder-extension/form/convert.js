@@ -1,7 +1,8 @@
 import { __decorate, __metadata, __param } from "tslib";
 import { Inject, Injector } from '@fm/di';
-import { isString } from 'lodash';
+import { isObservable, of } from 'rxjs';
 import { CONVERT_CONFIG, GET_TYPE } from '../../token';
+import { serializeAction } from '../basic/basic.extension';
 import { BaseConvert } from './base-convert';
 let Convert = class Convert {
     constructor(injector, getType) {
@@ -17,10 +18,10 @@ let Convert = class Convert {
     getConvertObj(convertConfig, builder, builderField) {
         let converter;
         const context = { injector: this.injector, convertConfig, builder, builderField };
-        const name = isString(convertConfig) ? convertConfig : convertConfig === null || convertConfig === void 0 ? void 0 : convertConfig.name;
-        const builderHandler = builder.getExecuteHandler(name, false);
-        if (builderHandler) {
-            builderHandler(new BaseConvert().invoke(context)).subscribe((obj) => converter = obj);
+        const { name, handler = name && builder.getExecuteHandler(name, false) } = serializeAction(convertConfig);
+        if (handler) {
+            const result = handler(new BaseConvert().invoke(context));
+            (isObservable(result) ? result : of(result)).subscribe((obj) => converter = obj);
         }
         if (!converter) {
             const convert = convertConfig instanceof BaseConvert ? convertConfig : this.getType(CONVERT_CONFIG, name);

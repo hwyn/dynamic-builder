@@ -10,7 +10,6 @@ export declare class FormExtension extends BasicExtension {
     private addChangeAction;
     private addControl;
     private createChange;
-    private createValidity;
     private createVisibility;
     private changeVisibility;
     private executeChangeEvent;
