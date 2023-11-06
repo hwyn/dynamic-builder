@@ -28,9 +28,9 @@ var BuilderContext = /** @class */ (function () {
                 var _providers = [_contextProvs, NB, providers, { provide: META_TYPE, useExisting: NB }];
                 _injector = Injector.create([_providers, { provide: SCOPE_PROPS, useValue: { props: props } }], _injector);
                 context === null || context === void 0 ? void 0 : context.registryInjector(_injector);
-                model = _injector.get(BuilderScope).loadForBuild(props);
+                model = _injector.get(BuilderScope);
             }
-            return model || _injector.get(NB, InjectFlags.NonCache).loadForBuild(props);
+            return (model || _injector.get(NB, InjectFlags.NonCache)).loadForBuild(props);
         };
     };
     BuilderContext.prototype.registryInjector = function (injector) {

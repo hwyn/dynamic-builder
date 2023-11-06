@@ -104,14 +104,14 @@ var ReadConfigExtension = /** @class */ (function (_super) {
             if (metaType && (executeHandler = metaType[actionName])) {
                 return funcToObservable(mp.proxyMethodAsync(metaType, actionName));
             }
-            if (!isSelf && (executeHandler = (_a = builder.parent) === null || _a === void 0 ? void 0 : _a.getExecuteHandler(actionName, isSelf))) {
-                return executeHandler;
-            }
             if (isFunction(getExecuteHandler) && (executeHandler = getExecuteHandler.call(_this.builder, actionName))) {
                 return executeHandler;
             }
             if (isFunction(executeHandler = builder[actionName])) {
                 return funcToObservable(mp.proxyMethodAsync(builder, actionName));
+            }
+            if (!isSelf && (executeHandler = (_a = builder.parent) === null || _a === void 0 ? void 0 : _a.getExecuteHandler(actionName, isSelf))) {
+                return executeHandler;
             }
         };
     };

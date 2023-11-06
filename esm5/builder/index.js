@@ -1,3 +1,3 @@
 export { Visibility } from './consts';
-export { InputProps, makeBuilderDecorator, RootModel } from './decorator';
+export { DynamicModel, InputProps, makeBuilderDecorator, makeCustomInputProps, RootModel } from './decorator';
 export * from './type-api';
