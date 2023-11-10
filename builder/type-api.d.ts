@@ -42,6 +42,7 @@ export interface BuilderField extends Field {
     type: string;
     element: any;
     field: Field;
+    fieldConfig: BuilderJsonField;
     visibility?: Visibility;
 }
 export interface BuilderJsonField {

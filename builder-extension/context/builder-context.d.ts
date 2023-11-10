@@ -4,7 +4,7 @@ import { BuilderContext as BasicBuilderContext } from '../../builder/builder-con
 import { BaseAction } from '../action';
 import { BasicExtension } from '../basic/basic.extension';
 import { BaseConvert } from '../form/base-convert';
-import { FormOptions } from '../form/type-api';
+import type { FormOptions } from '../form/type-api';
 import { Grid } from '../grid/grid';
 import { BuilderModelExtensions } from '../type-api';
 export { BaseType } from './base-type';

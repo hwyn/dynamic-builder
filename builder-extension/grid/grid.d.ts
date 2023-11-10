@@ -1,9 +1,11 @@
-import { BuilderModelExtensions, GridType } from '../type-api';
+import type { BuilderJsonField } from '../../builder/type-api';
+import type { BuilderModelExtensions, GridType } from '../type-api';
 export declare class Grid {
-    private builder;
-    private config;
-    constructor(json: any, builder: BuilderModelExtensions);
-    private serializationConfig;
+    protected builder: BuilderModelExtensions;
+    protected config: GridType;
+    static create(json: BuilderJsonField, builder: BuilderModelExtensions): Grid;
+    constructor(json: BuilderJsonField, builder: BuilderModelExtensions);
+    protected serializationConfig(gridConfig: any): any;
     getViewGrid(props: any): GridType;
     protected destroy(): void;
 }

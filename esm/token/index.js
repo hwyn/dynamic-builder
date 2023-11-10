@@ -11,6 +11,7 @@ export const META_TYPE = InjectorToken.get('META_TYPE');
 export const META_PROPS = InjectorToken.get('META_PROPS');
 export const SCOPE_PROPS = InjectorToken.get('SCOPE_PROPS');
 export const SCOPE_MODEL = InjectorToken.get('SCOPE_MODEL');
+export const GRID_PARSE = InjectorToken.get('GRID_PARSE');
 export const FACTORY_BUILDER = InjectorToken.get('FACTORY_BUILDER');
 export const FORM_CONTROL = InjectorToken.get('FORM_CONTROL');
 export const LAYOUT_ELEMENT = InjectorToken.get('LAYOUT_ELEMENT');

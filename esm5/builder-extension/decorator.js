@@ -13,11 +13,13 @@ var ActionParams;
     ActionParams["otherEvent"] = "otherEvent";
     ActionParams["instanceRef"] = "instanceRef";
     ActionParams["actionProps"] = "actionProps";
+    ActionParams["fieldConfig"] = "fieldConfig";
 })(ActionParams || (ActionParams = {}));
 function getObjectByKey(obj, _a) {
     var key = _a.key;
     return key ? obj && get(obj, key) : obj;
 }
+// eslint-disable-next-line complexity
 function transform(annotation, value, baseAction) {
     var _a;
     var otherEvent = [];
@@ -34,6 +36,7 @@ function transform(annotation, value, baseAction) {
         case ActionParams.field: return getObjectByKey(baseAction.builderField, annotation);
         case ActionParams.actionProps: return getObjectByKey(baseAction.actionProps, annotation);
         case ActionParams.viewModel: return getObjectByKey((_a = baseAction.builder) === null || _a === void 0 ? void 0 : _a.viewModel, annotation);
+        case ActionParams.fieldConfig: return getObjectByKey(baseAction.builderField.fieldConfig, annotation);
     }
     return value;
 }
@@ -45,6 +48,7 @@ var keyProps = function (key) { return props({ key: key }); };
 export var FieldRef = makeParamDecorator(ActionParams.field, keyProps);
 export var BuilderRef = makeParamDecorator(ActionParams.builder, props);
 export var InterceptRef = makeParamDecorator(ActionParams.intercept, props);
+export var FieldConfigRef = makeParamDecorator(ActionParams.field, keyProps);
 export var ViewModelRef = makeParamDecorator(ActionParams.viewModel, keyProps);
 export var InstanceRef = makeParamDecorator(ActionParams.instanceRef, keyProps);
 export var Event = makeParamDecorator(ActionParams.event, keyProps);

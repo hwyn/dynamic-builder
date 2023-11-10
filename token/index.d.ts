@@ -11,6 +11,7 @@ export declare const META_TYPE: InjectorToken;
 export declare const META_PROPS: InjectorToken;
 export declare const SCOPE_PROPS: InjectorToken;
 export declare const SCOPE_MODEL: InjectorToken;
+export declare const GRID_PARSE: InjectorToken;
 export declare const FACTORY_BUILDER: InjectorToken;
 export declare const FORM_CONTROL: InjectorToken;
 export declare const LAYOUT_ELEMENT: InjectorToken;

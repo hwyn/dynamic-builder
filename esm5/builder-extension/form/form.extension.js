@@ -1,4 +1,4 @@
-import { __assign, __extends, __spreadArray } from "tslib";
+import { __assign, __extends } from "tslib";
 import { isEmpty } from 'lodash';
 import { Visibility } from '../../builder';
 import { CONVERT_INTERCEPT, FORM_CONTROL } from '../../token';
@@ -24,19 +24,19 @@ var FormExtension = /** @class */ (function (_super) {
     FormExtension.prototype.createMergeControl = function (_a) {
         var jsonField = _a[0], builderField = _a[1];
         var changeType = this.getChangeType(jsonField);
-        var id = jsonField.id, checkVisibility = jsonField.checkVisibility;
         var builderId = this.builder.id;
         this.addChangeAction(changeType, jsonField, builderField);
-        this.pushCalculators(jsonField, __spreadArray([{
+        this.pushCalculators(jsonField, [{
                 action: this.bindCalculatorAction(this.addControl.bind(this, jsonField, builderField)),
                 dependents: { type: LOAD_ACTION, fieldId: builderId }
             }, {
                 action: this.bindCalculatorAction(this.createNotifyChange.bind(this, jsonField)),
                 dependents: { type: NOTIFY_MODEL_CHANGE, fieldId: builderId }
-            }], checkVisibility ? [{
+            },
+            {
                 action: this.bindCalculatorAction(this.createVisibility.bind(this, jsonField)),
-                dependents: { type: CHECK_VISIBILITY, fieldId: id }
-            }] : [], true));
+                dependents: { type: CHECK_VISIBILITY, fieldId: jsonField.id }
+            }]);
     };
     FormExtension.prototype.addChangeAction = function (changeType, jsonField, builderField) {
         var _a = jsonField.actions, actions = _a === void 0 ? [] : _a, binding = jsonField.binding;

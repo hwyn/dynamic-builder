@@ -19,6 +19,7 @@ export declare const GRID = "grid";
 export declare const LAYOUT = "layout";
 export declare const ELEMENT = "Element";
 export declare const LAYOUT_ID = "grid-id-model";
+export declare const LAYOUT_FIELD = "layout-field";
 export declare const CURRENT = "current";
 export declare const INSTANCE = "instance";
 export declare const EVENTS = "events";

@@ -19,6 +19,7 @@ export var GRID = 'grid';
 export var LAYOUT = 'layout';
 export var ELEMENT = 'Element';
 export var LAYOUT_ID = 'grid-id-model';
+export var LAYOUT_FIELD = 'layout-field';
 export var CURRENT = 'current';
 export var INSTANCE = 'instance';
 export var EVENTS = 'events';

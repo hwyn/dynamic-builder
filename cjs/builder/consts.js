@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Visibility = void 0;
+exports.FIELD_CONFIG_ATTR = exports.Visibility = void 0;
 var Visibility;
 (function (Visibility) {
     Visibility["none"] = "none";
@@ -10,3 +10,4 @@ var Visibility;
     Visibility["disabled"] = "disabled";
     Visibility["required"] = "required";
 })(Visibility = exports.Visibility || (exports.Visibility = {}));
+exports.FIELD_CONFIG_ATTR = 'fieldConfig';

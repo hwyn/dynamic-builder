@@ -17,7 +17,11 @@ export declare class LifeCycleExtension extends BasicExtension {
     protected invokeLifeCycle(type: string, event?: any, otherEvent?: any): Observable<any>;
     protected serializeCalculators(): void;
     protected linkCalculators(): void;
-    protected linkCalculator(calculator: OriginCalculators, nonSelfCalculator?: boolean): void;
+    protected linkCalculator(calculator: OriginCalculators & {
+        dependent: {
+            nonSelf?: boolean;
+        };
+    }, nonSelfCalculator?: boolean): void;
     private linkOtherCalculator;
     private createCalculators;
     private getNonSelfCalculators;

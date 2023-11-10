@@ -52,13 +52,14 @@ export class LifeCycleExtension extends BasicExtension {
         this.getNonSelfCalculators().forEach((calculator) => this.linkCalculator(calculator, true));
         this.calculators = this.calculators.filter((c) => !this.nonSelfCalculators.includes(c));
     }
+    // eslint-disable-next-line complexity
     linkCalculator(calculator, nonSelfCalculator) {
-        const { type, fieldId } = calculator.dependent;
+        const { type, fieldId, nonSelf } = calculator.dependent;
         const sourceField = this.getJsonFieldById(fieldId) || this.json;
         sourceField.actions = this.toArray(sourceField.actions || []);
         const { actions = [], id: sourceId } = sourceField;
         const isBuildCalculator = this.isBuildField(sourceField) && this.cache.lifeType.includes(type);
-        const nonCalculator = isBuildCalculator || fieldId !== sourceId;
+        const nonCalculator = nonSelf || isBuildCalculator || fieldId !== sourceId;
         if (nonCalculator && !nonSelfCalculator) {
             this.nonSelfCalculators.push(calculator);
             !isBuildCalculator && this.linkOtherCalculator(calculator);

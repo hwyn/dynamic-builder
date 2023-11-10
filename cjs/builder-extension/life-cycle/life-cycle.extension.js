@@ -67,13 +67,14 @@ var LifeCycleExtension = /** @class */ (function (_super) {
         this.getNonSelfCalculators().forEach(function (calculator) { return _this.linkCalculator(calculator, true); });
         this.calculators = this.calculators.filter(function (c) { return !_this.nonSelfCalculators.includes(c); });
     };
+    // eslint-disable-next-line complexity
     LifeCycleExtension.prototype.linkCalculator = function (calculator, nonSelfCalculator) {
-        var _a = calculator.dependent, type = _a.type, fieldId = _a.fieldId;
+        var _a = calculator.dependent, type = _a.type, fieldId = _a.fieldId, nonSelf = _a.nonSelf;
         var sourceField = this.getJsonFieldById(fieldId) || this.json;
         sourceField.actions = this.toArray(sourceField.actions || []);
         var _b = sourceField.actions, actions = _b === void 0 ? [] : _b, sourceId = sourceField.id;
         var isBuildCalculator = this.isBuildField(sourceField) && this.cache.lifeType.includes(type);
-        var nonCalculator = isBuildCalculator || fieldId !== sourceId;
+        var nonCalculator = nonSelf || isBuildCalculator || fieldId !== sourceId;
         if (nonCalculator && !nonSelfCalculator) {
             this.nonSelfCalculators.push(calculator);
             !isBuildCalculator && this.linkOtherCalculator(calculator);

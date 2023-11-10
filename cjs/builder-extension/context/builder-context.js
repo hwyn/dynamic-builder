@@ -11,6 +11,7 @@ var attribute_extension_1 = require("../attribute/attribute.extension");
 var datasource_extension_1 = require("../datasource/datasource.extension");
 var convert_1 = require("../form/convert");
 var form_extension_1 = require("../form/form.extension");
+var grid_1 = require("../grid/grid");
 var grid_extension_1 = require("../grid/grid.extension");
 var instance_extension_1 = require("../instance/instance.extension");
 var life_cycle_extension_1 = require("../life-cycle/life-cycle.extension");
@@ -131,6 +132,7 @@ var BuilderContext = /** @class */ (function (_super) {
         injector.set(token_1.GET_TYPE, { provide: token_1.GET_TYPE, useValue: this.getType.bind(this) });
         injector.set(token_1.ACTION_INTERCEPT, { provide: token_1.ACTION_INTERCEPT, useClass: actions_1.Action });
         injector.set(token_1.CONVERT_INTERCEPT, { provide: token_1.CONVERT_INTERCEPT, useClass: convert_1.Convert });
+        injector.set(token_1.GRID_PARSE, { provide: token_1.GRID_PARSE, useFactory: this.useFactory(grid_1.Grid.create) });
         this.canExtends(injector);
     };
     return BuilderContext;

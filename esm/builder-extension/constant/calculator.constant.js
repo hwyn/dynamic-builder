@@ -19,6 +19,7 @@ export const GRID = 'grid';
 export const LAYOUT = 'layout';
 export const ELEMENT = 'Element';
 export const LAYOUT_ID = 'grid-id-model';
+export const LAYOUT_FIELD = 'layout-field';
 export const CURRENT = 'current';
 export const INSTANCE = 'instance';
 export const EVENTS = 'events';

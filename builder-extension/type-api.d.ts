@@ -17,11 +17,13 @@ export interface Additional {
     fieldRows: BuilderFieldExtensions[][];
 }
 interface Layout {
+    container?: string;
     group?: number;
     row?: number;
     column: Column;
 }
 export interface CalculatorsDependent {
+    nonSelf?: boolean;
     fieldId?: string;
     type: TypeEvent;
 }
@@ -43,11 +45,12 @@ export interface ControlConfig {
     changeType?: TypeEvent;
 }
 export interface GridType {
-    spacing: Spacing;
-    justify: Justify;
-    alignItems: AlignItems;
-    groups: Column[];
+    spacing?: Spacing;
+    justify?: Justify;
+    alignItems?: AlignItems;
+    groups?: Column[];
     element?: any;
+    container?: string;
     className?: string;
     style?: {
         [key: string]: string;

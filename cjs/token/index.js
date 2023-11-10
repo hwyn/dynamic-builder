@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.GET_JSON_CONFIG = exports.LAYOUT_ELEMENT = exports.FORM_CONTROL = exports.FACTORY_BUILDER = exports.SCOPE_MODEL = exports.SCOPE_PROPS = exports.META_PROPS = exports.META_TYPE = exports.LOAD_BUILDER_CONFIG = exports.BUILDER_EXTENSION = exports.CONVERT_INTERCEPT = exports.ACTION_INTERCEPT = exports.CONVERT_CONFIG = exports.ACTIONS_CONFIG = exports.GET_TYPE = exports.UI_ELEMENT = void 0;
+exports.GET_JSON_CONFIG = exports.LAYOUT_ELEMENT = exports.FORM_CONTROL = exports.FACTORY_BUILDER = exports.GRID_PARSE = exports.SCOPE_MODEL = exports.SCOPE_PROPS = exports.META_PROPS = exports.META_TYPE = exports.LOAD_BUILDER_CONFIG = exports.BUILDER_EXTENSION = exports.CONVERT_INTERCEPT = exports.ACTION_INTERCEPT = exports.CONVERT_CONFIG = exports.ACTIONS_CONFIG = exports.GET_TYPE = exports.UI_ELEMENT = void 0;
 var di_1 = require("@fm/di");
 exports.UI_ELEMENT = di_1.InjectorToken.get('UI_ELEMENT');
 exports.GET_TYPE = di_1.InjectorToken.get('GET_TYPE');
@@ -14,6 +14,7 @@ exports.META_TYPE = di_1.InjectorToken.get('META_TYPE');
 exports.META_PROPS = di_1.InjectorToken.get('META_PROPS');
 exports.SCOPE_PROPS = di_1.InjectorToken.get('SCOPE_PROPS');
 exports.SCOPE_MODEL = di_1.InjectorToken.get('SCOPE_MODEL');
+exports.GRID_PARSE = di_1.InjectorToken.get('GRID_PARSE');
 exports.FACTORY_BUILDER = di_1.InjectorToken.get('FACTORY_BUILDER');
 exports.FORM_CONTROL = di_1.InjectorToken.get('FORM_CONTROL');
 exports.LAYOUT_ELEMENT = di_1.InjectorToken.get('LAYOUT_ELEMENT');

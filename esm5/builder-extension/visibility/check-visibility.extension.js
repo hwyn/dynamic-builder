@@ -1,12 +1,7 @@
 import { __extends } from "tslib";
-import { isEmpty, isUndefined } from 'lodash';
+import { isEmpty } from 'lodash';
 import { BasicExtension } from '../basic/basic.extension';
 import { CHECK_VISIBILITY, LOAD, LOAD_ACTION, REFRESH_VISIBILITY } from '../constant/calculator.constant';
-function getParentVisibility(builder) {
-    var _a;
-    var id = builder.id, parent = builder.parent;
-    return parent && ((_a = parent.getFieldById(id)) === null || _a === void 0 ? void 0 : _a.visibility);
-}
 var CheckVisibilityExtension = /** @class */ (function (_super) {
     __extends(CheckVisibilityExtension, _super);
     function CheckVisibilityExtension() {
@@ -49,21 +44,32 @@ var CheckVisibilityExtension = /** @class */ (function (_super) {
     };
     CheckVisibilityExtension.prototype.removeOnEvent = function (_a) {
         var builder = _a.builder;
-        builder.$$cache.fields.forEach(function (field) {
-            field.onCheckVisibility = field.events.onCheckVisibility;
-            delete field.events.onCheckVisibility;
+        builder.$$cache.fields.forEach(function (_a) {
+            var events = _a.events;
+            return delete events.onCheckVisibility;
         });
     };
     CheckVisibilityExtension.prototype.checkNeedOrDefaultVisibility = function (jsonField) {
+        var _a, _b;
         var visibility = jsonField.visibility, checkVisibility = jsonField.checkVisibility;
-        var needCheck = !isUndefined(checkVisibility || visibility) || getParentVisibility(this.builder);
-        if (needCheck && !checkVisibility) {
-            jsonField.checkVisibility = function (_a) {
-                var builder = _a.builder;
-                return visibility || getParentVisibility(builder);
+        if (checkVisibility || visibility) {
+            return checkVisibility;
+        }
+        var parent = this.builder.parent;
+        var parentField = parent && ((_b = parent.getFieldById((_a = this.builder) === null || _a === void 0 ? void 0 : _a.id)) === null || _b === void 0 ? void 0 : _b.fieldConfig);
+        if (parentField === null || parentField === void 0 ? void 0 : parentField.visibility) {
+            this.getBuilderFieldById(jsonField.id).visibility = parentField === null || parentField === void 0 ? void 0 : parentField.visibility;
+        }
+        if (parentField === null || parentField === void 0 ? void 0 : parentField.checkVisibility) {
+            jsonField.checkVisibility = {
+                action: function (_a) {
+                    var actionEvent = _a.actionEvent;
+                    return actionEvent;
+                },
+                dependents: { fieldId: parentField.id, type: CHECK_VISIBILITY, nonSelf: true }
             };
         }
-        return needCheck;
+        return jsonField.checkVisibility;
     };
     CheckVisibilityExtension.prototype.destroy = function () {
         this.unDefineProperty(this.builder, [REFRESH_VISIBILITY]);

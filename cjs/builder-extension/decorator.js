@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Output = exports.ActionProps = exports.OtherEvent = exports.CallLink = exports.Event = exports.InstanceRef = exports.ViewModelRef = exports.InterceptRef = exports.BuilderRef = exports.FieldRef = void 0;
+exports.Output = exports.ActionProps = exports.OtherEvent = exports.CallLink = exports.Event = exports.InstanceRef = exports.ViewModelRef = exports.FieldConfigRef = exports.InterceptRef = exports.BuilderRef = exports.FieldRef = void 0;
 var tslib_1 = require("tslib");
 var di_1 = require("@fm/di");
 var lodash_1 = require("lodash");
@@ -16,11 +16,13 @@ var ActionParams;
     ActionParams["otherEvent"] = "otherEvent";
     ActionParams["instanceRef"] = "instanceRef";
     ActionParams["actionProps"] = "actionProps";
+    ActionParams["fieldConfig"] = "fieldConfig";
 })(ActionParams || (ActionParams = {}));
 function getObjectByKey(obj, _a) {
     var key = _a.key;
     return key ? obj && (0, lodash_1.get)(obj, key) : obj;
 }
+// eslint-disable-next-line complexity
 function transform(annotation, value, baseAction) {
     var _a;
     var otherEvent = [];
@@ -37,6 +39,7 @@ function transform(annotation, value, baseAction) {
         case ActionParams.field: return getObjectByKey(baseAction.builderField, annotation);
         case ActionParams.actionProps: return getObjectByKey(baseAction.actionProps, annotation);
         case ActionParams.viewModel: return getObjectByKey((_a = baseAction.builder) === null || _a === void 0 ? void 0 : _a.viewModel, annotation);
+        case ActionParams.fieldConfig: return getObjectByKey(baseAction.builderField.fieldConfig, annotation);
     }
     return value;
 }
@@ -48,6 +51,7 @@ var keyProps = function (key) { return props({ key: key }); };
 exports.FieldRef = (0, di_1.makeParamDecorator)(ActionParams.field, keyProps);
 exports.BuilderRef = (0, di_1.makeParamDecorator)(ActionParams.builder, props);
 exports.InterceptRef = (0, di_1.makeParamDecorator)(ActionParams.intercept, props);
+exports.FieldConfigRef = (0, di_1.makeParamDecorator)(ActionParams.field, keyProps);
 exports.ViewModelRef = (0, di_1.makeParamDecorator)(ActionParams.viewModel, keyProps);
 exports.InstanceRef = (0, di_1.makeParamDecorator)(ActionParams.instanceRef, keyProps);
 exports.Event = (0, di_1.makeParamDecorator)(ActionParams.event, keyProps);

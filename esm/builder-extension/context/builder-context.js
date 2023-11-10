@@ -1,12 +1,13 @@
 import { getInjectableDef, Injector, setInjectableDef } from '@fm/di';
 import { BuilderContext as BasicBuilderContext } from '../../builder/builder-context';
-import { ACTION_INTERCEPT, ACTIONS_CONFIG, BUILDER_EXTENSION, CONVERT_CONFIG, CONVERT_INTERCEPT, FORM_CONTROL, GET_JSON_CONFIG, GET_TYPE, LAYOUT_ELEMENT, LOAD_BUILDER_CONFIG } from '../../token';
+import { ACTION_INTERCEPT, ACTIONS_CONFIG, BUILDER_EXTENSION, CONVERT_CONFIG, CONVERT_INTERCEPT, FORM_CONTROL, GET_JSON_CONFIG, GET_TYPE, GRID_PARSE, LAYOUT_ELEMENT, LOAD_BUILDER_CONFIG } from '../../token';
 import { Action } from '../action/actions';
 import { ActionExtension } from '../action/actions.extension';
 import { AttributeExtension } from '../attribute/attribute.extension';
 import { DataSourceExtension } from '../datasource/datasource.extension';
 import { Convert } from '../form/convert';
 import { FormExtension } from '../form/form.extension';
+import { Grid } from '../grid/grid';
 import { GridExtension } from '../grid/grid.extension';
 import { InstanceExtension } from '../instance/instance.extension';
 import { LifeCycleExtension } from '../life-cycle/life-cycle.extension';
@@ -111,6 +112,7 @@ export class BuilderContext extends BasicBuilderContext {
         injector.set(GET_TYPE, { provide: GET_TYPE, useValue: this.getType.bind(this) });
         injector.set(ACTION_INTERCEPT, { provide: ACTION_INTERCEPT, useClass: Action });
         injector.set(CONVERT_INTERCEPT, { provide: CONVERT_INTERCEPT, useClass: Convert });
+        injector.set(GRID_PARSE, { provide: GRID_PARSE, useFactory: this.useFactory(Grid.create) });
         this.canExtends(injector);
     }
 }

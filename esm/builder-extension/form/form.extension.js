@@ -17,7 +17,6 @@ export class FormExtension extends BasicExtension {
     }
     createMergeControl([jsonField, builderField]) {
         const changeType = this.getChangeType(jsonField);
-        const { id, checkVisibility } = jsonField;
         const builderId = this.builder.id;
         this.addChangeAction(changeType, jsonField, builderField);
         this.pushCalculators(jsonField, [{
@@ -27,10 +26,10 @@ export class FormExtension extends BasicExtension {
                 action: this.bindCalculatorAction(this.createNotifyChange.bind(this, jsonField)),
                 dependents: { type: NOTIFY_MODEL_CHANGE, fieldId: builderId }
             },
-            ...checkVisibility ? [{
-                    action: this.bindCalculatorAction(this.createVisibility.bind(this, jsonField)),
-                    dependents: { type: CHECK_VISIBILITY, fieldId: id }
-                }] : []]);
+            {
+                action: this.bindCalculatorAction(this.createVisibility.bind(this, jsonField)),
+                dependents: { type: CHECK_VISIBILITY, fieldId: jsonField.id }
+            }]);
     }
     addChangeAction(changeType, jsonField, builderField) {
         const { actions = [], binding } = jsonField;

@@ -8,12 +8,14 @@ var operators_1 = require("rxjs/operators");
 var token_1 = require("../token");
 var utility_1 = require("../utility");
 var builder_engine_service_1 = require("./builder-engine.service");
+var consts_1 = require("./consts");
 var CACHE = "$$cache";
 function createField(field) {
     var _a = (0, utility_1.cloneDeepPlain)(field), id = _a.id, type = _a.type, visibility = _a.visibility, other = tslib_1.__rest(_a, ["id", "type", "visibility"]);
     var element = field.element || (typeof type !== 'string' ? type : this.injector.get(builder_engine_service_1.BuilderEngine).getUiComponent(type));
     var _field = { id: id, type: type, element: element, visibility: visibility, field: other };
     Object.keys(_field).forEach(function (key) { return _field[key] === undefined && delete _field[key]; });
+    Object.defineProperty(_field, consts_1.FIELD_CONFIG_ATTR, (0, utility_1.withValue)(field));
     return _field;
 }
 function parseExtension(privateExtension) {
