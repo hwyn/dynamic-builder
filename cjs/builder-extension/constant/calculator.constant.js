@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Visibility = exports.ORIGIN_NON_SELF_CALCULATORS = exports.ORIGIN_CALCULATORS = exports.NON_SELF_BUILDERS = exports.EVENTS = exports.INSTANCE = exports.CURRENT = exports.LAYOUT_FIELD = exports.LAYOUT_ID = exports.ELEMENT = exports.LAYOUT = exports.GRID = exports.CONTROL = exports.VIEW_MODEL = exports.ADD_EVENT_LISTENER = exports.CHECK_VISIBILITY = exports.DATA_SOURCE = exports.REFRESH_DATA = exports.REFRESH_VISIBILITY = exports.NOTIFY_MODEL_CHANGE = exports.CALCULATOR = exports.LOAD_VIEW_MODEL = exports.LOAD_CONFIG_ACTION = exports.LOAD_ACTION = exports.MOUNTED = exports.DESTROY = exports.CHANGE = exports.LOAD = exports.LOAD_SOURCE = void 0;
+exports.Visibility = exports.ORIGIN_NON_SELF_CALCULATORS = exports.ORIGIN_CALCULATORS = exports.NON_SELF_BUILDERS = exports.EVENTS = exports.INSTANCE = exports.CURRENT = exports.LAYOUT_FIELD = exports.LAYOUT_ID = exports.GRID_ELEMENT = exports.ELEMENT = exports.LAYOUT = exports.GRID = exports.CONTROL = exports.VIEW_MODEL = exports.ADD_EVENT_LISTENER = exports.CHECK_VISIBILITY = exports.DATA_SOURCE = exports.REFRESH_DATA = exports.REFRESH_VISIBILITY = exports.NOTIFY_MODEL_CHANGE = exports.CALCULATOR = exports.LOAD_VIEW_MODEL = exports.LOAD_CONFIG_ACTION = exports.LOAD_ACTION = exports.MOUNTED = exports.DESTROY = exports.CHANGE = exports.LOAD = exports.LOAD_SOURCE = void 0;
 exports.LOAD_SOURCE = 'loadSource';
 exports.LOAD = 'load';
 exports.CHANGE = 'change';
@@ -21,6 +21,7 @@ exports.CONTROL = 'control';
 exports.GRID = 'grid';
 exports.LAYOUT = 'layout';
 exports.ELEMENT = 'Element';
+exports.GRID_ELEMENT = 'gridElement';
 exports.LAYOUT_ID = 'grid-id-model';
 exports.LAYOUT_FIELD = 'layout-field';
 exports.CURRENT = 'current';

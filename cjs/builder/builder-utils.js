@@ -18,26 +18,26 @@ function createField(field) {
     Object.defineProperty(_field, consts_1.FIELD_CONFIG_ATTR, (0, utility_1.withValue)(field));
     return _field;
 }
-function parseExtension(privateExtension) {
-    return privateExtension.map(function (item) { return item.extension ? item : { extension: item }; });
+function parseExtension(extension) {
+    return extension.map(function (item) { return item.extension ? item : { extension: item }; });
 }
 function extendsProviders(child) {
     var _a;
-    (_a = this.privateExtension) === null || _a === void 0 ? void 0 : _a.forEach(function (extensionProvider) {
+    (_a = this.extension) === null || _a === void 0 ? void 0 : _a.forEach(function (extensionProvider) {
         var _a, _b;
         var needExtends = extensionProvider.needExtends, parentExtension = extensionProvider.extension;
-        if (needExtends && !((_a = child.privateExtension) === null || _a === void 0 ? void 0 : _a.some(function (_a) {
+        if (needExtends && !((_a = child.extension) === null || _a === void 0 ? void 0 : _a.some(function (_a) {
             var extension = _a.extension;
             return extension === parentExtension;
         }))) {
-            (_b = child.privateExtension) === null || _b === void 0 ? void 0 : _b.push(extensionProvider);
+            (_b = child.extension) === null || _b === void 0 ? void 0 : _b.push(extensionProvider);
         }
     });
 }
 function addChild(child) {
     child.parent = this;
     this.children.push(child);
-    !(0, lodash_1.isEmpty)(this.privateExtension) && extendsProviders.call(this, child);
+    !(0, lodash_1.isEmpty)(this.extension) && extendsProviders.call(this, child);
 }
 function removeChild(child) {
     this.children.splice(this.children.indexOf(child), 1);
@@ -57,7 +57,7 @@ function destroy() {
                     cacheObj.listenerDetect.unsubscribe();
                     cacheObj.beforeDestroys.splice(0);
                     _this.children.splice(0);
-                    (_a = _this.privateExtension) === null || _a === void 0 ? void 0 : _a.splice(0);
+                    (_a = _this.extension) === null || _a === void 0 ? void 0 : _a.splice(0);
                     _this.parent && removeChild.call(_this.parent, _this);
                     cacheObj.bindFn.forEach(function (fn) { return fn(); });
                     cacheObj.bindFn.splice(0);
@@ -91,11 +91,11 @@ function getCacheObj(props) {
 function loadForBuild(props) {
     var _this = this;
     var LoadConfig = this.injector.get(token_1.LOAD_BUILDER_CONFIG);
-    var privateExtension = this.privateExtension.map(function (_a) {
+    var extension = this.extension.map(function (_a) {
         var extension = _a.extension;
         return extension;
     });
-    var Extensions = tslib_1.__spreadArray(tslib_1.__spreadArray([], (0, lodash_1.flatMap)(this.injector.get(token_1.BUILDER_EXTENSION)), true), privateExtension, true);
+    var Extensions = tslib_1.__spreadArray(tslib_1.__spreadArray([], (0, lodash_1.flatMap)(this.injector.get(token_1.BUILDER_EXTENSION)), true), extension, true);
     return new LoadConfig(this, props, this.$$cache).init().pipe((0, utility_1.observableMap)(function (loadExample) {
         Object.defineProperty(_this, CACHE, (0, utility_1.withValue)(getCacheObj.call(_this, props)));
         var beforeInits = Extensions
@@ -116,7 +116,7 @@ function init() {
         onDestroy: (0, utility_1.withValue)(function () { var _a; return (_a = _this.$$cache) === null || _a === void 0 ? void 0 : _a.destroy(); }),
         loadForBuild: (0, utility_1.withValue)(function (props) {
             delete _this.loadForBuild;
-            Object.defineProperty(_this, 'privateExtension', (0, utility_1.withValue)(parseExtension(props.privateExtension || [])));
+            Object.defineProperty(_this, 'extension', (0, utility_1.withValue)(parseExtension(props.extension || [])));
             props.builder && addChild.call(props.builder, _this);
             loadForBuild.call(_this, props).subscribe(function () { return _this.detectChanges(); });
             return _this;

@@ -8,12 +8,13 @@ export class ActionExtension extends BasicExtension {
         this.fields = [];
     }
     beforeExtension() {
-        [this.json, ...this.jsonFields].forEach((jsonField) => {
-            const { actions } = jsonField;
-            if (!Array.isArray(actions) && isPlainObject(actions)) {
-                jsonField.actions = Object.keys(actions).map((key) => this.bindCalculatorAction(actions[key], key));
-            }
-        });
+        [this.json, ...this.jsonFields].forEach((jsonField) => jsonField.actions = this.parseActions(jsonField.actions));
+    }
+    parseActions(actions) {
+        if (!Array.isArray(actions) && isPlainObject(actions)) {
+            return Object.keys(actions).map((key) => this.bindCalculatorAction(actions[key], key));
+        }
+        return actions;
     }
     extension() {
         const handler = this.eachFields.bind(this, this.jsonFields, this.create.bind(this));

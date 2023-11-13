@@ -62,7 +62,7 @@ export interface BuilderProps extends BuilderElement {
     context?: BuilderContext;
     builder?: BuilderModelImplements;
     BuilderModel?: Type<BuilderModelImplements>;
-    privateExtension?: (PrivateExtension | Type)[];
+    extension?: (PrivateExtension | Type)[];
     events?: {
         [key: string]: (params?: any) => Observable<any>;
     };
@@ -97,7 +97,7 @@ export declare interface BuilderModelInterface {
     readonly grid?: GridType;
     readonly Element: any;
     readonly injector: Injector;
-    readonly privateExtension?: PrivateExtension[];
+    readonly extension?: PrivateExtension[];
     showField(visibility: Visibility | undefined): boolean;
     listenerDetect: Subject<any>;
     detectChanges(): void;

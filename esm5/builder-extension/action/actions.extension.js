@@ -12,12 +12,14 @@ var ActionExtension = /** @class */ (function (_super) {
     }
     ActionExtension.prototype.beforeExtension = function () {
         var _this = this;
-        __spreadArray([this.json], this.jsonFields, true).forEach(function (jsonField) {
-            var actions = jsonField.actions;
-            if (!Array.isArray(actions) && isPlainObject(actions)) {
-                jsonField.actions = Object.keys(actions).map(function (key) { return _this.bindCalculatorAction(actions[key], key); });
-            }
-        });
+        __spreadArray([this.json], this.jsonFields, true).forEach(function (jsonField) { return jsonField.actions = _this.parseActions(jsonField.actions); });
+    };
+    ActionExtension.prototype.parseActions = function (actions) {
+        var _this = this;
+        if (!Array.isArray(actions) && isPlainObject(actions)) {
+            return Object.keys(actions).map(function (key) { return _this.bindCalculatorAction(actions[key], key); });
+        }
+        return actions;
     };
     ActionExtension.prototype.extension = function () {
         var handler = this.eachFields.bind(this, this.jsonFields, this.create.bind(this));

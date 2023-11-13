@@ -18,6 +18,7 @@ export var CONTROL = 'control';
 export var GRID = 'grid';
 export var LAYOUT = 'layout';
 export var ELEMENT = 'Element';
+export var GRID_ELEMENT = 'gridElement';
 export var LAYOUT_ID = 'grid-id-model';
 export var LAYOUT_FIELD = 'layout-field';
 export var CURRENT = 'current';

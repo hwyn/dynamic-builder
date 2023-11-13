@@ -15,23 +15,23 @@ function createField(field) {
     Object.defineProperty(_field, FIELD_CONFIG_ATTR, withValue(field));
     return _field;
 }
-function parseExtension(privateExtension) {
-    return privateExtension.map((item) => item.extension ? item : { extension: item });
+function parseExtension(extension) {
+    return extension.map((item) => item.extension ? item : { extension: item });
 }
 function extendsProviders(child) {
     var _a;
-    (_a = this.privateExtension) === null || _a === void 0 ? void 0 : _a.forEach((extensionProvider) => {
+    (_a = this.extension) === null || _a === void 0 ? void 0 : _a.forEach((extensionProvider) => {
         var _a, _b;
         const { needExtends, extension: parentExtension } = extensionProvider;
-        if (needExtends && !((_a = child.privateExtension) === null || _a === void 0 ? void 0 : _a.some(({ extension }) => extension === parentExtension))) {
-            (_b = child.privateExtension) === null || _b === void 0 ? void 0 : _b.push(extensionProvider);
+        if (needExtends && !((_a = child.extension) === null || _a === void 0 ? void 0 : _a.some(({ extension }) => extension === parentExtension))) {
+            (_b = child.extension) === null || _b === void 0 ? void 0 : _b.push(extensionProvider);
         }
     });
 }
 function addChild(child) {
     child.parent = this;
     this.children.push(child);
-    !isEmpty(this.privateExtension) && extendsProviders.call(this, child);
+    !isEmpty(this.extension) && extendsProviders.call(this, child);
 }
 function removeChild(child) {
     this.children.splice(this.children.indexOf(child), 1);
@@ -50,7 +50,7 @@ function destroy() {
                     cacheObj.listenerDetect.unsubscribe();
                     cacheObj.beforeDestroys.splice(0);
                     this.children.splice(0);
-                    (_a = this.privateExtension) === null || _a === void 0 ? void 0 : _a.splice(0);
+                    (_a = this.extension) === null || _a === void 0 ? void 0 : _a.splice(0);
                     this.parent && removeChild.call(this.parent, this);
                     cacheObj.bindFn.forEach((fn) => fn());
                     cacheObj.bindFn.splice(0);
@@ -83,8 +83,8 @@ function getCacheObj(props) {
 }
 function loadForBuild(props) {
     const LoadConfig = this.injector.get(LOAD_BUILDER_CONFIG);
-    const privateExtension = this.privateExtension.map(({ extension }) => extension);
-    const Extensions = [...flatMap(this.injector.get(BUILDER_EXTENSION)), ...privateExtension];
+    const extension = this.extension.map(({ extension }) => extension);
+    const Extensions = [...flatMap(this.injector.get(BUILDER_EXTENSION)), ...extension];
     return new LoadConfig(this, props, this.$$cache).init().pipe(observableMap((loadExample) => {
         Object.defineProperty(this, CACHE, withValue(getCacheObj.call(this, props)));
         const beforeInits = Extensions
@@ -104,7 +104,7 @@ export function init() {
         onDestroy: withValue(() => { var _a; return (_a = this.$$cache) === null || _a === void 0 ? void 0 : _a.destroy(); }),
         loadForBuild: withValue((props) => {
             delete this.loadForBuild;
-            Object.defineProperty(this, 'privateExtension', withValue(parseExtension(props.privateExtension || [])));
+            Object.defineProperty(this, 'extension', withValue(parseExtension(props.extension || [])));
             props.builder && addChild.call(props.builder, this);
             loadForBuild.call(this, props).subscribe(() => this.detectChanges());
             return this;

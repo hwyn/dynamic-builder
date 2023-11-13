@@ -27,14 +27,15 @@ export class Grid {
             const [item = {}] = (_a = groupLayout[index + 1]) !== null && _a !== void 0 ? _a : [];
             return Object.assign(Object.assign({ xs }, defaultGroupAdditional), item);
         });
-        return Object.assign(Object.assign({ id, container: 'default' }, other), { additional: groupAdditional });
+        return Object.assign(Object.assign({ id }, other), { additional: groupAdditional });
     }
     getViewGrid(props) {
         const config = cloneDeepPlain(this.config);
-        const { additional = [], container: configContainer, className = '', style } = config;
+        const builderContainerId = this.builder.$$cache.grid.config.container;
+        const { additional = [], container: configContainer = builderContainerId, className = '', style } = config;
         const { className: propsClassName = '', style: propsStyle } = props;
-        const currentFields = this.builder.fields.filter(({ layout: { container } }) => container === configContainer);
-        const groupLayout = groupByFields(currentFields);
+        const fields = this.builder.fields.filter(({ layout: { container } }) => container === configContainer);
+        const groupLayout = groupByFields(fields);
         config.additional = additional.filter((item, group) => {
             return !!(item.fieldRows = groupFieldsToArray(groupLayout[group + 1])).length;
         });

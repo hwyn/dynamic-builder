@@ -1,10 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Output = exports.ActionProps = exports.OtherEvent = exports.CallLink = exports.Event = exports.InstanceRef = exports.ViewModelRef = exports.FieldConfigRef = exports.InterceptRef = exports.BuilderRef = exports.FieldRef = void 0;
+exports.ActionProps = exports.OtherEvent = exports.CallLink = exports.Event = exports.Output = exports.InstanceRef = exports.ViewModelRef = exports.FieldConfigRef = exports.InterceptRef = exports.BuilderRef = exports.FieldRef = void 0;
 var tslib_1 = require("tslib");
 var di_1 = require("@fm/di");
 var lodash_1 = require("lodash");
 var decorator_1 = require("../builder/decorator");
+var action_1 = require("./action");
+var event_zip_1 = require("./action/event-zip");
 var ActionParams;
 (function (ActionParams) {
     ActionParams["event"] = "event";
@@ -43,6 +45,15 @@ function transform(annotation, value, baseAction) {
     }
     return value;
 }
+var proxyOutput = function (_m, props, type, prop) { return function (event) {
+    var otherEvent = [];
+    for (var _i = 1; _i < arguments.length; _i++) {
+        otherEvent[_i - 1] = arguments[_i];
+    }
+    var p = (0, action_1.getEventType)(prop);
+    var output = (0, lodash_1.get)(props === null || props === void 0 ? void 0 : props.events, p, type[p]);
+    return output.apply(void 0, tslib_1.__spreadArray([new event_zip_1.EventZip(event)], otherEvent, false));
+}; };
 var props = function (obj) {
     if (obj === void 0) { obj = {}; }
     return (tslib_1.__assign({ transform: transform }, obj));
@@ -54,8 +65,8 @@ exports.InterceptRef = (0, di_1.makeParamDecorator)(ActionParams.intercept, prop
 exports.FieldConfigRef = (0, di_1.makeParamDecorator)(ActionParams.field, keyProps);
 exports.ViewModelRef = (0, di_1.makeParamDecorator)(ActionParams.viewModel, keyProps);
 exports.InstanceRef = (0, di_1.makeParamDecorator)(ActionParams.instanceRef, keyProps);
+exports.Output = (0, decorator_1.makeCustomInputProps)(proxyOutput);
 exports.Event = (0, di_1.makeParamDecorator)(ActionParams.event, keyProps);
 exports.CallLink = (0, di_1.makeParamDecorator)(ActionParams.callLink, keyProps);
 exports.OtherEvent = (0, di_1.makeParamDecorator)(ActionParams.otherEvent, keyProps);
 exports.ActionProps = (0, di_1.makeParamDecorator)(ActionParams.actionProps, keyProps);
-exports.Output = (0, decorator_1.makeCustomInputProps)(function (_m, props, type, prop) { return (0, lodash_1.get)(props === null || props === void 0 ? void 0 : props.events, prop, type[prop]); });

@@ -39,17 +39,18 @@ var Grid = /** @class */ (function () {
             var _b = ((_a = groupLayout[index + 1]) !== null && _a !== void 0 ? _a : [])[0], item = _b === void 0 ? {} : _b;
             return tslib_1.__assign(tslib_1.__assign({ xs: xs }, defaultGroupAdditional), item);
         });
-        return tslib_1.__assign(tslib_1.__assign({ id: id, container: 'default' }, other), { additional: groupAdditional });
+        return tslib_1.__assign(tslib_1.__assign({ id: id }, other), { additional: groupAdditional });
     };
     Grid.prototype.getViewGrid = function (props) {
         var config = (0, utility_1.cloneDeepPlain)(this.config);
-        var _a = config.additional, additional = _a === void 0 ? [] : _a, configContainer = config.container, _b = config.className, className = _b === void 0 ? '' : _b, style = config.style;
-        var _c = props.className, propsClassName = _c === void 0 ? '' : _c, propsStyle = props.style;
-        var currentFields = this.builder.fields.filter(function (_a) {
+        var builderContainerId = this.builder.$$cache.grid.config.container;
+        var _a = config.additional, additional = _a === void 0 ? [] : _a, _b = config.container, configContainer = _b === void 0 ? builderContainerId : _b, _c = config.className, className = _c === void 0 ? '' : _c, style = config.style;
+        var _d = props.className, propsClassName = _d === void 0 ? '' : _d, propsStyle = props.style;
+        var fields = this.builder.fields.filter(function (_a) {
             var container = _a.layout.container;
             return container === configContainer;
         });
-        var groupLayout = groupByFields(currentFields);
+        var groupLayout = groupByFields(fields);
         config.additional = additional.filter(function (item, group) {
             return !!(item.fieldRows = groupFieldsToArray(groupLayout[group + 1])).length;
         });

@@ -1,6 +1,8 @@
 import { makeParamDecorator } from '@fm/di';
 import { get } from 'lodash';
 import { makeCustomInputProps } from '../builder/decorator';
+import { getEventType } from './action';
+import { EventZip } from './action/event-zip';
 var ActionParams;
 (function (ActionParams) {
     ActionParams["event"] = "event";
@@ -34,6 +36,11 @@ function transform(annotation, value, baseAction, ...otherEvent) {
     }
     return value;
 }
+const proxyOutput = (_m, props, type, prop) => (event, ...otherEvent) => {
+    const p = getEventType(prop);
+    const output = get(props === null || props === void 0 ? void 0 : props.events, p, type[p]);
+    return output(new EventZip(event), ...otherEvent);
+};
 const props = (obj = {}) => (Object.assign({ transform }, obj));
 const keyProps = (key) => props({ key });
 export const FieldRef = makeParamDecorator(ActionParams.field, keyProps);
@@ -42,8 +49,8 @@ export const InterceptRef = makeParamDecorator(ActionParams.intercept, props);
 export const FieldConfigRef = makeParamDecorator(ActionParams.field, keyProps);
 export const ViewModelRef = makeParamDecorator(ActionParams.viewModel, keyProps);
 export const InstanceRef = makeParamDecorator(ActionParams.instanceRef, keyProps);
+export const Output = makeCustomInputProps(proxyOutput);
 export const Event = makeParamDecorator(ActionParams.event, keyProps);
 export const CallLink = makeParamDecorator(ActionParams.callLink, keyProps);
 export const OtherEvent = makeParamDecorator(ActionParams.otherEvent, keyProps);
 export const ActionProps = makeParamDecorator(ActionParams.actionProps, keyProps);
-export const Output = makeCustomInputProps((_m, props, type, prop) => get(props === null || props === void 0 ? void 0 : props.events, prop, type[prop]));

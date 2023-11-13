@@ -7,6 +7,7 @@ import { ACTIONS_CONFIG, GET_TYPE } from '../../token';
 import { funcToObservable, observableMap, observableTap, toForkJoin, transformObservable } from '../../utility';
 import { serializeAction } from '../basic/basic.extension';
 import { BaseAction } from './base.action';
+import { EventZip } from './event-zip';
 var Action = /** @class */ (function () {
     function Action(mp, injector, getType) {
         this.mp = mp;
@@ -138,7 +139,9 @@ var Action = /** @class */ (function () {
         if (!executeHandler) {
             throw new Error("".concat(name, " not defined!"));
         }
-        return transformObservable(executeHandler.apply(undefined, __spreadArray([action], otherEvent, true)));
+        return transformObservable(executeHandler.apply(undefined, __spreadArray([
+            actionEvent instanceof EventZip ? actionEvent.event : action
+        ], otherEvent, true)));
     };
     Action = __decorate([
         __param(0, Inject(MethodProxy)),

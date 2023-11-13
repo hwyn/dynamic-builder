@@ -7,6 +7,7 @@ import { ACTIONS_CONFIG, GET_TYPE } from '../../token';
 import { funcToObservable, observableMap, observableTap, toForkJoin, transformObservable } from '../../utility';
 import { serializeAction } from '../basic/basic.extension';
 import { BaseAction } from './base.action';
+import { EventZip } from './event-zip';
 let Action = class Action {
     constructor(mp, injector, getType) {
         this.mp = mp;
@@ -91,7 +92,10 @@ let Action = class Action {
         if (!executeHandler) {
             throw new Error(`${name} not defined!`);
         }
-        return transformObservable(executeHandler.apply(undefined, [action, ...otherEvent]));
+        return transformObservable(executeHandler.apply(undefined, [
+            actionEvent instanceof EventZip ? actionEvent.event : action,
+            ...otherEvent
+        ]));
     }
 };
 Action = __decorate([

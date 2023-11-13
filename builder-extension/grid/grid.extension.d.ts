@@ -1,7 +1,7 @@
 import { BasicExtension } from '../basic/basic.extension';
 export declare class GridExtension extends BasicExtension {
-    private builderFields;
     private layoutBuildFields;
+    private builderFields;
     private getGrid;
     private getLayoutElement;
     protected extension(): void;

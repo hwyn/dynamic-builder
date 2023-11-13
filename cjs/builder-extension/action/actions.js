@@ -10,6 +10,7 @@ var token_1 = require("../../token");
 var utility_1 = require("../../utility");
 var basic_extension_1 = require("../basic/basic.extension");
 var base_action_1 = require("./base.action");
+var event_zip_1 = require("./event-zip");
 var Action = /** @class */ (function () {
     function Action(mp, injector, getType) {
         this.mp = mp;
@@ -141,7 +142,9 @@ var Action = /** @class */ (function () {
         if (!executeHandler) {
             throw new Error("".concat(name, " not defined!"));
         }
-        return (0, utility_1.transformObservable)(executeHandler.apply(undefined, tslib_1.__spreadArray([action], otherEvent, true)));
+        return (0, utility_1.transformObservable)(executeHandler.apply(undefined, tslib_1.__spreadArray([
+            actionEvent instanceof event_zip_1.EventZip ? actionEvent.event : action
+        ], otherEvent, true)));
     };
     Action = tslib_1.__decorate([
         tslib_1.__param(0, (0, di_1.Inject)(di_1.MethodProxy)),
