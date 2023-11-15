@@ -79,8 +79,8 @@ export class LifeCycleExtension extends BasicExtension {
         const fields = [...this.jsonFields, this.json];
         const fieldsWithCalculators = fields.filter(({ calculators }) => !isEmpty(calculators));
         this.calculators = [];
+        this.cache.fields.forEach(({ field }) => delete field.calculators);
         fieldsWithCalculators.forEach(({ id: targetId, calculators = [] }) => {
-            var _a;
             this.toArray(calculators).forEach(({ action, dependents }) => {
                 this.toArray(action).forEach((a) => {
                     this.toArray(dependents).forEach((dependent) => {
@@ -88,7 +88,6 @@ export class LifeCycleExtension extends BasicExtension {
                     });
                 });
             });
-            (_a = this.getBuilderFieldById(targetId)) === null || _a === void 0 ? true : delete _a.field.calculators;
         });
     }
     getNonSelfCalculators() {

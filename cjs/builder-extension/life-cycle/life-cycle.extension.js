@@ -98,9 +98,12 @@ var LifeCycleExtension = /** @class */ (function (_super) {
             return !(0, lodash_1.isEmpty)(calculators);
         });
         this.calculators = [];
+        this.cache.fields.forEach(function (_a) {
+            var field = _a.field;
+            return delete field.calculators;
+        });
         fieldsWithCalculators.forEach(function (_a) {
-            var _b;
-            var targetId = _a.id, _c = _a.calculators, calculators = _c === void 0 ? [] : _c;
+            var targetId = _a.id, _b = _a.calculators, calculators = _b === void 0 ? [] : _b;
             _this.toArray(calculators).forEach(function (_a) {
                 var action = _a.action, dependents = _a.dependents;
                 _this.toArray(action).forEach(function (a) {
@@ -109,7 +112,6 @@ var LifeCycleExtension = /** @class */ (function (_super) {
                     });
                 });
             });
-            (_b = _this.getBuilderFieldById(targetId)) === null || _b === void 0 ? true : delete _b.field.calculators;
         });
     };
     LifeCycleExtension.prototype.getNonSelfCalculators = function () {

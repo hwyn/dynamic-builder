@@ -30,7 +30,7 @@ var GridExtension = /** @class */ (function (_super) {
         var grid = this.getGrid(jsonField, this.builder);
         var gridElement = this.getLayoutElement(grid, this.builder);
         if (grid.config.container === this.builder.$$cache.grid.config.container) {
-            throw new Error('layoutField container is error');
+            throw new Error("".concat(jsonField.id, " container is error"));
         }
         if (jsonField.type === LAYOUT_FIELD) {
             builderField.element = gridElement;

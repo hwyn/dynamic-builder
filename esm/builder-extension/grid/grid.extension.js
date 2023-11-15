@@ -25,7 +25,7 @@ export class GridExtension extends BasicExtension {
         const grid = this.getGrid(jsonField, this.builder);
         const gridElement = this.getLayoutElement(grid, this.builder);
         if (grid.config.container === this.builder.$$cache.grid.config.container) {
-            throw new Error('layoutField container is error');
+            throw new Error(`${jsonField.id} container is error`);
         }
         if (jsonField.type === LAYOUT_FIELD) {
             builderField.element = gridElement;

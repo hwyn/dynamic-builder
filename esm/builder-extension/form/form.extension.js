@@ -2,7 +2,7 @@ import { isEmpty } from 'lodash';
 import { Visibility } from '../../builder';
 import { CONVERT_INTERCEPT, FORM_CONTROL } from '../../token';
 import { BasicExtension } from '../basic/basic.extension';
-import { CHANGE, CHECK_VISIBILITY, CONTROL, LOAD_ACTION, NOTIFY_MODEL_CHANGE } from '../constant/calculator.constant';
+import { CHANGE, CHECK_VISIBILITY, CONTROL, CREATE_CONTROL, LOAD_ACTION, NOTIFY_MODEL_CHANGE } from '../constant/calculator.constant';
 export class FormExtension extends BasicExtension {
     constructor() {
         super(...arguments);
@@ -20,7 +20,7 @@ export class FormExtension extends BasicExtension {
         const builderId = this.builder.id;
         this.addChangeAction(changeType, jsonField, builderField);
         this.pushCalculators(jsonField, [{
-                action: this.bindCalculatorAction(this.addControl.bind(this, jsonField, builderField)),
+                action: this.bindCalculatorAction(this.addControl.bind(this, jsonField, builderField), CREATE_CONTROL),
                 dependents: { type: LOAD_ACTION, fieldId: builderId }
             }, {
                 action: this.bindCalculatorAction(this.createNotifyChange.bind(this, jsonField)),
@@ -55,6 +55,7 @@ export class FormExtension extends BasicExtension {
         this.defineProperty(builderField, CONTROL, control);
         this.executeChangeEvent(jsonField, value);
         this.changeVisibility(builderField, binding, builderField.visibility);
+        delete builderField.events[this.getEventType(CREATE_CONTROL)];
         delete builderField.field.binding;
     }
     createChange({ binding }, { builderField, actionEvent }) {
@@ -81,8 +82,11 @@ export class FormExtension extends BasicExtension {
         return events[this.getEventType(this.getChangeType(jsonField))](value);
     }
     createNotifyChange(jsonField, { actionEvent, builderField }) {
-        if (!actionEvent || actionEvent === builderField) {
-            this.executeChangeEvent(jsonField, this.getValueToModel(jsonField.binding));
+        const { control } = builderField;
+        if ((!actionEvent || actionEvent === builderField) && control) {
+            const value = this.getValueToModel(jsonField.binding);
+            if (control.value !== value)
+                this.executeChangeEvent(jsonField, value);
         }
     }
     detectChanges({ instance }) {

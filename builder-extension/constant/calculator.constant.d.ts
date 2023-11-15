@@ -11,6 +11,7 @@ export declare const NOTIFY_MODEL_CHANGE = "notifyModelChanges";
 export declare const REFRESH_VISIBILITY = "refreshVisibility";
 export declare const REFRESH_DATA = "refreshData";
 export declare const DATA_SOURCE = "dataSource";
+export declare const CREATE_CONTROL = "createControl";
 export declare const CHECK_VISIBILITY = "checkVisibility";
 export declare const ADD_EVENT_LISTENER = "addEventListener";
 export declare const VIEW_MODEL = "viewModel";

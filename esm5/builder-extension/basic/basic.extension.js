@@ -55,7 +55,7 @@ var BasicExtension = /** @class */ (function () {
     };
     BasicExtension.prototype.serializeCalculatorConfig = function (jsonCalculator, actionType, defaultDependents) {
         var needSerialize = isString(jsonCalculator) || isFunction(jsonCalculator);
-        var calculatorConfig = needSerialize ? { action: this.serializeAction(jsonCalculator) } : this.cloneDeepPlain(jsonCalculator);
+        var calculatorConfig = needSerialize ? { action: jsonCalculator } : this.cloneDeepPlain(jsonCalculator);
         var action = calculatorConfig.action, _a = calculatorConfig.dependents, dependents = _a === void 0 ? defaultDependents : _a;
         calculatorConfig.action = merge({ type: actionType }, this.serializeAction(action));
         calculatorConfig.dependents = dependents;

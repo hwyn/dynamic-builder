@@ -11,6 +11,7 @@ export const NOTIFY_MODEL_CHANGE = 'notifyModelChanges';
 export const REFRESH_VISIBILITY = 'refreshVisibility';
 export const REFRESH_DATA = 'refreshData';
 export const DATA_SOURCE = 'dataSource';
+export const CREATE_CONTROL = 'createControl';
 export const CHECK_VISIBILITY = 'checkVisibility';
 export const ADD_EVENT_LISTENER = 'addEventListener';
 export const VIEW_MODEL = 'viewModel';

@@ -13,6 +13,9 @@ export declare interface FormControl<T = any> {
     disable(): void;
     patchValue(value: T): void;
     updateValueAndValidity(): void;
+    clearValidators(): void;
+    setValidators(validators: ValidatorFn[]): void;
+    setAsyncValidators(asyncValidators: AsyncValidatorFn[]): void;
     destroy(fieldId?: string): void;
 }
 export declare interface BuilderFormField {

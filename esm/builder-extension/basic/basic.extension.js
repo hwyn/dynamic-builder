@@ -48,7 +48,7 @@ export class BasicExtension {
     }
     serializeCalculatorConfig(jsonCalculator, actionType, defaultDependents) {
         const needSerialize = isString(jsonCalculator) || isFunction(jsonCalculator);
-        const calculatorConfig = needSerialize ? { action: this.serializeAction(jsonCalculator) } : this.cloneDeepPlain(jsonCalculator);
+        const calculatorConfig = needSerialize ? { action: jsonCalculator } : this.cloneDeepPlain(jsonCalculator);
         const { action, dependents = defaultDependents } = calculatorConfig;
         calculatorConfig.action = merge({ type: actionType }, this.serializeAction(action));
         calculatorConfig.dependents = dependents;

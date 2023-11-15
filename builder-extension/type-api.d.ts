@@ -89,4 +89,5 @@ export interface BuilderModelExtensions extends BuilderModelInterface, BuilderVi
     nonSelfCalculators: OriginCalculators[];
     getExecuteHandler: (actionName: string, isSelf?: boolean) => undefined | ExecuteHandler;
 }
+export type EventEmit = (...args: any[]) => void;
 export {};

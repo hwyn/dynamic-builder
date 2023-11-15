@@ -30,7 +30,7 @@ var FormExtension = /** @class */ (function (_super) {
         var builderId = this.builder.id;
         this.addChangeAction(changeType, jsonField, builderField);
         this.pushCalculators(jsonField, [{
-                action: this.bindCalculatorAction(this.addControl.bind(this, jsonField, builderField)),
+                action: this.bindCalculatorAction(this.addControl.bind(this, jsonField, builderField), calculator_constant_1.CREATE_CONTROL),
                 dependents: { type: calculator_constant_1.LOAD_ACTION, fieldId: builderId }
             }, {
                 action: this.bindCalculatorAction(this.createNotifyChange.bind(this, jsonField)),
@@ -68,6 +68,7 @@ var FormExtension = /** @class */ (function (_super) {
         this.defineProperty(builderField, calculator_constant_1.CONTROL, control);
         this.executeChangeEvent(jsonField, value);
         this.changeVisibility(builderField, binding, builderField.visibility);
+        delete builderField.events[this.getEventType(calculator_constant_1.CREATE_CONTROL)];
         delete builderField.field.binding;
     };
     FormExtension.prototype.createChange = function (_a, _b) {
@@ -100,8 +101,11 @@ var FormExtension = /** @class */ (function (_super) {
     };
     FormExtension.prototype.createNotifyChange = function (jsonField, _a) {
         var actionEvent = _a.actionEvent, builderField = _a.builderField;
-        if (!actionEvent || actionEvent === builderField) {
-            this.executeChangeEvent(jsonField, this.getValueToModel(jsonField.binding));
+        var control = builderField.control;
+        if ((!actionEvent || actionEvent === builderField) && control) {
+            var value = this.getValueToModel(jsonField.binding);
+            if (control.value !== value)
+                this.executeChangeEvent(jsonField, value);
         }
     };
     FormExtension.prototype.detectChanges = function (_a) {
