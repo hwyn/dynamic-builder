@@ -14,7 +14,6 @@ var ActionParams;
     ActionParams["otherEvent"] = "otherEvent";
     ActionParams["instanceRef"] = "instanceRef";
     ActionParams["actionProps"] = "actionProps";
-    ActionParams["fieldConfig"] = "fieldConfig";
 })(ActionParams || (ActionParams = {}));
 function getObjectByKey(obj, { key }) {
     return key ? obj && get(obj, key) : obj;
@@ -32,7 +31,6 @@ function transform(annotation, value, baseAction, ...otherEvent) {
         case ActionParams.field: return getObjectByKey(baseAction.builderField, annotation);
         case ActionParams.actionProps: return getObjectByKey(baseAction.actionProps, annotation);
         case ActionParams.viewModel: return getObjectByKey((_a = baseAction.builder) === null || _a === void 0 ? void 0 : _a.viewModel, annotation);
-        case ActionParams.fieldConfig: return getObjectByKey(baseAction.builderField.fieldConfig, annotation);
     }
     return value;
 }
@@ -46,7 +44,6 @@ const keyProps = (key) => props({ key });
 export const FieldRef = makeParamDecorator(ActionParams.field, keyProps);
 export const BuilderRef = makeParamDecorator(ActionParams.builder, props);
 export const InterceptRef = makeParamDecorator(ActionParams.intercept, props);
-export const FieldConfigRef = makeParamDecorator(ActionParams.field, keyProps);
 export const ViewModelRef = makeParamDecorator(ActionParams.viewModel, keyProps);
 export const InstanceRef = makeParamDecorator(ActionParams.instanceRef, keyProps);
 export const Output = makeCustomInputProps(proxyOutput);

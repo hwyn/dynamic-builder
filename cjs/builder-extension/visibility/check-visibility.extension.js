@@ -53,22 +53,25 @@ var CheckVisibilityExtension = /** @class */ (function (_super) {
         });
     };
     CheckVisibilityExtension.prototype.checkNeedOrDefaultVisibility = function (jsonField) {
-        var _a, _b;
+        var _this = this;
+        var parent = this.builder.parent;
         var visibility = jsonField.visibility, checkVisibility = jsonField.checkVisibility;
-        if (checkVisibility || visibility) {
+        if (checkVisibility || visibility || !parent) {
             return checkVisibility;
         }
-        var parent = this.builder.parent;
-        var parentField = parent && ((_b = parent.getFieldById((_a = this.builder) === null || _a === void 0 ? void 0 : _a.id)) === null || _b === void 0 ? void 0 : _b.fieldConfig);
+        var parentField = parent.$$cache.fieldsConfig.find(function (_a) {
+            var id = _a.id;
+            return id === _this.builder.id;
+        });
         if (parentField === null || parentField === void 0 ? void 0 : parentField.visibility) {
             this.getBuilderFieldById(jsonField.id).visibility = parentField === null || parentField === void 0 ? void 0 : parentField.visibility;
         }
         if (parentField === null || parentField === void 0 ? void 0 : parentField.checkVisibility) {
             jsonField.checkVisibility = {
-                action: function (_a) {
+                action: this.bindCalculatorAction(function (_a) {
                     var actionEvent = _a.actionEvent;
                     return actionEvent;
-                },
+                }),
                 dependents: { fieldId: parentField.id, type: calculator_constant_1.CHECK_VISIBILITY, nonSelf: true }
             };
         }

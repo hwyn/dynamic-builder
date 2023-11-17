@@ -1,6 +1,6 @@
 {
 	"name": "@dynamic/builder",
-	"version": "1.0.0",
+	"version": "0.0.1",
 	"description": "",
 	"main": "./cjs/index.js",
 	"module": "./esm5/index.js",

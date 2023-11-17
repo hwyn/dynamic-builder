@@ -9,11 +9,12 @@ export interface CacheObj {
     lifeActions: {
         [key: string]: any;
     };
-    fields: BuilderField[];
-    destroyed: boolean;
     bindFn: any[];
     ready: boolean;
+    destroyed: boolean;
     destroy: () => void;
+    fields: BuilderField[];
+    fieldsConfig: BuilderJsonField[];
     addChild: (child: BuilderModelImplements) => void;
     removeChild: (child: BuilderModelImplements) => void;
     listenerDetect: Subject<any>;
@@ -42,7 +43,6 @@ export interface BuilderField extends Field {
     type: string;
     element: any;
     field: Field;
-    fieldConfig: BuilderJsonField;
     visibility?: Visibility;
 }
 export interface BuilderJsonField {

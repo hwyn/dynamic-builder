@@ -38,19 +38,18 @@ export class CheckVisibilityExtension extends BasicExtension {
         builder.$$cache.fields.forEach(({ events }) => delete events.onCheckVisibility);
     }
     checkNeedOrDefaultVisibility(jsonField) {
-        var _a, _b;
+        const { parent } = this.builder;
         const { visibility, checkVisibility } = jsonField;
-        if (checkVisibility || visibility) {
+        if (checkVisibility || visibility || !parent) {
             return checkVisibility;
         }
-        const { parent } = this.builder;
-        const parentField = parent && ((_b = parent.getFieldById((_a = this.builder) === null || _a === void 0 ? void 0 : _a.id)) === null || _b === void 0 ? void 0 : _b.fieldConfig);
+        const parentField = parent.$$cache.fieldsConfig.find(({ id }) => id === this.builder.id);
         if (parentField === null || parentField === void 0 ? void 0 : parentField.visibility) {
             this.getBuilderFieldById(jsonField.id).visibility = parentField === null || parentField === void 0 ? void 0 : parentField.visibility;
         }
         if (parentField === null || parentField === void 0 ? void 0 : parentField.checkVisibility) {
             jsonField.checkVisibility = {
-                action: ({ actionEvent }) => actionEvent,
+                action: this.bindCalculatorAction(({ actionEvent }) => actionEvent),
                 dependents: { fieldId: parentField.id, type: CHECK_VISIBILITY, nonSelf: true }
             };
         }

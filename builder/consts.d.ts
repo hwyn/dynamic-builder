@@ -6,4 +6,3 @@ export declare enum Visibility {
     disabled = "disabled",
     required = "required"
 }
-export declare const FIELD_CONFIG_ATTR = "fieldConfig";

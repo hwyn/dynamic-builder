@@ -5,14 +5,12 @@ import { tap } from 'rxjs/operators';
 import { BUILDER_EXTENSION, LOAD_BUILDER_CONFIG } from '../token';
 import { cloneDeepPlain, createDetectChanges, observableMap, toForkJoin, transformObservable, withValue } from '../utility';
 import { BuilderEngine } from './builder-engine.service';
-import { FIELD_CONFIG_ATTR } from './consts';
 const CACHE = `$$cache`;
 function createField(field) {
     const _a = cloneDeepPlain(field), { id, type, visibility } = _a, other = __rest(_a, ["id", "type", "visibility"]);
     const element = field.element || (typeof type !== 'string' ? type : this.injector.get(BuilderEngine).getUiComponent(type));
     const _field = { id, type, element, visibility, field: other };
     Object.keys(_field).forEach((key) => _field[key] === undefined && delete _field[key]);
-    Object.defineProperty(_field, FIELD_CONFIG_ATTR, withValue(field));
     return _field;
 }
 function parseExtension(extension) {
@@ -74,6 +72,7 @@ function getCacheObj(props) {
         bindFn,
         destroyed,
         listenerDetect,
+        fieldsConfig: fields,
         destroy: modelDestroy,
         addChild: modelAddChild,
         removeChild: modelRemoveChild,
