@@ -1,4 +1,4 @@
-import { Inject, Injector, makeDecorator, makePropDecorator, setInjectableDef } from '@fm/di';
+import { getInjectableDef, Inject, Injector, makeDecorator, makePropDecorator, setInjectableDef } from '@fm/di';
 import { get } from 'lodash';
 import { SCOPE_MODEL, SCOPE_PROPS } from '../token';
 export const BUILDER_DEF = '__builder_def__';
@@ -10,12 +10,15 @@ function typeFn(cls, meta) {
     setInjectableDef(cls, Object.assign(Object.assign({}, meta), { providedIn: 'any' }));
 }
 export function makeBuilderDecorator(name, forward = forwardTemplate) {
-    const builderDecorator = makeDecorator(name, (props) => props, typeFn);
+    const builderDecorator = makeDecorator(name, (props) => props);
     return (props) => (cls) => {
         if (name !== DYNAMIC_BUILDER) {
             Object.defineProperty(cls, BUILDER_DEF, { value: true });
         }
-        return forward(builderDecorator(props)(cls), props);
+        const result = forward(builderDecorator(props)(cls), props);
+        if (!getInjectableDef(cls))
+            typeFn(cls, props);
+        return result;
     };
 }
 const methodToProp = (typeDecorator) => (ctor, method, index) => {

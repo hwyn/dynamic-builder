@@ -15,7 +15,7 @@ var BuilderContext = /** @class */ (function () {
         this.uiElements = [];
     }
     BuilderContext.prototype.forwardUiElement = function (name, Element) {
-        this.uiElements.push({ name: name, component: Element });
+        this.uiElements.push({ name: name, component: Element.componentDef || Element });
         return Element;
     };
     BuilderContext.prototype.factoryBuilder = function (injector) {

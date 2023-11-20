@@ -1,5 +1,5 @@
 import { __assign } from "tslib";
-import { Inject, Injector, makeDecorator, makePropDecorator, setInjectableDef } from '@fm/di';
+import { getInjectableDef, Inject, Injector, makeDecorator, makePropDecorator, setInjectableDef } from '@fm/di';
 import { get } from 'lodash';
 import { SCOPE_MODEL, SCOPE_PROPS } from '../token';
 export var BUILDER_DEF = '__builder_def__';
@@ -12,12 +12,15 @@ function typeFn(cls, meta) {
 }
 export function makeBuilderDecorator(name, forward) {
     if (forward === void 0) { forward = forwardTemplate; }
-    var builderDecorator = makeDecorator(name, function (props) { return props; }, typeFn);
+    var builderDecorator = makeDecorator(name, function (props) { return props; });
     return function (props) { return function (cls) {
         if (name !== DYNAMIC_BUILDER) {
             Object.defineProperty(cls, BUILDER_DEF, { value: true });
         }
-        return forward(builderDecorator(props)(cls), props);
+        var result = forward(builderDecorator(props)(cls), props);
+        if (!getInjectableDef(cls))
+            typeFn(cls, props);
+        return result;
     }; };
 }
 var methodToProp = function (typeDecorator) { return function (ctor, method, index) {

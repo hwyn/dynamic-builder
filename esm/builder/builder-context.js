@@ -15,7 +15,7 @@ export class BuilderContext {
         this.uiElements = [];
     }
     forwardUiElement(name, Element) {
-        this.uiElements.push({ name, component: Element });
+        this.uiElements.push({ name, component: Element.componentDef || Element });
         return Element;
     }
     factoryBuilder(injector) {

@@ -15,12 +15,15 @@ function typeFn(cls, meta) {
 }
 function makeBuilderDecorator(name, forward) {
     if (forward === void 0) { forward = forwardTemplate; }
-    var builderDecorator = (0, di_1.makeDecorator)(name, function (props) { return props; }, typeFn);
+    var builderDecorator = (0, di_1.makeDecorator)(name, function (props) { return props; });
     return function (props) { return function (cls) {
         if (name !== exports.DYNAMIC_BUILDER) {
             Object.defineProperty(cls, exports.BUILDER_DEF, { value: true });
         }
-        return forward(builderDecorator(props)(cls), props);
+        var result = forward(builderDecorator(props)(cls), props);
+        if (!(0, di_1.getInjectableDef)(cls))
+            typeFn(cls, props);
+        return result;
     }; };
 }
 exports.makeBuilderDecorator = makeBuilderDecorator;
