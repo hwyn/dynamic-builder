@@ -65,10 +65,10 @@ var CheckVisibilityExtension = /** @class */ (function (_super) {
         }
         if (parentField === null || parentField === void 0 ? void 0 : parentField.checkVisibility) {
             jsonField.checkVisibility = {
-                action: this.bindCalculatorAction(function (_a) {
+                action: function (_a) {
                     var actionEvent = _a.actionEvent;
                     return actionEvent;
-                }),
+                },
                 dependents: { fieldId: parentField.id, type: CHECK_VISIBILITY, nonSelf: true }
             };
         }

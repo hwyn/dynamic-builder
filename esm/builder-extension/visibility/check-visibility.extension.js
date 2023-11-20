@@ -49,7 +49,7 @@ export class CheckVisibilityExtension extends BasicExtension {
         }
         if (parentField === null || parentField === void 0 ? void 0 : parentField.checkVisibility) {
             jsonField.checkVisibility = {
-                action: this.bindCalculatorAction(({ actionEvent }) => actionEvent),
+                action: ({ actionEvent }) => actionEvent,
                 dependents: { fieldId: parentField.id, type: CHECK_VISIBILITY, nonSelf: true }
             };
         }
