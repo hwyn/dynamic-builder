@@ -1,5 +1,6 @@
 import { makeParamDecorator } from '@fm/di';
 import { get } from 'lodash';
+import { tap } from 'rxjs/operators';
 import { makeCustomInputProps } from '../builder/decorator';
 import { getEventType } from './action';
 import { EventZip } from './action/event-zip';
@@ -37,7 +38,9 @@ function transform(annotation, value, baseAction, ...otherEvent) {
 const proxyOutput = (_m, props, type, prop) => (event, ...otherEvent) => {
     const p = getEventType(prop);
     const output = get(props === null || props === void 0 ? void 0 : props.events, p, type[p]);
-    return output(new EventZip(event), ...otherEvent);
+    let value = output(new EventZip(event), ...otherEvent);
+    value.pipe(tap((v) => value = v));
+    return value;
 };
 const props = (obj = {}) => (Object.assign({ transform }, obj));
 const keyProps = (key) => props({ key });

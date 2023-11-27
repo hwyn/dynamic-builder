@@ -31,44 +31,48 @@ let Action = class Action {
     createEvent(event, otherEventParam = []) {
         return [event, ...otherEventParam];
     }
+    createCallLinkType({ type, callLink = [] }, { id }, input, out) {
+        return [...callLink, { fieldId: id, type, input, out }];
+    }
     getActionContext({ builder, id } = {}) {
         return isEmpty(builder) ? {} : { builder, builderField: builder.getFieldById(id) };
     }
-    call(calculators, builder, callLink = []) {
+    call(calculators, builder) {
         const groupList = toArray(groupBy(calculators, 'targetId'));
-        return (value, ...other) => forkJoin(groupList.map((links) => {
+        return (callLink, value, ...other) => forkJoin(groupList.map((links) => {
             return this.invoke(links.map(({ action }) => (Object.assign(Object.assign({}, action), { callLink }))), { builder, id: links[0].targetId }, value, ...other);
         }));
     }
-    invokeCallCalculators(calculators, { type, callLink }, props) {
+    invokeCallCalculators(calculators, { type }, props) {
         const { builder, id } = props;
         const filterCalculators = calculators.filter(({ dependent: { fieldId, type: cType } }) => fieldId === id && cType === type);
-        const link = [...(callLink || []), { fieldId: id, type: type, count: filterCalculators.length }];
-        return !isEmpty(filterCalculators) ? this.call(filterCalculators, builder, link) : (value) => of(value);
+        return !isEmpty(filterCalculators) ? this.call(filterCalculators, builder) : (_callLink, value) => of(value);
     }
-    invokeCalculators(actionProps, props, value, ...otherEventParam) {
+    invokeCalculators(actionProps, props, callLink, ...events) {
         const { builder, id } = props;
+        const [value, ...otherEvent] = events;
         const nonSelfBuilders = (builder === null || builder === void 0 ? void 0 : builder.$$cache.nonSelfBuilders) || [];
         const calculatorsInvokes = nonSelfBuilders.map((nonBuild) => this.invokeCallCalculators(nonBuild.nonSelfCalculators, actionProps, { builder: nonBuild, id }));
         calculatorsInvokes.push(this.invokeCallCalculators((builder === null || builder === void 0 ? void 0 : builder.calculators) || [], actionProps, props));
-        return forkJoin(calculatorsInvokes.map((invokeCalculators) => invokeCalculators(value, ...otherEventParam)));
+        return forkJoin(calculatorsInvokes.map((invokeCalculators) => invokeCalculators(callLink, value, ...otherEvent)));
     }
-    execute(action, props, event = void (0), ...otherEventParam) {
+    execute(action, props, event = void (0), ...otherEvent) {
         const { name, handler, stop } = action;
-        const e = this.createEvent(event, otherEventParam);
+        const e = this.createEvent(event, otherEvent);
         if (stop && !isEmpty(event) && (event === null || event === void 0 ? void 0 : event.stopPropagation)) {
             event.stopPropagation();
         }
         return name || handler ? this.executeAction(action, this.getActionContext(props), e) : of(event);
     }
-    invoke(actions, props, event = void (0), ...otherEventParam) {
+    invoke(actions, props, event = void (0), ...otherEvent) {
         const _actions = (Array.isArray(actions) ? actions : [actions]).map(serializeAction);
-        return toForkJoin(_actions.map(({ before }) => before && this.invoke(before, props, event, ...otherEventParam))).pipe(observableMap(() => forkJoin(_actions.map((action) => {
-            return this.execute(action, props, event, ...otherEventParam);
+        return toForkJoin(_actions.map(({ before }) => before && this.invoke(before, props, event, ...otherEvent))).pipe(observableMap(() => forkJoin(_actions.map((action) => {
+            return this.execute(action, props, event, ...otherEvent);
         }))), observableTap((result) => !props ? of(void (0)) : toForkJoin(_actions.map((action, index) => {
-            return action.type && this.invokeCalculators(action, props, result[index], ...otherEventParam);
+            const callLink = this.createCallLinkType(action, props, event, result[index]);
+            return action.type && this.invokeCalculators(action, props, callLink, result[index], ...otherEvent);
         }))), observableTap((result) => toForkJoin(_actions.map(({ after }, index) => {
-            return after && this.invoke(after, props, result[index], ...otherEventParam);
+            return after && this.invoke(after, props, result[index], ...otherEvent);
         }))), map((result) => result.pop()));
     }
     callAction(actionName, context, ...events) {

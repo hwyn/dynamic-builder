@@ -4,6 +4,7 @@ exports.ActionProps = exports.OtherEvent = exports.CallLink = exports.Event = ex
 var tslib_1 = require("tslib");
 var di_1 = require("@fm/di");
 var lodash_1 = require("lodash");
+var operators_1 = require("rxjs/operators");
 var decorator_1 = require("../builder/decorator");
 var action_1 = require("./action");
 var event_zip_1 = require("./action/event-zip");
@@ -50,7 +51,9 @@ var proxyOutput = function (_m, props, type, prop) { return function (event) {
     }
     var p = (0, action_1.getEventType)(prop);
     var output = (0, lodash_1.get)(props === null || props === void 0 ? void 0 : props.events, p, type[p]);
-    return output.apply(void 0, tslib_1.__spreadArray([new event_zip_1.EventZip(event)], otherEvent, false));
+    var value = output.apply(void 0, tslib_1.__spreadArray([new event_zip_1.EventZip(event)], otherEvent, false));
+    value.pipe((0, operators_1.tap)(function (v) { return value = v; }));
+    return value;
 }; };
 var props = function (obj) {
     if (obj === void 0) { obj = {}; }

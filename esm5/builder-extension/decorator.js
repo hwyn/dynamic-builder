@@ -1,6 +1,7 @@
 import { __assign, __spreadArray } from "tslib";
 import { makeParamDecorator } from '@fm/di';
 import { get } from 'lodash';
+import { tap } from 'rxjs/operators';
 import { makeCustomInputProps } from '../builder/decorator';
 import { getEventType } from './action';
 import { EventZip } from './action/event-zip';
@@ -47,7 +48,9 @@ var proxyOutput = function (_m, props, type, prop) { return function (event) {
     }
     var p = getEventType(prop);
     var output = get(props === null || props === void 0 ? void 0 : props.events, p, type[p]);
-    return output.apply(void 0, __spreadArray([new EventZip(event)], otherEvent, false));
+    var value = output.apply(void 0, __spreadArray([new EventZip(event)], otherEvent, false));
+    value.pipe(tap(function (v) { return value = v; }));
+    return value;
 }; };
 var props = function (obj) {
     if (obj === void 0) { obj = {}; }

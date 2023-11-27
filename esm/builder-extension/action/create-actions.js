@@ -1,6 +1,7 @@
 import { groupBy } from 'lodash';
 import { ACTION_INTERCEPT } from '../../token';
 import { observableMap, transformObservable } from '../../utility';
+import { EventZip } from './event-zip';
 function mergeHandler(actions, props, options) {
     const actionIntercept = options.injector.get(ACTION_INTERCEPT);
     const isMore = actions.length > 1;
@@ -9,7 +10,7 @@ function mergeHandler(actions, props, options) {
     return (event, ...arg) => {
         const { interceptFn = () => event } = options;
         const obs = transformObservable(interceptFn(props, event, ...arg)).pipe(observableMap((value) => actionIntercept.invoke(actions, props, value, ...arg)));
-        return runObservable ? obs : obs.subscribe();
+        return runObservable || event instanceof EventZip ? obs : obs.subscribe();
     };
 }
 export function getEventType(type) {

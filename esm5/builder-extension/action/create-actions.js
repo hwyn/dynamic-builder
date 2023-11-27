@@ -2,6 +2,7 @@ import { __assign, __spreadArray } from "tslib";
 import { groupBy } from 'lodash';
 import { ACTION_INTERCEPT } from '../../token';
 import { observableMap, transformObservable } from '../../utility';
+import { EventZip } from './event-zip';
 function mergeHandler(actions, props, options) {
     var actionIntercept = options.injector.get(ACTION_INTERCEPT);
     var isMore = actions.length > 1;
@@ -17,7 +18,7 @@ function mergeHandler(actions, props, options) {
         }
         var _a = options.interceptFn, interceptFn = _a === void 0 ? function () { return event; } : _a;
         var obs = transformObservable(interceptFn.apply(void 0, __spreadArray([props, event], arg, false))).pipe(observableMap(function (value) { return actionIntercept.invoke.apply(actionIntercept, __spreadArray([actions, props, value], arg, false)); }));
-        return runObservable ? obs : obs.subscribe();
+        return runObservable || event instanceof EventZip ? obs : obs.subscribe();
     };
 }
 export function getEventType(type) {

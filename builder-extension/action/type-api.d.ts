@@ -4,6 +4,12 @@ import { BuilderModelExtensions } from '../type-api';
 import { BaseAction } from './base.action';
 export type TypeEvent = 'load' | 'dataSource' | 'calculator-datasource' | 'calculator' | 'click' | 'change' | 'focus' | 'blur' | 'keyUp' | 'keyDown' | string;
 export type ExecuteHandler = (baseAction: BaseAction, ...otherEvent: any[]) => any;
+export type CallLinkType = {
+    fieldId: string;
+    type: TypeEvent;
+    input: any;
+    out: any;
+};
 export interface ActionInterceptProps {
     builder: BuilderModelExtensions;
     id: string;

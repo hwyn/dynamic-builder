@@ -5,6 +5,7 @@ var tslib_1 = require("tslib");
 var lodash_1 = require("lodash");
 var token_1 = require("../../token");
 var utility_1 = require("../../utility");
+var event_zip_1 = require("./event-zip");
 function mergeHandler(actions, props, options) {
     var actionIntercept = options.injector.get(token_1.ACTION_INTERCEPT);
     var isMore = actions.length > 1;
@@ -20,7 +21,7 @@ function mergeHandler(actions, props, options) {
         }
         var _a = options.interceptFn, interceptFn = _a === void 0 ? function () { return event; } : _a;
         var obs = (0, utility_1.transformObservable)(interceptFn.apply(void 0, tslib_1.__spreadArray([props, event], arg, false))).pipe((0, utility_1.observableMap)(function (value) { return actionIntercept.invoke.apply(actionIntercept, tslib_1.__spreadArray([actions, props, value], arg, false)); }));
-        return runObservable ? obs : obs.subscribe();
+        return runObservable || event instanceof event_zip_1.EventZip ? obs : obs.subscribe();
     };
 }
 function getEventType(type) {
