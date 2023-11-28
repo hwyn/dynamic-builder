@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ActionProps = exports.OtherEvent = exports.CallLink = exports.Event = exports.Output = exports.InstanceRef = exports.ViewModelRef = exports.InterceptRef = exports.BuilderRef = exports.FieldRef = void 0;
+exports.ActionProps = exports.OtherEvent = exports.CallLink = exports.Event = exports.Output = exports.ViewModelRef = exports.InstanceRef = exports.InterceptRef = exports.BuilderRef = exports.FieldRef = void 0;
 var tslib_1 = require("tslib");
 var di_1 = require("@fm/di");
 var lodash_1 = require("lodash");
@@ -24,7 +24,6 @@ function getObjectByKey(obj, _a) {
     var key = _a.key;
     return key ? obj && (0, lodash_1.get)(obj, key) : obj;
 }
-// eslint-disable-next-line complexity
 function transform(annotation, value, baseAction) {
     var _a;
     var otherEvent = [];
@@ -63,10 +62,10 @@ var keyProps = function (key) { return props({ key: key }); };
 exports.FieldRef = (0, di_1.makeParamDecorator)(ActionParams.field, keyProps);
 exports.BuilderRef = (0, di_1.makeParamDecorator)(ActionParams.builder, props);
 exports.InterceptRef = (0, di_1.makeParamDecorator)(ActionParams.intercept, props);
+exports.InstanceRef = (0, di_1.makeParamDecorator)(ActionParams.instanceRef, props);
 exports.ViewModelRef = (0, di_1.makeParamDecorator)(ActionParams.viewModel, keyProps);
-exports.InstanceRef = (0, di_1.makeParamDecorator)(ActionParams.instanceRef, keyProps);
 exports.Output = (0, decorator_1.makeCustomInputProps)(proxyOutput);
 exports.Event = (0, di_1.makeParamDecorator)(ActionParams.event, keyProps);
-exports.CallLink = (0, di_1.makeParamDecorator)(ActionParams.callLink, keyProps);
-exports.OtherEvent = (0, di_1.makeParamDecorator)(ActionParams.otherEvent, keyProps);
+exports.CallLink = (0, di_1.makeParamDecorator)(ActionParams.callLink, props);
+exports.OtherEvent = (0, di_1.makeParamDecorator)(ActionParams.otherEvent, props);
 exports.ActionProps = (0, di_1.makeParamDecorator)(ActionParams.actionProps, keyProps);

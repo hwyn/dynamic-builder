@@ -21,7 +21,6 @@ function getObjectByKey(obj, _a) {
     var key = _a.key;
     return key ? obj && get(obj, key) : obj;
 }
-// eslint-disable-next-line complexity
 function transform(annotation, value, baseAction) {
     var _a;
     var otherEvent = [];
@@ -60,10 +59,10 @@ var keyProps = function (key) { return props({ key: key }); };
 export var FieldRef = makeParamDecorator(ActionParams.field, keyProps);
 export var BuilderRef = makeParamDecorator(ActionParams.builder, props);
 export var InterceptRef = makeParamDecorator(ActionParams.intercept, props);
+export var InstanceRef = makeParamDecorator(ActionParams.instanceRef, props);
 export var ViewModelRef = makeParamDecorator(ActionParams.viewModel, keyProps);
-export var InstanceRef = makeParamDecorator(ActionParams.instanceRef, keyProps);
 export var Output = makeCustomInputProps(proxyOutput);
 export var Event = makeParamDecorator(ActionParams.event, keyProps);
-export var CallLink = makeParamDecorator(ActionParams.callLink, keyProps);
-export var OtherEvent = makeParamDecorator(ActionParams.otherEvent, keyProps);
+export var CallLink = makeParamDecorator(ActionParams.callLink, props);
+export var OtherEvent = makeParamDecorator(ActionParams.otherEvent, props);
 export var ActionProps = makeParamDecorator(ActionParams.actionProps, keyProps);

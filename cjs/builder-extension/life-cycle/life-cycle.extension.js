@@ -84,8 +84,12 @@ var LifeCycleExtension = /** @class */ (function (_super) {
         }
     };
     LifeCycleExtension.prototype.linkOtherCalculator = function (calculator) {
+        var _this = this;
         var _a = calculator.dependent, type = _a.type, _b = _a.fieldId, fieldId = _b === void 0 ? '' : _b;
-        var dependentFields = this.builder.root.getAllFieldById(fieldId);
+        var dependentFields = this.builder.root.getAllFieldById(fieldId).filter(function (_a) {
+            var events = _a.events;
+            return !events[_this.getEventType(type)];
+        });
         if (!(0, lodash_1.isEmpty)(dependentFields)) {
             dependentFields.forEach(function (dependentField) { return dependentField.addEventListener && dependentField.addEventListener({ type: type }); });
         }

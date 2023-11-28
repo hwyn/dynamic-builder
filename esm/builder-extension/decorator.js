@@ -19,7 +19,6 @@ var ActionParams;
 function getObjectByKey(obj, { key }) {
     return key ? obj && get(obj, key) : obj;
 }
-// eslint-disable-next-line complexity
 function transform(annotation, value, baseAction, ...otherEvent) {
     var _a;
     switch (annotation.metadataName) {
@@ -47,10 +46,10 @@ const keyProps = (key) => props({ key });
 export const FieldRef = makeParamDecorator(ActionParams.field, keyProps);
 export const BuilderRef = makeParamDecorator(ActionParams.builder, props);
 export const InterceptRef = makeParamDecorator(ActionParams.intercept, props);
+export const InstanceRef = makeParamDecorator(ActionParams.instanceRef, props);
 export const ViewModelRef = makeParamDecorator(ActionParams.viewModel, keyProps);
-export const InstanceRef = makeParamDecorator(ActionParams.instanceRef, keyProps);
 export const Output = makeCustomInputProps(proxyOutput);
 export const Event = makeParamDecorator(ActionParams.event, keyProps);
-export const CallLink = makeParamDecorator(ActionParams.callLink, keyProps);
-export const OtherEvent = makeParamDecorator(ActionParams.otherEvent, keyProps);
+export const CallLink = makeParamDecorator(ActionParams.callLink, props);
+export const OtherEvent = makeParamDecorator(ActionParams.otherEvent, props);
 export const ActionProps = makeParamDecorator(ActionParams.actionProps, keyProps);

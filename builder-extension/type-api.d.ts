@@ -1,3 +1,4 @@
+import { Observable } from 'rxjs';
 import { BuilderField, BuilderModelInterface, Instance, Model } from '../builder';
 import { Action, BuilderFieldAction, ExecuteHandler, TypeEvent } from './action';
 import { BuilderFormField } from './form/type-api';
@@ -89,5 +90,5 @@ export interface BuilderModelExtensions extends BuilderModelInterface, BuilderVi
     nonSelfCalculators: OriginCalculators[];
     getExecuteHandler: (actionName: string, isSelf?: boolean) => undefined | ExecuteHandler;
 }
-export type EventEmit = (...args: any[]) => void;
+export type EventEmit = <T>(...args: any[]) => Observable<T>;
 export {};

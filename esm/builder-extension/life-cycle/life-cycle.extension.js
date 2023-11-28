@@ -70,7 +70,7 @@ export class LifeCycleExtension extends BasicExtension {
     }
     linkOtherCalculator(calculator) {
         const { type, fieldId = '' } = calculator.dependent;
-        const dependentFields = this.builder.root.getAllFieldById(fieldId);
+        const dependentFields = this.builder.root.getAllFieldById(fieldId).filter(({ events }) => !events[this.getEventType(type)]);
         if (!isEmpty(dependentFields)) {
             dependentFields.forEach((dependentField) => dependentField.addEventListener && dependentField.addEventListener({ type }));
         }
