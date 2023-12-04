@@ -1,7 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.RootModel = exports.makeCustomInputProps = exports.makeBuilderDecorator = exports.InputProps = exports.DynamicModel = exports.Visibility = void 0;
+exports.RootModel = exports.makeCustomInputProps = exports.makeBuilderDecorator = exports.InputProps = exports.DynamicModel = exports.Visibility = exports.BuilderEngine = void 0;
 var tslib_1 = require("tslib");
+var builder_engine_service_1 = require("./builder-engine.service");
+Object.defineProperty(exports, "BuilderEngine", { enumerable: true, get: function () { return builder_engine_service_1.BuilderEngine; } });
 var consts_1 = require("./consts");
 Object.defineProperty(exports, "Visibility", { enumerable: true, get: function () { return consts_1.Visibility; } });
 var decorator_1 = require("./decorator");

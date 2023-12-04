@@ -46,6 +46,8 @@ var BuilderContext = /** @class */ (function (_super) {
     }
     BuilderContext.prototype.canExtends = function (injector) {
         var _this = this;
+        var _a;
+        (_a = this.parent) === null || _a === void 0 ? void 0 : _a.canExtends(injector);
         _super.prototype.registryInjector.call(this, injector);
         this.map.forEach(function (_factory, token) { return _this.registryFactory(injector, token); });
         this.clsMap.forEach(function (cls, token) { return injector.set(token, { provide: token, useClass: cls }); });
@@ -124,10 +126,8 @@ var BuilderContext = /** @class */ (function (_super) {
         (_a = this.extensions).push.apply(_a, extensions);
     };
     BuilderContext.prototype.registryInjector = function (injector) {
-        var _a;
         injector.set(token_1.LOAD_BUILDER_CONFIG, { provide: token_1.LOAD_BUILDER_CONFIG, useValue: read_config_extension_1.ReadConfigExtension });
         injector.set(token_1.BUILDER_EXTENSION, { provide: token_1.BUILDER_EXTENSION, multi: true, useValue: defaultExtensions });
-        (_a = this.parent) === null || _a === void 0 ? void 0 : _a.canExtends(injector);
         injector.set(BuilderContext, { provide: BuilderContext, useValue: this });
         injector.set(token_1.GET_TYPE, { provide: token_1.GET_TYPE, useValue: this.getType.bind(this) });
         injector.set(token_1.ACTION_INTERCEPT, { provide: token_1.ACTION_INTERCEPT, useClass: actions_1.Action });

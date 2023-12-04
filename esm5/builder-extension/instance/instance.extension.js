@@ -57,7 +57,7 @@ var InstanceExtension = /** @class */ (function (_super) {
             var hasMounted = !!current && _current !== current;
             _current = current;
             if (hasMounted) {
-                instance.onMounted(id);
+                instance.onMounted(current);
             }
             if (current instanceof BuilderModel && current.id !== id) {
                 console.info("Builder needs to set the id property: ".concat(id));

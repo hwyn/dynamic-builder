@@ -38,6 +38,8 @@ export class BuilderContext extends BasicBuilderContext {
         this.clsMap = new Map();
     }
     canExtends(injector) {
+        var _a;
+        (_a = this.parent) === null || _a === void 0 ? void 0 : _a.canExtends(injector);
         super.registryInjector(injector);
         this.map.forEach((_factory, token) => this.registryFactory(injector, token));
         this.clsMap.forEach((cls, token) => injector.set(token, { provide: token, useClass: cls }));
@@ -104,10 +106,8 @@ export class BuilderContext extends BasicBuilderContext {
         this.extensions.push(...extensions);
     }
     registryInjector(injector) {
-        var _a;
         injector.set(LOAD_BUILDER_CONFIG, { provide: LOAD_BUILDER_CONFIG, useValue: ReadConfigExtension });
         injector.set(BUILDER_EXTENSION, { provide: BUILDER_EXTENSION, multi: true, useValue: defaultExtensions });
-        (_a = this.parent) === null || _a === void 0 ? void 0 : _a.canExtends(injector);
         injector.set(BuilderContext, { provide: BuilderContext, useValue: this });
         injector.set(GET_TYPE, { provide: GET_TYPE, useValue: this.getType.bind(this) });
         injector.set(ACTION_INTERCEPT, { provide: ACTION_INTERCEPT, useClass: Action });
