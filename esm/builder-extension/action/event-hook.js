@@ -14,6 +14,20 @@ export class EventHook extends BasicUtility {
         this.actionIntercept = this.injector.get(ACTION_INTERCEPT);
         this.defineProperty(this.cache, NON_SELF_BUILDERS, this.builder.root.$$cache.nonSelfBuilders || []);
     }
+    linkCalculators() {
+        const calculators = this.serializeCalculators();
+        calculators.forEach((calculator) => this.linkCalculator(calculator));
+        this.getNonSelfCalculators().forEach((calculator) => this.linkCalculator(calculator, true));
+        this.calculators = calculators.filter((c) => !this.nonSelfCalculators.includes(c));
+        this.pushNonBuilders();
+    }
+    invokeCalculators(actionProps, props, callLink, ...events) {
+        const [value, ...otherEvent] = events;
+        const nonSelfBuilders = this.nonSelfBuilders || [];
+        const calculatorsInvokes = nonSelfBuilders.map((nonBuild) => { var _a, _b; return this.invokeCallCalculators((_b = (_a = this.getEventHook(nonBuild)) === null || _a === void 0 ? void 0 : _a.nonSelfCalculators) !== null && _b !== void 0 ? _b : [], actionProps, { builder: nonBuild, id: props.id }); });
+        calculatorsInvokes.push(this.invokeCallCalculators(this.calculators || [], actionProps, props));
+        return forkJoin(calculatorsInvokes.map((invokeCalculators) => invokeCalculators(callLink, value, ...otherEvent)));
+    }
     serializeCalculators() {
         const fields = [...this.jsonFields, this.json];
         const fieldsWithCalculators = fields.filter(({ calculators }) => !isEmpty(calculators));
@@ -28,20 +42,7 @@ export class EventHook extends BasicUtility {
                 });
             });
         });
-        this.linkCalculators(originCalculators);
-    }
-    invokeCalculators(actionProps, props, callLink, ...events) {
-        const [value, ...otherEvent] = events;
-        const nonSelfBuilders = this.nonSelfBuilders || [];
-        const calculatorsInvokes = nonSelfBuilders.map((nonBuild) => { var _a, _b; return this.invokeCallCalculators((_b = (_a = this.getEventHook(nonBuild)) === null || _a === void 0 ? void 0 : _a.nonSelfCalculators) !== null && _b !== void 0 ? _b : [], actionProps, { builder: nonBuild, id: props.id }); });
-        calculatorsInvokes.push(this.invokeCallCalculators(this.calculators || [], actionProps, props));
-        return forkJoin(calculatorsInvokes.map((invokeCalculators) => invokeCalculators(callLink, value, ...otherEvent)));
-    }
-    linkCalculators(calculators) {
-        calculators.forEach((calculator) => this.linkCalculator(calculator));
-        this.getNonSelfCalculators().forEach((calculator) => this.linkCalculator(calculator, true));
-        this.calculators = calculators.filter((c) => !this.nonSelfCalculators.includes(c));
-        this.pushNonBuilders();
+        return originCalculators;
     }
     // eslint-disable-next-line complexity
     linkCalculator(calculator, nonSelfCalculator) {

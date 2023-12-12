@@ -20,6 +20,26 @@ var EventHook = /** @class */ (function (_super) {
     EventHook.create = function (builder, props, cache, json) {
         return new EventHook(builder, props, cache, json);
     };
+    EventHook.prototype.linkCalculators = function () {
+        var _this = this;
+        var calculators = this.serializeCalculators();
+        calculators.forEach(function (calculator) { return _this.linkCalculator(calculator); });
+        this.getNonSelfCalculators().forEach(function (calculator) { return _this.linkCalculator(calculator, true); });
+        this.calculators = calculators.filter(function (c) { return !_this.nonSelfCalculators.includes(c); });
+        this.pushNonBuilders();
+    };
+    EventHook.prototype.invokeCalculators = function (actionProps, props, callLink) {
+        var _this = this;
+        var events = [];
+        for (var _i = 3; _i < arguments.length; _i++) {
+            events[_i - 3] = arguments[_i];
+        }
+        var value = events[0], otherEvent = events.slice(1);
+        var nonSelfBuilders = this.nonSelfBuilders || [];
+        var calculatorsInvokes = nonSelfBuilders.map(function (nonBuild) { var _a, _b; return _this.invokeCallCalculators((_b = (_a = _this.getEventHook(nonBuild)) === null || _a === void 0 ? void 0 : _a.nonSelfCalculators) !== null && _b !== void 0 ? _b : [], actionProps, { builder: nonBuild, id: props.id }); });
+        calculatorsInvokes.push(this.invokeCallCalculators(this.calculators || [], actionProps, props));
+        return (0, rxjs_1.forkJoin)(calculatorsInvokes.map(function (invokeCalculators) { return invokeCalculators.apply(void 0, tslib_1.__spreadArray([callLink, value], otherEvent, false)); }));
+    };
     EventHook.prototype.serializeCalculators = function () {
         var _this = this;
         var fields = tslib_1.__spreadArray(tslib_1.__spreadArray([], this.jsonFields, true), [this.json], false);
@@ -43,26 +63,7 @@ var EventHook = /** @class */ (function (_super) {
                 });
             });
         });
-        this.linkCalculators(originCalculators);
-    };
-    EventHook.prototype.invokeCalculators = function (actionProps, props, callLink) {
-        var _this = this;
-        var events = [];
-        for (var _i = 3; _i < arguments.length; _i++) {
-            events[_i - 3] = arguments[_i];
-        }
-        var value = events[0], otherEvent = events.slice(1);
-        var nonSelfBuilders = this.nonSelfBuilders || [];
-        var calculatorsInvokes = nonSelfBuilders.map(function (nonBuild) { var _a, _b; return _this.invokeCallCalculators((_b = (_a = _this.getEventHook(nonBuild)) === null || _a === void 0 ? void 0 : _a.nonSelfCalculators) !== null && _b !== void 0 ? _b : [], actionProps, { builder: nonBuild, id: props.id }); });
-        calculatorsInvokes.push(this.invokeCallCalculators(this.calculators || [], actionProps, props));
-        return (0, rxjs_1.forkJoin)(calculatorsInvokes.map(function (invokeCalculators) { return invokeCalculators.apply(void 0, tslib_1.__spreadArray([callLink, value], otherEvent, false)); }));
-    };
-    EventHook.prototype.linkCalculators = function (calculators) {
-        var _this = this;
-        calculators.forEach(function (calculator) { return _this.linkCalculator(calculator); });
-        this.getNonSelfCalculators().forEach(function (calculator) { return _this.linkCalculator(calculator, true); });
-        this.calculators = calculators.filter(function (c) { return !_this.nonSelfCalculators.includes(c); });
-        this.pushNonBuilders();
+        return originCalculators;
     };
     // eslint-disable-next-line complexity
     EventHook.prototype.linkCalculator = function (calculator, nonSelfCalculator) {

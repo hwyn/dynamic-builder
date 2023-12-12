@@ -25,7 +25,7 @@ var ActionExtension = /** @class */ (function (_super) {
         });
     };
     ActionExtension.prototype.afterExtension = function () {
-        var handler = this.cache.eventHook.serializeCalculators();
+        var handler = this.cache.eventHook.linkCalculators();
         return this.createLifeActionEvents({ type: LOAD_CALCULATOR, handler: handler })[0]();
     };
     ActionExtension.prototype.parseActions = function (actions) {

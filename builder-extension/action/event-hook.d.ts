@@ -11,9 +11,9 @@ export declare class EventHook extends BasicUtility {
     protected actionIntercept: ActionIntercept;
     static create(builder: BuilderModelExtensions, props: BuilderProps, cache: CacheObj, json: any): EventHook;
     constructor(builder: BuilderModelExtensions, props: BuilderProps, cache: CacheObj, json: any);
-    serializeCalculators(): void;
+    linkCalculators(): void;
     invokeCalculators(actionProps: ActionProps, props: ActionInterceptProps, callLink: CallLinkType[], ...events: any[]): import("rxjs").Observable<any[]>;
-    protected linkCalculators(calculators: OriginCalculators[]): void;
+    protected serializeCalculators(): OriginCalculators[];
     protected linkCalculator(calculator: OriginCalculators, nonSelfCalculator?: boolean): void;
     protected linkOtherCalculator(calculator: OriginCalculators): void;
     protected call(calculators: OriginCalculators[], builder: BuilderModelExtensions): (callLink: CallLinkType[], value: any, ...other: any[]) => import("rxjs").Observable<any[]>;

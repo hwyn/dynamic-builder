@@ -21,7 +21,7 @@ export class ActionExtension extends BasicExtension {
         });
     }
     afterExtension() {
-        const handler = this.cache.eventHook.serializeCalculators();
+        const handler = this.cache.eventHook.linkCalculators();
         return this.createLifeActionEvents({ type: LOAD_CALCULATOR, handler })[0]();
     }
     parseActions(actions) {
