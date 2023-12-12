@@ -1,11 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.cloneDeepPlain = exports.withGetOrSet = exports.withValue = exports.funcToObservable = exports.createDetectChanges = exports.transformObj = exports.transformObservable = exports.isObservable = exports.isPromise = exports.type = void 0;
+exports.cloneDeepPlain = exports.withGetOrSet = exports.withValue = exports.serializeAction = exports.funcToObservable = exports.createDetectChanges = exports.transformObj = exports.transformObservable = exports.isObservable = exports.isPromise = exports.type = void 0;
 var tslib_1 = require("tslib");
 var lodash_1 = require("lodash");
 var rxjs_1 = require("rxjs");
 var operators_1 = require("rxjs/operators");
 var exec_observable_1 = require("./operators/exec-observable");
+var uuid_1 = require("./uuid");
 function type(obj) {
     return Object.prototype.toString.call(obj).replace(/\[object (.*)\]/, '$1');
 }
@@ -54,6 +55,12 @@ function funcToObservable(func) {
     };
 }
 exports.funcToObservable = funcToObservable;
+var serializeAction = function (action) {
+    var sAction = ((0, lodash_1.isString)(action) ? { name: action } : (0, lodash_1.isFunction)(action) ? { handler: action } : action);
+    sAction && !sAction._uid && (sAction._uid = (0, uuid_1.generateUUID)(5));
+    return sAction;
+};
+exports.serializeAction = serializeAction;
 function withValue(value) {
     return { value: value, enumerable: true, configurable: true };
 }

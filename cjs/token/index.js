@@ -1,11 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.GET_JSON_CONFIG = exports.LAYOUT_ELEMENT = exports.FORM_CONTROL = exports.FACTORY_BUILDER = exports.GRID_PARSE = exports.SCOPE_MODEL = exports.SCOPE_PROPS = exports.META_PROPS = exports.META_TYPE = exports.LOAD_BUILDER_CONFIG = exports.BUILDER_EXTENSION = exports.CONVERT_INTERCEPT = exports.ACTION_INTERCEPT = exports.CONVERT_CONFIG = exports.ACTIONS_CONFIG = exports.GET_TYPE = exports.UI_ELEMENT = void 0;
+exports.GET_JSON_CONFIG = exports.LAYOUT_ELEMENT = exports.FORM_CONTROL = exports.FACTORY_BUILDER = exports.GRID_PARSE = exports.SCOPE_MODEL = exports.SCOPE_PROPS = exports.META_PROPS = exports.META_TYPE = exports.LOAD_BUILDER_CONFIG = exports.BUILDER_EXTENSION = exports.CONVERT_INTERCEPT = exports.ACTION_INTERCEPT = exports.EVENT_HOOK = exports.CONVERT_CONFIG = exports.ACTIONS_CONFIG = exports.GET_TYPE = exports.UI_ELEMENT = void 0;
 var di_1 = require("@fm/di");
 exports.UI_ELEMENT = di_1.InjectorToken.get('UI_ELEMENT');
 exports.GET_TYPE = di_1.InjectorToken.get('GET_TYPE');
 exports.ACTIONS_CONFIG = di_1.InjectorToken.get('ACTION_CONFIG');
 exports.CONVERT_CONFIG = di_1.InjectorToken.get('CONVERT_CONFIG');
+exports.EVENT_HOOK = di_1.InjectorToken.get('EVENT_HOOK');
 exports.ACTION_INTERCEPT = di_1.InjectorToken.get('ACTION_INTERCEPT');
 exports.CONVERT_INTERCEPT = di_1.InjectorToken.get('CONVERT_INTERCEPT');
 exports.BUILDER_EXTENSION = di_1.InjectorToken.get('BUILDER_EXTENSION');

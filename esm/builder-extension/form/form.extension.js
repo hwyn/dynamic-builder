@@ -35,13 +35,10 @@ export class FormExtension extends BasicExtension {
         const { actions = [], binding } = jsonField;
         const { convert, intercept = '' } = binding;
         const actionIndex = actions.findIndex(({ type }) => type === changeType);
-        const changeAfter = this.bindCalculatorAction(this.detectChanges.bind(this, builderField));
-        const newAction = { type: changeType, after: changeAfter };
+        const newAction = actionIndex === -1 ? { type: changeType } : this.bindCalculatorAction(actions[actionIndex]);
         const bindingAction = this.bindCalculatorAction(this.createChange.bind(this, jsonField));
-        if (actions[actionIndex]) {
-            bindingAction.after = this.bindCalculatorAction(actions[actionIndex]);
-        }
         jsonField.actions = actions;
+        newAction.after = this.bindCalculatorAction(this.detectChanges.bind(this, builderField));
         newAction.before = intercept ? Object.assign(Object.assign({}, this.bindCalculatorAction(intercept)), { after: bindingAction }) : bindingAction;
         actionIndex === -1 ? actions.push(newAction) : actions[actionIndex] = newAction;
         if (convert) {

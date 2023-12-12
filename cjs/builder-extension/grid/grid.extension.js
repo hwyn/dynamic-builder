@@ -32,9 +32,6 @@ var GridExtension = /** @class */ (function (_super) {
         var jsonField = _a[0], builderField = _a[1];
         var grid = this.getGrid(jsonField, this.builder);
         var gridElement = this.getLayoutElement(grid, this.builder);
-        if (grid.config.container === this.builder.$$cache.grid.config.container) {
-            throw new Error("".concat(jsonField.id, " container is error"));
-        }
         if (jsonField.type === calculator_constant_1.LAYOUT_FIELD) {
             builderField.element = gridElement;
         }
@@ -51,7 +48,7 @@ var GridExtension = /** @class */ (function (_super) {
         var _c = mergeLayout.container, container = _c === void 0 ? '__m__' : _c, group = mergeLayout.group, row = mergeLayout.row;
         cursor[container] = cursor[container] || {};
         cursor[container][group] = row || cursor[container][group] || 1;
-        this.defineProperty(builderField, calculator_constant_1.LAYOUT, (0, lodash_1.merge)({ row: cursor[container][group] }, mergeLayout));
+        this.defineProperty(builderField, calculator_constant_1.LAYOUT, (0, lodash_1.merge)({ row: cursor[container][group], container: this.builder.id }, mergeLayout));
         if (jsonField.grid || jsonField.type === calculator_constant_1.LAYOUT_FIELD)
             this.addLayoutElement([jsonField, builderField]);
         delete field.layout;

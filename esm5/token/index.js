@@ -3,6 +3,7 @@ export var UI_ELEMENT = InjectorToken.get('UI_ELEMENT');
 export var GET_TYPE = InjectorToken.get('GET_TYPE');
 export var ACTIONS_CONFIG = InjectorToken.get('ACTION_CONFIG');
 export var CONVERT_CONFIG = InjectorToken.get('CONVERT_CONFIG');
+export var EVENT_HOOK = InjectorToken.get('EVENT_HOOK');
 export var ACTION_INTERCEPT = InjectorToken.get('ACTION_INTERCEPT');
 export var CONVERT_INTERCEPT = InjectorToken.get('CONVERT_INTERCEPT');
 export var BUILDER_EXTENSION = InjectorToken.get('BUILDER_EXTENSION');

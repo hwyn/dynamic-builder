@@ -5,7 +5,7 @@ export declare class Grid {
     protected config: GridType;
     static create(json: BuilderJsonField, builder: BuilderModelExtensions): Grid;
     constructor(json: BuilderJsonField, builder: BuilderModelExtensions);
-    protected serializationConfig(gridConfig: any): any;
+    protected serializationConfig(container: string, gridConfig: any): any;
     getViewGrid(props: any): GridType;
     protected destroy(): void;
 }

@@ -7,7 +7,7 @@ function mergeHandler(actions, props, options) {
     const isMore = actions.length > 1;
     const runObservable = actions.some(({ runObservable }) => runObservable);
     isMore && console.warn(`${props.id} Repeat listen event: ${actions[0].type}`);
-    return (event, ...arg) => {
+    return function eventHandler(event, ...arg) {
         const { interceptFn = () => event } = options;
         const obs = transformObservable(interceptFn(props, event, ...arg)).pipe(observableMap((value) => actionIntercept.invoke(actions, props, value, ...arg)));
         return runObservable || event instanceof EventZip ? obs : obs.subscribe();

@@ -11,7 +11,7 @@ function mergeHandler(actions, props, options) {
         return runObservable;
     });
     isMore && console.warn("".concat(props.id, " Repeat listen event: ").concat(actions[0].type));
-    return function (event) {
+    return function eventHandler(event) {
         var arg = [];
         for (var _i = 1; _i < arguments.length; _i++) {
             arg[_i - 1] = arguments[_i];

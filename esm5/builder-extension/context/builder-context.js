@@ -1,7 +1,8 @@
 import { __extends, __spreadArray } from "tslib";
 import { getInjectableDef, Injector, setInjectableDef } from '@fm/di';
 import { BuilderContext as BasicBuilderContext } from '../../builder/builder-context';
-import { ACTION_INTERCEPT, ACTIONS_CONFIG, BUILDER_EXTENSION, CONVERT_CONFIG, CONVERT_INTERCEPT, FORM_CONTROL, GET_JSON_CONFIG, GET_TYPE, GRID_PARSE, LAYOUT_ELEMENT, LOAD_BUILDER_CONFIG } from '../../token';
+import { ACTION_INTERCEPT, ACTIONS_CONFIG, BUILDER_EXTENSION, CONVERT_CONFIG, CONVERT_INTERCEPT, EVENT_HOOK, FORM_CONTROL, GET_JSON_CONFIG, GET_TYPE, GRID_PARSE, LAYOUT_ELEMENT, LOAD_BUILDER_CONFIG } from '../../token';
+import { EventHook } from '../action';
 import { Action } from '../action/actions';
 import { ActionExtension } from '../action/actions.extension';
 import { AttributeExtension } from '../attribute/attribute.extension';
@@ -126,6 +127,7 @@ var BuilderContext = /** @class */ (function (_super) {
         injector.set(BUILDER_EXTENSION, { provide: BUILDER_EXTENSION, multi: true, useValue: defaultExtensions });
         injector.set(BuilderContext, { provide: BuilderContext, useValue: this });
         injector.set(GET_TYPE, { provide: GET_TYPE, useValue: this.getType.bind(this) });
+        injector.set(EVENT_HOOK, { provide: EVENT_HOOK, useFactory: this.useFactory(EventHook.create) });
         injector.set(ACTION_INTERCEPT, { provide: ACTION_INTERCEPT, useClass: Action });
         injector.set(CONVERT_INTERCEPT, { provide: CONVERT_INTERCEPT, useClass: Convert });
         injector.set(GRID_PARSE, { provide: GRID_PARSE, useFactory: this.useFactory(Grid.create) });

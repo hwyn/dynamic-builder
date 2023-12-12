@@ -1,30 +1,16 @@
+import { __extends } from "tslib";
 import { isFunction, isString, merge } from 'lodash';
-import { cloneDeepPlain, generateUUID, transformObj, withGetOrSet, withValue } from '../../utility';
-import { createActions, getActionType, getEventType } from '../action/create-actions';
+import { cloneDeepPlain, transformObj, withGetOrSet } from '../../utility/utility';
+import { createActions } from '../action/create-actions';
+import { BasicUtility } from '../basic-utility/basic-utility';
 import { CALCULATOR } from '../constant/calculator.constant';
-export var serializeAction = function (action) {
-    var sAction = (isString(action) ? { name: action } : isFunction(action) ? { handler: action } : action);
-    sAction && !sAction._uid && (sAction._uid = generateUUID(5));
-    return sAction;
-};
-var BasicExtension = /** @class */ (function () {
+var BasicExtension = /** @class */ (function (_super) {
+    __extends(BasicExtension, _super);
     function BasicExtension(builder, props, cache, json) {
-        var _a;
-        this.builder = builder;
-        this.props = props;
-        this.cache = cache;
-        this.json = json;
-        this.injector = this.builder.injector;
-        this.jsonFields = (_a = this.json) === null || _a === void 0 ? void 0 : _a.fields;
-        this.beforeExtension();
+        var _this = _super.call(this, builder, props, cache, json) || this;
+        _this.beforeExtension();
+        return _this;
     }
-    Object.defineProperty(BasicExtension.prototype, "builderAttr", {
-        get: function () {
-            return ['jsonName', 'configAction', 'jsonNameAction', 'config'];
-        },
-        enumerable: false,
-        configurable: true
-    });
     BasicExtension.prototype.beforeExtension = function () { };
     BasicExtension.prototype.afterExtension = function () { };
     BasicExtension.prototype.beforeDestroy = function () { };
@@ -46,9 +32,6 @@ var BasicExtension = /** @class */ (function () {
             var builderField = _this.getBuilderFieldById(jsonField.id);
             return callBack([jsonField, builderField]) || builderField;
         });
-    };
-    BasicExtension.prototype.isBuildField = function (props) {
-        return this.builderAttr.some(function (key) { return !!props[key]; });
     };
     BasicExtension.prototype.cloneDeepPlain = function (value) {
         return cloneDeepPlain(value);
@@ -73,9 +56,6 @@ var BasicExtension = /** @class */ (function () {
         fieldConfig.calculators = this.toArray(fieldConfig.calculators || []);
         var pushCalculators = this.toArray(calculator);
         (_a = fieldConfig.calculators).push.apply(_a, pushCalculators);
-        this.cache.bindFn.push(function () {
-            pushCalculators.forEach(function (c) { return fieldConfig.calculators.splice(fieldConfig.calculators.indexOf(c), 1); });
-        });
     };
     BasicExtension.prototype.pushAction = function (fieldConfig, actions) {
         fieldConfig.actions = this.toArray(fieldConfig.actions || []);
@@ -88,25 +68,12 @@ var BasicExtension = /** @class */ (function () {
             !findAction ? defaultAction.push(pushAction) : Object.assign(findAction, pushAction);
         });
     };
-    BasicExtension.prototype.toArray = function (obj) {
-        return Array.isArray(obj) ? obj : [obj];
-    };
-    BasicExtension.prototype.defineProperty = function (object, prototypeName, value) {
-        Object.defineProperty(object, prototypeName, withValue(value));
-    };
     BasicExtension.prototype.defineProperties = function (object, prototype) {
         var _this = this;
         Object.keys(prototype).forEach(function (key) { return _this.defineProperty(object, key, prototype[key]); });
     };
     BasicExtension.prototype.definePropertyGet = function (object, prototypeName, get) {
         Object.defineProperty(object, prototypeName, withGetOrSet(get));
-    };
-    BasicExtension.prototype.unDefineProperty = function (object, prototypeNames) {
-        var _this = this;
-        prototypeNames.forEach(function (prototypeName) { return _this.defineProperty(object, prototypeName, null); });
-    };
-    BasicExtension.prototype.serializeAction = function (action) {
-        return serializeAction(action);
     };
     BasicExtension.prototype.pushActionToMethod = function (actions) {
         var _this = this;
@@ -138,21 +105,9 @@ var BasicExtension = /** @class */ (function () {
     BasicExtension.prototype.createActions = function (actions, props, options) {
         return createActions(actions, props, options);
     };
-    BasicExtension.prototype.getEventType = function (type) {
-        return getEventType(type);
-    };
-    BasicExtension.prototype.getActionType = function (type) {
-        return getActionType(type);
-    };
-    BasicExtension.prototype.getJsonFieldById = function (fieldId) {
-        return this.jsonFields.find(function (_a) {
-            var id = _a.id;
-            return fieldId === id;
-        });
-    };
     BasicExtension.prototype.getBuilderFieldById = function (fieldId) {
         return this.builder.getFieldById(fieldId);
     };
     return BasicExtension;
-}());
+}(BasicUtility));
 export { BasicExtension };

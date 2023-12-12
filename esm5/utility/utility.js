@@ -1,8 +1,9 @@
 import { __spreadArray } from "tslib";
-import { isPlainObject } from 'lodash';
+import { isFunction, isPlainObject, isString } from 'lodash';
 import { from, Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { observableMap } from './operators/exec-observable';
+import { generateUUID } from './uuid';
 export function type(obj) {
     return Object.prototype.toString.call(obj).replace(/\[object (.*)\]/, '$1');
 }
@@ -44,6 +45,11 @@ export function funcToObservable(func) {
         }).pipe(observableMap(transformObservable));
     };
 }
+export var serializeAction = function (action) {
+    var sAction = (isString(action) ? { name: action } : isFunction(action) ? { handler: action } : action);
+    sAction && !sAction._uid && (sAction._uid = generateUUID(5));
+    return sAction;
+};
 export function withValue(value) {
     return { value: value, enumerable: true, configurable: true };
 }

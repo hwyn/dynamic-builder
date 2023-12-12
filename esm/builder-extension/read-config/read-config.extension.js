@@ -3,7 +3,7 @@ import { isEmpty, isFunction, uniq } from 'lodash';
 import { of } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { GET_JSON_CONFIG, META_TYPE } from '../../token';
-import { funcToObservable, observableMap, observableTap, toForkJoin } from '../../utility';
+import { funcToObservable, generateUUID, observableMap, observableTap, toForkJoin } from '../../utility';
 import { BasicExtension } from "../basic/basic.extension";
 import { LOAD_CONFIG_ACTION } from '../constant/calculator.constant';
 export class ReadConfigExtension extends BasicExtension {
@@ -51,7 +51,11 @@ export class ReadConfigExtension extends BasicExtension {
         else {
             configOb = (configAction ? this.createLoadConfigAction(configAction, props) : of(config)).pipe(map(this.cloneDeepPlain));
         }
-        return configOb.pipe(map((_config = []) => Object.assign({ fields: [] }, Array.isArray(_config) ? { fields: _config } : _config, id ? { id } : {})));
+        return configOb.pipe(map((_config = []) => {
+            const config = Object.assign({ fields: [] }, Array.isArray(_config) ? { fields: _config } : _config, id ? { id } : {});
+            config.fields.forEach((field) => !field.id && (field.id = generateUUID(5)));
+            return config;
+        }));
     }
     createLoadConfigAction(actionName, props) {
         const loadAction = Object.assign(Object.assign({}, this.serializeAction(actionName)), { type: LOAD_CONFIG_ACTION, runObservable: true });

@@ -1,7 +1,8 @@
-import { isPlainObject } from 'lodash';
+import { isFunction, isPlainObject, isString } from 'lodash';
 import { from, Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { observableMap } from './operators/exec-observable';
+import { generateUUID } from './uuid';
 export function type(obj) {
     return Object.prototype.toString.call(obj).replace(/\[object (.*)\]/, '$1');
 }
@@ -37,6 +38,11 @@ export function funcToObservable(func) {
         func(handler, ...args);
     }).pipe(observableMap(transformObservable));
 }
+export const serializeAction = (action) => {
+    const sAction = (isString(action) ? { name: action } : isFunction(action) ? { handler: action } : action);
+    sAction && !sAction._uid && (sAction._uid = generateUUID(5));
+    return sAction;
+};
 export function withValue(value) {
     return { value, enumerable: true, configurable: true };
 }

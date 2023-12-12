@@ -40,28 +40,23 @@ function destroy() {
     const { beforeDestroys = [], ready = false, destroyed } = cacheObj;
     cacheObj.destroyed = true;
     if (ready && !destroyed) {
-        try {
-            transformObservable(this.destroy && this.destroy.call(this)).pipe(observableMap(() => toForkJoin(beforeDestroys.map((beforeDestroy) => beforeDestroy && beforeDestroy()))), observableMap((destroys) => toForkJoin(destroys.map((destroy) => destroy && destroy())))).subscribe({
-                next: () => {
-                    var _a;
-                    cacheObj.fields.splice(0);
-                    cacheObj.listenerDetect.unsubscribe();
-                    cacheObj.beforeDestroys.splice(0);
-                    this.children.splice(0);
-                    (_a = this.extension) === null || _a === void 0 ? void 0 : _a.splice(0);
-                    this.parent && removeChild.call(this.parent, this);
-                    cacheObj.bindFn.forEach((fn) => fn());
-                    cacheObj.bindFn.splice(0);
-                    Object.defineProperties(this, { $$cache: withValue({ ready: false, destroyed: true }), onDestroy: withValue(null) });
-                },
-                error: (e) => {
-                    console.error(e);
-                }
-            });
-        }
-        catch (e) {
-            console.error(e);
-        }
+        transformObservable(this.destroy && this.destroy.call(this)).pipe(observableMap(() => toForkJoin(beforeDestroys.map((beforeDestroy) => beforeDestroy && beforeDestroy()))), observableMap((destroys) => toForkJoin(destroys.map((destroy) => destroy && destroy())))).subscribe({
+            next: () => {
+                var _a;
+                cacheObj.fields.splice(0);
+                cacheObj.listenerDetect.unsubscribe();
+                cacheObj.beforeDestroys.splice(0);
+                this.children.splice(0);
+                (_a = this.extension) === null || _a === void 0 ? void 0 : _a.splice(0);
+                this.parent && removeChild.call(this.parent, this);
+                cacheObj.bindFn.forEach((fn) => fn());
+                cacheObj.bindFn.splice(0);
+                Object.defineProperties(this, { $$cache: withValue({ ready: false, destroyed: true }), onDestroy: withValue(null) });
+            },
+            error: (e) => {
+                console.error(e);
+            }
+        });
     }
 }
 function getCacheObj(props) {

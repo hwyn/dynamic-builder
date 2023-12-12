@@ -48,13 +48,10 @@ var FormExtension = /** @class */ (function (_super) {
             var type = _a.type;
             return type === changeType;
         });
-        var changeAfter = this.bindCalculatorAction(this.detectChanges.bind(this, builderField));
-        var newAction = { type: changeType, after: changeAfter };
+        var newAction = actionIndex === -1 ? { type: changeType } : this.bindCalculatorAction(actions[actionIndex]);
         var bindingAction = this.bindCalculatorAction(this.createChange.bind(this, jsonField));
-        if (actions[actionIndex]) {
-            bindingAction.after = this.bindCalculatorAction(actions[actionIndex]);
-        }
         jsonField.actions = actions;
+        newAction.after = this.bindCalculatorAction(this.detectChanges.bind(this, builderField));
         newAction.before = intercept ? tslib_1.__assign(tslib_1.__assign({}, this.bindCalculatorAction(intercept)), { after: bindingAction }) : bindingAction;
         actionIndex === -1 ? actions.push(newAction) : actions[actionIndex] = newAction;
         if (convert) {

@@ -1,4 +1,3 @@
-import { serializeAction } from './basic/basic.extension';
 export * from './action';
 export * from './action/create-actions';
 export * from './attribute/attribute.extension';
@@ -12,4 +11,3 @@ export { Grid } from './grid/grid';
 export { BuilderModelExtensions as BuilderModel } from './model/builder-extension-model';
 export * from './type-api';
 export * from './view-model/base.view';
-export { serializeAction };

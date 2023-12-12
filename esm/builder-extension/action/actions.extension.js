@@ -1,20 +1,17 @@
 import { isEmpty, isPlainObject } from 'lodash';
+import { EVENT_HOOK } from '../../token';
 import { BasicExtension } from '../basic/basic.extension';
-import { ADD_EVENT_LISTENER, EVENTS, LOAD_ACTION, LOAD_VIEW_MODEL } from '../constant/calculator.constant';
+import { ADD_EVENT_LISTENER, EVENTS, LOAD_ACTION, LOAD_CALCULATOR, LOAD_VIEW_MODEL } from '../constant/calculator.constant';
 const CACHE_ACTION = 'cacheAction';
+const VAR_HOOK = 'eventHook';
 export class ActionExtension extends BasicExtension {
     constructor() {
         super(...arguments);
         this.fields = [];
     }
     beforeExtension() {
+        this.defineProperty(this.cache, VAR_HOOK, this.injector.get(EVENT_HOOK)(this.builder, this.props, this.cache, this.json));
         [this.json, ...this.jsonFields].forEach((jsonField) => jsonField.actions = this.parseActions(jsonField.actions));
-    }
-    parseActions(actions) {
-        if (!Array.isArray(actions) && isPlainObject(actions)) {
-            return Object.keys(actions).map((key) => this.bindCalculatorAction(actions[key], key));
-        }
-        return actions;
     }
     extension() {
         const handler = this.eachFields.bind(this, this.jsonFields, this.create.bind(this));
@@ -22,6 +19,16 @@ export class ActionExtension extends BasicExtension {
             action: this.bindCalculatorAction(handler, LOAD_ACTION),
             dependents: { type: LOAD_VIEW_MODEL, fieldId: this.builder.id }
         });
+    }
+    afterExtension() {
+        const handler = this.cache.eventHook.serializeCalculators();
+        return this.createLifeActionEvents({ type: LOAD_CALCULATOR, handler })[0]();
+    }
+    parseActions(actions) {
+        if (!Array.isArray(actions) && isPlainObject(actions)) {
+            return Object.keys(actions).map((key) => this.bindCalculatorAction(actions[key], key));
+        }
+        return actions;
     }
     create([jsonField, builderField]) {
         const { actions = [] } = jsonField;
@@ -41,7 +48,10 @@ export class ActionExtension extends BasicExtension {
         }
     }
     destroy() {
+        var _a;
+        (_a = this.cache.eventHook) === null || _a === void 0 ? void 0 : _a.destroy();
         this.fields.forEach((field) => this.unDefineProperty(field, [CACHE_ACTION, EVENTS, ADD_EVENT_LISTENER]));
+        this.unDefineProperty(this.cache, [VAR_HOOK]);
         super.destroy();
     }
 }

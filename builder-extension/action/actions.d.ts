@@ -13,9 +13,6 @@ export declare class Action implements ActionIntercept {
     private createEvent;
     protected createCallLinkType({ type, callLink }: ActionLinkProps, { id }: ActionInterceptProps, input: any, out: any): CallLinkType[];
     protected getActionContext({ builder, id }?: ActionInterceptProps): ActionContext;
-    private call;
-    private invokeCallCalculators;
-    private invokeCalculators;
     private execute;
     invoke(actions: InvokeAction | InvokeAction[], props?: ActionInterceptProps, event?: Event | any, ...otherEvent: any[]): Observable<any>;
     callAction(actionName: InvokeAction, context: ActionInterceptProps, ...events: any[]): Observable<any>;

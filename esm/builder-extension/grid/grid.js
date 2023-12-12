@@ -15,9 +15,9 @@ export class Grid {
     }
     constructor(json, builder) {
         this.builder = builder;
-        this.config = this.serializationConfig(json.grid);
+        this.config = this.serializationConfig(json.id, json.grid);
     }
-    serializationConfig(gridConfig) {
+    serializationConfig(container, gridConfig) {
         const _a = Object.assign(Object.assign({}, defaultGrid), gridConfig), { id = LAYOUT_ID, groups, additional = [] } = _a, other = __rest(_a, ["id", "groups", "additional"]);
         const { justify, alignItems, spacing } = other;
         const groupLayout = groupBy(additional, ({ group }) => group);
@@ -27,14 +27,13 @@ export class Grid {
             const [item = {}] = (_a = groupLayout[index + 1]) !== null && _a !== void 0 ? _a : [];
             return Object.assign(Object.assign({ xs }, defaultGroupAdditional), item);
         });
-        return Object.assign(Object.assign({ id }, other), { additional: groupAdditional });
+        return Object.assign(Object.assign({ id, container }, other), { additional: groupAdditional });
     }
     getViewGrid(props) {
         const config = cloneDeepPlain(this.config);
-        const builderContainerId = this.builder.$$cache.grid.config.container;
-        const { additional = [], container: configContainer = builderContainerId, className = '', style } = config;
+        const { additional = [], container: gridContainer, className = '', style } = config;
         const { className: propsClassName = '', style: propsStyle } = props;
-        const fields = this.builder.fields.filter(({ layout: { container } }) => container === configContainer);
+        const fields = this.builder.fields.filter(({ layout: { container } }) => container === gridContainer);
         const groupLayout = groupByFields(fields);
         config.additional = additional.filter((item, group) => {
             return !!(item.fieldRows = groupFieldsToArray(groupLayout[group + 1])).length;

@@ -44,28 +44,23 @@ function destroy() {
     var _a = cacheObj.beforeDestroys, beforeDestroys = _a === void 0 ? [] : _a, _b = cacheObj.ready, ready = _b === void 0 ? false : _b, destroyed = cacheObj.destroyed;
     cacheObj.destroyed = true;
     if (ready && !destroyed) {
-        try {
-            transformObservable(this.destroy && this.destroy.call(this)).pipe(observableMap(function () { return toForkJoin(beforeDestroys.map(function (beforeDestroy) { return beforeDestroy && beforeDestroy(); })); }), observableMap(function (destroys) { return toForkJoin(destroys.map(function (destroy) { return destroy && destroy(); })); })).subscribe({
-                next: function () {
-                    var _a;
-                    cacheObj.fields.splice(0);
-                    cacheObj.listenerDetect.unsubscribe();
-                    cacheObj.beforeDestroys.splice(0);
-                    _this.children.splice(0);
-                    (_a = _this.extension) === null || _a === void 0 ? void 0 : _a.splice(0);
-                    _this.parent && removeChild.call(_this.parent, _this);
-                    cacheObj.bindFn.forEach(function (fn) { return fn(); });
-                    cacheObj.bindFn.splice(0);
-                    Object.defineProperties(_this, { $$cache: withValue({ ready: false, destroyed: true }), onDestroy: withValue(null) });
-                },
-                error: function (e) {
-                    console.error(e);
-                }
-            });
-        }
-        catch (e) {
-            console.error(e);
-        }
+        transformObservable(this.destroy && this.destroy.call(this)).pipe(observableMap(function () { return toForkJoin(beforeDestroys.map(function (beforeDestroy) { return beforeDestroy && beforeDestroy(); })); }), observableMap(function (destroys) { return toForkJoin(destroys.map(function (destroy) { return destroy && destroy(); })); })).subscribe({
+            next: function () {
+                var _a;
+                cacheObj.fields.splice(0);
+                cacheObj.listenerDetect.unsubscribe();
+                cacheObj.beforeDestroys.splice(0);
+                _this.children.splice(0);
+                (_a = _this.extension) === null || _a === void 0 ? void 0 : _a.splice(0);
+                _this.parent && removeChild.call(_this.parent, _this);
+                cacheObj.bindFn.forEach(function (fn) { return fn(); });
+                cacheObj.bindFn.splice(0);
+                Object.defineProperties(_this, { $$cache: withValue({ ready: false, destroyed: true }), onDestroy: withValue(null) });
+            },
+            error: function (e) {
+                console.error(e);
+            }
+        });
     }
 }
 function getCacheObj(props) {

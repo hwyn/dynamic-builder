@@ -3,9 +3,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ActionExtension = void 0;
 var tslib_1 = require("tslib");
 var lodash_1 = require("lodash");
+var token_1 = require("../../token");
 var basic_extension_1 = require("../basic/basic.extension");
 var calculator_constant_1 = require("../constant/calculator.constant");
 var CACHE_ACTION = 'cacheAction';
+var VAR_HOOK = 'eventHook';
 var ActionExtension = /** @class */ (function (_super) {
     tslib_1.__extends(ActionExtension, _super);
     function ActionExtension() {
@@ -15,14 +17,8 @@ var ActionExtension = /** @class */ (function (_super) {
     }
     ActionExtension.prototype.beforeExtension = function () {
         var _this = this;
+        this.defineProperty(this.cache, VAR_HOOK, this.injector.get(token_1.EVENT_HOOK)(this.builder, this.props, this.cache, this.json));
         tslib_1.__spreadArray([this.json], this.jsonFields, true).forEach(function (jsonField) { return jsonField.actions = _this.parseActions(jsonField.actions); });
-    };
-    ActionExtension.prototype.parseActions = function (actions) {
-        var _this = this;
-        if (!Array.isArray(actions) && (0, lodash_1.isPlainObject)(actions)) {
-            return Object.keys(actions).map(function (key) { return _this.bindCalculatorAction(actions[key], key); });
-        }
-        return actions;
     };
     ActionExtension.prototype.extension = function () {
         var handler = this.eachFields.bind(this, this.jsonFields, this.create.bind(this));
@@ -30,6 +26,17 @@ var ActionExtension = /** @class */ (function (_super) {
             action: this.bindCalculatorAction(handler, calculator_constant_1.LOAD_ACTION),
             dependents: { type: calculator_constant_1.LOAD_VIEW_MODEL, fieldId: this.builder.id }
         });
+    };
+    ActionExtension.prototype.afterExtension = function () {
+        var handler = this.cache.eventHook.serializeCalculators();
+        return this.createLifeActionEvents({ type: calculator_constant_1.LOAD_CALCULATOR, handler: handler })[0]();
+    };
+    ActionExtension.prototype.parseActions = function (actions) {
+        var _this = this;
+        if (!Array.isArray(actions) && (0, lodash_1.isPlainObject)(actions)) {
+            return Object.keys(actions).map(function (key) { return _this.bindCalculatorAction(actions[key], key); });
+        }
+        return actions;
     };
     ActionExtension.prototype.create = function (_a) {
         var _b;
@@ -56,7 +63,10 @@ var ActionExtension = /** @class */ (function (_super) {
     };
     ActionExtension.prototype.destroy = function () {
         var _this = this;
+        var _a;
+        (_a = this.cache.eventHook) === null || _a === void 0 ? void 0 : _a.destroy();
         this.fields.forEach(function (field) { return _this.unDefineProperty(field, [CACHE_ACTION, calculator_constant_1.EVENTS, calculator_constant_1.ADD_EVENT_LISTENER]); });
+        this.unDefineProperty(this.cache, [VAR_HOOK]);
         _super.prototype.destroy.call(this);
     };
     return ActionExtension;

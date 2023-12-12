@@ -24,9 +24,6 @@ export class GridExtension extends BasicExtension {
     addLayoutElement([jsonField, builderField]) {
         const grid = this.getGrid(jsonField, this.builder);
         const gridElement = this.getLayoutElement(grid, this.builder);
-        if (grid.config.container === this.builder.$$cache.grid.config.container) {
-            throw new Error(`${jsonField.id} container is error`);
-        }
         if (jsonField.type === LAYOUT_FIELD) {
             builderField.element = gridElement;
         }
@@ -42,7 +39,7 @@ export class GridExtension extends BasicExtension {
         const { container = '__m__', group, row } = mergeLayout;
         cursor[container] = cursor[container] || {};
         cursor[container][group] = row || cursor[container][group] || 1;
-        this.defineProperty(builderField, LAYOUT, merge({ row: cursor[container][group] }, mergeLayout));
+        this.defineProperty(builderField, LAYOUT, merge({ row: cursor[container][group], container: this.builder.id }, mergeLayout));
         if (jsonField.grid || jsonField.type === LAYOUT_FIELD)
             this.addLayoutElement([jsonField, builderField]);
         delete field.layout;

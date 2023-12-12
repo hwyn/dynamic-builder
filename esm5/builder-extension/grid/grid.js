@@ -18,12 +18,12 @@ function groupFieldsToArray(fields) {
 var Grid = /** @class */ (function () {
     function Grid(json, builder) {
         this.builder = builder;
-        this.config = this.serializationConfig(json.grid);
+        this.config = this.serializationConfig(json.id, json.grid);
     }
     Grid.create = function (json, builder) {
         return new Grid(json, builder);
     };
-    Grid.prototype.serializationConfig = function (gridConfig) {
+    Grid.prototype.serializationConfig = function (container, gridConfig) {
         var _a = Object.assign(__assign({}, defaultGrid), gridConfig), _b = _a.id, id = _b === void 0 ? LAYOUT_ID : _b, groups = _a.groups, _c = _a.additional, additional = _c === void 0 ? [] : _c, other = __rest(_a, ["id", "groups", "additional"]);
         var justify = other.justify, alignItems = other.alignItems, spacing = other.spacing;
         var groupLayout = groupBy(additional, function (_a) {
@@ -36,16 +36,15 @@ var Grid = /** @class */ (function () {
             var _b = ((_a = groupLayout[index + 1]) !== null && _a !== void 0 ? _a : [])[0], item = _b === void 0 ? {} : _b;
             return __assign(__assign({ xs: xs }, defaultGroupAdditional), item);
         });
-        return __assign(__assign({ id: id }, other), { additional: groupAdditional });
+        return __assign(__assign({ id: id, container: container }, other), { additional: groupAdditional });
     };
     Grid.prototype.getViewGrid = function (props) {
         var config = cloneDeepPlain(this.config);
-        var builderContainerId = this.builder.$$cache.grid.config.container;
-        var _a = config.additional, additional = _a === void 0 ? [] : _a, _b = config.container, configContainer = _b === void 0 ? builderContainerId : _b, _c = config.className, className = _c === void 0 ? '' : _c, style = config.style;
-        var _d = props.className, propsClassName = _d === void 0 ? '' : _d, propsStyle = props.style;
+        var _a = config.additional, additional = _a === void 0 ? [] : _a, gridContainer = config.container, _b = config.className, className = _b === void 0 ? '' : _b, style = config.style;
+        var _c = props.className, propsClassName = _c === void 0 ? '' : _c, propsStyle = props.style;
         var fields = this.builder.fields.filter(function (_a) {
             var container = _a.layout.container;
-            return container === configContainer;
+            return container === gridContainer;
         });
         var groupLayout = groupByFields(fields);
         config.additional = additional.filter(function (item, group) {

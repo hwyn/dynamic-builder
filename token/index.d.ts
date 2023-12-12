@@ -3,6 +3,7 @@ export declare const UI_ELEMENT: InjectorToken;
 export declare const GET_TYPE: InjectorToken;
 export declare const ACTIONS_CONFIG: InjectorToken;
 export declare const CONVERT_CONFIG: InjectorToken;
+export declare const EVENT_HOOK: InjectorToken;
 export declare const ACTION_INTERCEPT: InjectorToken;
 export declare const CONVERT_INTERCEPT: InjectorToken;
 export declare const BUILDER_EXTENSION: InjectorToken;

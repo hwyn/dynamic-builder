@@ -5,6 +5,7 @@ var tslib_1 = require("tslib");
 var di_1 = require("@fm/di");
 var builder_context_1 = require("../../builder/builder-context");
 var token_1 = require("../../token");
+var action_1 = require("../action");
 var actions_1 = require("../action/actions");
 var actions_extension_1 = require("../action/actions.extension");
 var attribute_extension_1 = require("../attribute/attribute.extension");
@@ -130,6 +131,7 @@ var BuilderContext = /** @class */ (function (_super) {
         injector.set(token_1.BUILDER_EXTENSION, { provide: token_1.BUILDER_EXTENSION, multi: true, useValue: defaultExtensions });
         injector.set(BuilderContext, { provide: BuilderContext, useValue: this });
         injector.set(token_1.GET_TYPE, { provide: token_1.GET_TYPE, useValue: this.getType.bind(this) });
+        injector.set(token_1.EVENT_HOOK, { provide: token_1.EVENT_HOOK, useFactory: this.useFactory(action_1.EventHook.create) });
         injector.set(token_1.ACTION_INTERCEPT, { provide: token_1.ACTION_INTERCEPT, useClass: actions_1.Action });
         injector.set(token_1.CONVERT_INTERCEPT, { provide: token_1.CONVERT_INTERCEPT, useClass: convert_1.Convert });
         injector.set(token_1.GRID_PARSE, { provide: token_1.GRID_PARSE, useFactory: this.useFactory(grid_1.Grid.create) });

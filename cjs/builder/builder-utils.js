@@ -47,28 +47,23 @@ function destroy() {
     var _a = cacheObj.beforeDestroys, beforeDestroys = _a === void 0 ? [] : _a, _b = cacheObj.ready, ready = _b === void 0 ? false : _b, destroyed = cacheObj.destroyed;
     cacheObj.destroyed = true;
     if (ready && !destroyed) {
-        try {
-            (0, utility_1.transformObservable)(this.destroy && this.destroy.call(this)).pipe((0, utility_1.observableMap)(function () { return (0, utility_1.toForkJoin)(beforeDestroys.map(function (beforeDestroy) { return beforeDestroy && beforeDestroy(); })); }), (0, utility_1.observableMap)(function (destroys) { return (0, utility_1.toForkJoin)(destroys.map(function (destroy) { return destroy && destroy(); })); })).subscribe({
-                next: function () {
-                    var _a;
-                    cacheObj.fields.splice(0);
-                    cacheObj.listenerDetect.unsubscribe();
-                    cacheObj.beforeDestroys.splice(0);
-                    _this.children.splice(0);
-                    (_a = _this.extension) === null || _a === void 0 ? void 0 : _a.splice(0);
-                    _this.parent && removeChild.call(_this.parent, _this);
-                    cacheObj.bindFn.forEach(function (fn) { return fn(); });
-                    cacheObj.bindFn.splice(0);
-                    Object.defineProperties(_this, { $$cache: (0, utility_1.withValue)({ ready: false, destroyed: true }), onDestroy: (0, utility_1.withValue)(null) });
-                },
-                error: function (e) {
-                    console.error(e);
-                }
-            });
-        }
-        catch (e) {
-            console.error(e);
-        }
+        (0, utility_1.transformObservable)(this.destroy && this.destroy.call(this)).pipe((0, utility_1.observableMap)(function () { return (0, utility_1.toForkJoin)(beforeDestroys.map(function (beforeDestroy) { return beforeDestroy && beforeDestroy(); })); }), (0, utility_1.observableMap)(function (destroys) { return (0, utility_1.toForkJoin)(destroys.map(function (destroy) { return destroy && destroy(); })); })).subscribe({
+            next: function () {
+                var _a;
+                cacheObj.fields.splice(0);
+                cacheObj.listenerDetect.unsubscribe();
+                cacheObj.beforeDestroys.splice(0);
+                _this.children.splice(0);
+                (_a = _this.extension) === null || _a === void 0 ? void 0 : _a.splice(0);
+                _this.parent && removeChild.call(_this.parent, _this);
+                cacheObj.bindFn.forEach(function (fn) { return fn(); });
+                cacheObj.bindFn.splice(0);
+                Object.defineProperties(_this, { $$cache: (0, utility_1.withValue)({ ready: false, destroyed: true }), onDestroy: (0, utility_1.withValue)(null) });
+            },
+            error: function (e) {
+                console.error(e);
+            }
+        });
     }
 }
 function getCacheObj(props) {

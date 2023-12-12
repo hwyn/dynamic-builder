@@ -4,7 +4,7 @@ import { isEmpty, isFunction, uniq } from 'lodash';
 import { of } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { GET_JSON_CONFIG, META_TYPE } from '../../token';
-import { funcToObservable, observableMap, observableTap, toForkJoin } from '../../utility';
+import { funcToObservable, generateUUID, observableMap, observableTap, toForkJoin } from '../../utility';
 import { BasicExtension } from "../basic/basic.extension";
 import { LOAD_CONFIG_ACTION } from '../constant/calculator.constant';
 var ReadConfigExtension = /** @class */ (function (_super) {
@@ -59,7 +59,9 @@ var ReadConfigExtension = /** @class */ (function (_super) {
         }
         return configOb.pipe(map(function (_config) {
             if (_config === void 0) { _config = []; }
-            return Object.assign({ fields: [] }, Array.isArray(_config) ? { fields: _config } : _config, id ? { id: id } : {});
+            var config = Object.assign({ fields: [] }, Array.isArray(_config) ? { fields: _config } : _config, id ? { id: id } : {});
+            config.fields.forEach(function (field) { return !field.id && (field.id = generateUUID(5)); });
+            return config;
         }));
     };
     ReadConfigExtension.prototype.createLoadConfigAction = function (actionName, props) {

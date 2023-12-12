@@ -8,7 +8,6 @@ var rxjs_1 = require("rxjs");
 var operators_1 = require("rxjs/operators");
 var token_1 = require("../../token");
 var utility_1 = require("../../utility");
-var basic_extension_1 = require("../basic/basic.extension");
 var base_action_1 = require("./base.action");
 var event_zip_1 = require("./event-zip");
 var Action = /** @class */ (function () {
@@ -47,46 +46,6 @@ var Action = /** @class */ (function () {
         var _b = _a === void 0 ? {} : _a, builder = _b.builder, id = _b.id;
         return (0, lodash_1.isEmpty)(builder) ? {} : { builder: builder, builderField: builder.getFieldById(id) };
     };
-    Action.prototype.call = function (calculators, builder) {
-        var _this = this;
-        var groupList = (0, lodash_1.toArray)((0, lodash_1.groupBy)(calculators, 'targetId'));
-        return function (callLink, value) {
-            var other = [];
-            for (var _i = 2; _i < arguments.length; _i++) {
-                other[_i - 2] = arguments[_i];
-            }
-            return (0, rxjs_1.forkJoin)(groupList.map(function (links) {
-                return _this.invoke.apply(_this, tslib_1.__spreadArray([links.map(function (_a) {
-                        var action = _a.action;
-                        return (tslib_1.__assign(tslib_1.__assign({}, action), { callLink: callLink }));
-                    }), { builder: builder, id: links[0].targetId }, value], other, false));
-            }));
-        };
-    };
-    Action.prototype.invokeCallCalculators = function (calculators, _a, props) {
-        var type = _a.type;
-        var builder = props.builder, id = props.id;
-        var filterCalculators = calculators.filter(function (_a) {
-            var _b = _a.dependent, fieldId = _b.fieldId, cType = _b.type;
-            return fieldId === id && cType === type;
-        });
-        return !(0, lodash_1.isEmpty)(filterCalculators) ? this.call(filterCalculators, builder) : function (_callLink, value) { return (0, rxjs_1.of)(value); };
-    };
-    Action.prototype.invokeCalculators = function (actionProps, props, callLink) {
-        var _this = this;
-        var events = [];
-        for (var _i = 3; _i < arguments.length; _i++) {
-            events[_i - 3] = arguments[_i];
-        }
-        var builder = props.builder, id = props.id;
-        var value = events[0], otherEvent = events.slice(1);
-        var nonSelfBuilders = (builder === null || builder === void 0 ? void 0 : builder.$$cache.nonSelfBuilders) || [];
-        var calculatorsInvokes = nonSelfBuilders.map(function (nonBuild) {
-            return _this.invokeCallCalculators(nonBuild.nonSelfCalculators, actionProps, { builder: nonBuild, id: id });
-        });
-        calculatorsInvokes.push(this.invokeCallCalculators((builder === null || builder === void 0 ? void 0 : builder.calculators) || [], actionProps, props));
-        return (0, rxjs_1.forkJoin)(calculatorsInvokes.map(function (invokeCalculators) { return invokeCalculators.apply(void 0, tslib_1.__spreadArray([callLink, value], otherEvent, false)); }));
-    };
     Action.prototype.execute = function (action, props, event) {
         if (event === void 0) { event = void (0); }
         var otherEvent = [];
@@ -107,15 +66,16 @@ var Action = /** @class */ (function () {
         for (var _i = 3; _i < arguments.length; _i++) {
             otherEvent[_i - 3] = arguments[_i];
         }
-        var _actions = (Array.isArray(actions) ? actions : [actions]).map(basic_extension_1.serializeAction);
+        var _actions = (Array.isArray(actions) ? actions : [actions]).map(utility_1.serializeAction);
         return (0, utility_1.toForkJoin)(_actions.map(function (_a) {
             var before = _a.before;
             return before && _this.invoke.apply(_this, tslib_1.__spreadArray([before, props, event], otherEvent, false));
         })).pipe((0, utility_1.observableMap)(function () { return (0, rxjs_1.forkJoin)(_actions.map(function (action) {
             return _this.execute.apply(_this, tslib_1.__spreadArray([action, props, event], otherEvent, false));
         })); }), (0, utility_1.observableTap)(function (result) { return !props ? (0, rxjs_1.of)(void (0)) : (0, utility_1.toForkJoin)(_actions.map(function (action, index) {
+            var _a, _b;
             var callLink = _this.createCallLinkType(action, props, event, result[index]);
-            return action.type && _this.invokeCalculators.apply(_this, tslib_1.__spreadArray([action, props, callLink, result[index]], otherEvent, false));
+            return action.type && ((_b = (_a = props.builder) === null || _a === void 0 ? void 0 : _a.$$cache.eventHook) === null || _b === void 0 ? void 0 : _b.invokeCalculators.apply(_b, tslib_1.__spreadArray([action, props, callLink, result[index]], otherEvent, false)));
         })); }), (0, utility_1.observableTap)(function (result) { return (0, utility_1.toForkJoin)(_actions.map(function (_a, index) {
             var after = _a.after;
             return after && _this.invoke.apply(_this, tslib_1.__spreadArray([after, props, result[index]], otherEvent, false));
@@ -126,11 +86,11 @@ var Action = /** @class */ (function () {
         for (var _i = 2; _i < arguments.length; _i++) {
             events[_i - 2] = arguments[_i];
         }
-        return this.invoke.apply(this, tslib_1.__spreadArray([(0, basic_extension_1.serializeAction)(actionName), context], events, false));
+        return this.invoke.apply(this, tslib_1.__spreadArray([(0, utility_1.serializeAction)(actionName), context], events, false));
     };
     Action.prototype.executeAction = function (actionProps, actionContext, _a) {
         var _b = _a === void 0 ? this.createEvent(void (0)) : _a, actionEvent = _b[0], otherEvent = _b.slice(1);
-        var _c = (0, basic_extension_1.serializeAction)(actionProps), _d = _c.name, name = _d === void 0 ? "" : _d, handler = _c.handler;
+        var _c = (0, utility_1.serializeAction)(actionProps), _d = _c.name, name = _d === void 0 ? "" : _d, handler = _c.handler;
         var _e = name.match(/([^.]+)/ig) || [name], actionName = _e[0], _f = _e[1], execute = _f === void 0 ? 'execute' : _f;
         var ActionType = null;
         var executeHandler = handler;
