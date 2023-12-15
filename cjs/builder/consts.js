@@ -9,4 +9,4 @@ var Visibility;
     Visibility["readonly"] = "readonly";
     Visibility["disabled"] = "disabled";
     Visibility["required"] = "required";
-})(Visibility = exports.Visibility || (exports.Visibility = {}));
+})(Visibility || (exports.Visibility = Visibility = {}));

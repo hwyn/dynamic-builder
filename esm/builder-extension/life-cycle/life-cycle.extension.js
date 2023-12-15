@@ -17,7 +17,6 @@ export class LifeCycleExtension extends BasicExtension {
             action: this.bindCalculatorAction(this.createLife.bind(this)),
             dependents: { type: LOAD_CALCULATOR, fieldId: this.builder.id }
         });
-        this.pushAction(this.json, { type: DESTROY });
         if (this.builder.parent)
             this.callParentDestroy(this.builder.parent);
     }
@@ -29,18 +28,17 @@ export class LifeCycleExtension extends BasicExtension {
             dependents: { type: DESTROY, fieldId: parentBuilder.id, equal, nonSelf: true }
         });
     }
-    createLoadAction(json) {
-        const { actions = [] } = json;
-        const loadIndex = actions.findIndex(({ type }) => type === LOAD);
-        const loadAction = { before: Object.assign(Object.assign({}, actions[loadIndex]), { type: LOAD_SOURCE }), type: LOAD };
-        loadIndex === -1 ? actions.push(loadAction) : actions[loadIndex] = loadAction;
-        return json;
+    createLifeChange() {
+        const { actions = [] } = this.json;
+        const lifeActions = this.lifeEvent.map((type) => actions.find((action) => action.type === type) || { type });
+        const loadIndex = lifeActions.findIndex(({ type }) => type === LOAD);
+        const loadAction = { before: Object.assign(Object.assign({}, lifeActions[loadIndex]), { type: LOAD_SOURCE }), type: LOAD };
+        loadIndex === -1 ? lifeActions.push(loadAction) : lifeActions[loadIndex] = loadAction;
+        lifeActions.forEach((action) => action.runObservable = true);
+        return lifeActions;
     }
     createLife() {
-        const { actions } = this.createLoadAction(this.json);
-        const lifeActionsType = actions.filter(({ type }) => this.lifeEvent.includes(type));
-        lifeActionsType.forEach((action) => action.runObservable = true);
-        this.lifeActions = this.createLifeActions(lifeActionsType);
+        this.lifeActions = this.createLifeActions(this.createLifeChange());
         this.defineProperty(this.builder, this.getEventType(CHANGE), this.onLifeChange.bind(this, this.builder.onChange));
         return this.invokeLifeCycle(this.getEventType(LOAD), this.props);
     }

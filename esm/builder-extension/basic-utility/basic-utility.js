@@ -34,7 +34,7 @@ export class BasicUtility {
         return this.jsonFields.find(({ id }) => fieldId === id);
     }
     isBuildField(props) {
-        return this.builderAttr.some((key) => !!props[key]);
+        return this.builderAttr.some((key) => !!props[key]) || this.json === props;
     }
     getEventType(type) {
         return getEventType(type);

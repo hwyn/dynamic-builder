@@ -23,7 +23,6 @@ var LifeCycleExtension = /** @class */ (function (_super) {
             action: this.bindCalculatorAction(this.createLife.bind(this)),
             dependents: { type: calculator_constant_1.LOAD_CALCULATOR, fieldId: this.builder.id }
         });
-        this.pushAction(this.json, { type: calculator_constant_1.DESTROY });
         if (this.builder.parent)
             this.callParentDestroy(this.builder.parent);
     };
@@ -39,25 +38,20 @@ var LifeCycleExtension = /** @class */ (function (_super) {
             dependents: { type: calculator_constant_1.DESTROY, fieldId: parentBuilder.id, equal: equal, nonSelf: true }
         });
     };
-    LifeCycleExtension.prototype.createLoadAction = function (json) {
-        var _a = json.actions, actions = _a === void 0 ? [] : _a;
-        var loadIndex = actions.findIndex(function (_a) {
+    LifeCycleExtension.prototype.createLifeChange = function () {
+        var _a = this.json.actions, actions = _a === void 0 ? [] : _a;
+        var lifeActions = this.lifeEvent.map(function (type) { return actions.find(function (action) { return action.type === type; }) || { type: type }; });
+        var loadIndex = lifeActions.findIndex(function (_a) {
             var type = _a.type;
             return type === calculator_constant_1.LOAD;
         });
-        var loadAction = { before: tslib_1.__assign(tslib_1.__assign({}, actions[loadIndex]), { type: calculator_constant_1.LOAD_SOURCE }), type: calculator_constant_1.LOAD };
-        loadIndex === -1 ? actions.push(loadAction) : actions[loadIndex] = loadAction;
-        return json;
+        var loadAction = { before: tslib_1.__assign(tslib_1.__assign({}, lifeActions[loadIndex]), { type: calculator_constant_1.LOAD_SOURCE }), type: calculator_constant_1.LOAD };
+        loadIndex === -1 ? lifeActions.push(loadAction) : lifeActions[loadIndex] = loadAction;
+        lifeActions.forEach(function (action) { return action.runObservable = true; });
+        return lifeActions;
     };
     LifeCycleExtension.prototype.createLife = function () {
-        var _this = this;
-        var actions = this.createLoadAction(this.json).actions;
-        var lifeActionsType = actions.filter(function (_a) {
-            var type = _a.type;
-            return _this.lifeEvent.includes(type);
-        });
-        lifeActionsType.forEach(function (action) { return action.runObservable = true; });
-        this.lifeActions = this.createLifeActions(lifeActionsType);
+        this.lifeActions = this.createLifeActions(this.createLifeChange());
         this.defineProperty(this.builder, this.getEventType(calculator_constant_1.CHANGE), this.onLifeChange.bind(this, this.builder.onChange));
         return this.invokeLifeCycle(this.getEventType(calculator_constant_1.LOAD), this.props);
     };

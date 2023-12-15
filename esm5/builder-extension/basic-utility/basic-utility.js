@@ -41,7 +41,7 @@ var BasicUtility = /** @class */ (function () {
         });
     };
     BasicUtility.prototype.isBuildField = function (props) {
-        return this.builderAttr.some(function (key) { return !!props[key]; });
+        return this.builderAttr.some(function (key) { return !!props[key]; }) || this.json === props;
     };
     BasicUtility.prototype.getEventType = function (type) {
         return getEventType(type);
