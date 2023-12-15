@@ -1,6 +1,6 @@
 import { Observable } from 'rxjs';
 import { BuilderField, BuilderModelInterface, Instance, Model } from '../builder';
-import { Action, BuilderFieldAction, ExecuteHandler, TypeEvent } from './action';
+import { Action, ActionInterceptProps, BuilderFieldAction, ExecuteHandler, TypeEvent } from './action';
 import { BuilderFormField } from './form/type-api';
 import { BuilderViewModel } from './view-model/type-api';
 import { BuilderVisibilityModel } from './visibility/type-api';
@@ -27,6 +27,7 @@ export interface CalculatorsDependent {
     nonSelf?: boolean;
     fieldId?: string;
     type: TypeEvent;
+    equal?: (props: ActionInterceptProps, calculator: OriginCalculators) => boolean;
 }
 export interface Calculators {
     action: Action;

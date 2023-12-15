@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import { flatMap, groupBy, isEmpty, toArray } from 'lodash';
 import { forkJoin, of } from 'rxjs';
 import { ACTION_INTERCEPT } from '../../token';
@@ -12,6 +13,7 @@ export class EventHook extends BasicUtility {
         this.calculators = [];
         this.nonSelfCalculators = [];
         this.actionIntercept = this.injector.get(ACTION_INTERCEPT);
+        this.cache.bindFn.push(() => this.destroy());
         this.defineProperty(this.cache, NON_SELF_BUILDERS, this.builder.root.$$cache.nonSelfBuilders || []);
     }
     linkCalculators() {
@@ -24,8 +26,8 @@ export class EventHook extends BasicUtility {
     invokeCalculators(actionProps, props, callLink, ...events) {
         const [value, ...otherEvent] = events;
         const nonSelfBuilders = this.nonSelfBuilders || [];
-        const calculatorsInvokes = nonSelfBuilders.map((nonBuild) => { var _a, _b; return this.invokeCallCalculators((_b = (_a = this.getEventHook(nonBuild)) === null || _a === void 0 ? void 0 : _a.nonSelfCalculators) !== null && _b !== void 0 ? _b : [], actionProps, { builder: nonBuild, id: props.id }); });
-        calculatorsInvokes.push(this.invokeCallCalculators(this.calculators || [], actionProps, props));
+        const calculatorsInvokes = nonSelfBuilders.map((nonBuild) => { var _a, _b; return this.invokeCallCalculators((_b = (_a = this.getEventHook(nonBuild)) === null || _a === void 0 ? void 0 : _a.nonSelfCalculators) !== null && _b !== void 0 ? _b : [], actionProps, props, { builder: nonBuild, id: props.id }); });
+        calculatorsInvokes.push(this.invokeCallCalculators(this.calculators || [], actionProps, props, props));
         return forkJoin(calculatorsInvokes.map((invokeCalculators) => invokeCalculators(callLink, value, ...otherEvent)));
     }
     serializeCalculators() {
@@ -74,9 +76,12 @@ export class EventHook extends BasicUtility {
             return inter.invoke(links.map(({ action }) => (Object.assign(Object.assign({}, action), { callLink }))), { builder, id: links[0].targetId }, value, ...other);
         }));
     }
-    invokeCallCalculators(calculators, { type }, props) {
+    invokeCallCalculators(calculators, { type }, targetProps, props) {
         const { builder, id } = props;
-        const filterCalculators = calculators.filter(({ dependent: { fieldId, type: cType } }) => fieldId === id && cType === type);
+        const filterCalculators = calculators.filter((calculator) => {
+            const { dependent: { fieldId, type: cType, equal } } = calculator;
+            return fieldId === id && cType === type && (!equal || equal(targetProps, calculator));
+        });
         return !isEmpty(filterCalculators) ? this.call(filterCalculators, builder) : (_callLink, value) => of(value);
     }
     getEventHook(builder) {

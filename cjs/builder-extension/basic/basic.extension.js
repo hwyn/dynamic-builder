@@ -48,10 +48,14 @@ var BasicExtension = /** @class */ (function (_super) {
         return calculatorConfig;
     };
     BasicExtension.prototype.bindCalculatorAction = function (handler, type) {
+        var _this = this;
         if (type === void 0) { type = calculator_constant_1.CALCULATOR; }
         var action = this.serializeAction(handler);
         action.type = type;
-        action.handler && this.cache.bindFn.push(function () { delete action.handler; });
+        if (!this.cache.bindActionHandler) {
+            this.cache.bindActionHandler = this.factoryBindFn(function (item) { return _this.removeAction(item); });
+        }
+        action.handler && this.cache.bindActionHandler(action);
         return action;
     };
     BasicExtension.prototype.pushCalculators = function (fieldConfig, calculator) {
@@ -106,6 +110,10 @@ var BasicExtension = /** @class */ (function (_super) {
         return this.createActions(_actions, props, { injector: this.injector });
     };
     BasicExtension.prototype.createActions = function (actions, props, options) {
+        if (!this.cache.bindAction) {
+            this.cache.bindAction = this.factoryBindFn(function (item) { return delete item.builder; });
+        }
+        this.cache.bindAction(props);
         return (0, create_actions_1.createActions)(actions, props, options);
     };
     BasicExtension.prototype.getBuilderFieldById = function (fieldId) {

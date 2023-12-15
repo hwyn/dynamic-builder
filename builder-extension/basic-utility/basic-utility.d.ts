@@ -12,6 +12,8 @@ export declare class BasicUtility {
     constructor(builder: BuilderModelExtensions, props: BuilderProps, cache: CacheObj, json: any);
     protected get builderAttr(): string[];
     protected serializeAction(action: ((...args: any[]) => any) | string | Action): Action;
+    protected factoryBindFn(handler: (item: any) => void): (item: any) => number;
+    protected removeAction(action: Action): void;
     protected getJsonFieldById(fieldId: string): any;
     protected isBuildField(props: any): boolean;
     protected getEventType(type: string): string;

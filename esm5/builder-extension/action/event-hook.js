@@ -1,4 +1,5 @@
 import { __assign, __extends, __spreadArray } from "tslib";
+/* eslint-disable max-len */
 import { flatMap, groupBy, isEmpty, toArray } from 'lodash';
 import { forkJoin, of } from 'rxjs';
 import { ACTION_INTERCEPT } from '../../token';
@@ -11,6 +12,7 @@ var EventHook = /** @class */ (function (_super) {
         _this.calculators = [];
         _this.nonSelfCalculators = [];
         _this.actionIntercept = _this.injector.get(ACTION_INTERCEPT);
+        _this.cache.bindFn.push(function () { return _this.destroy(); });
         _this.defineProperty(_this.cache, NON_SELF_BUILDERS, _this.builder.root.$$cache.nonSelfBuilders || []);
         return _this;
     }
@@ -33,8 +35,8 @@ var EventHook = /** @class */ (function (_super) {
         }
         var value = events[0], otherEvent = events.slice(1);
         var nonSelfBuilders = this.nonSelfBuilders || [];
-        var calculatorsInvokes = nonSelfBuilders.map(function (nonBuild) { var _a, _b; return _this.invokeCallCalculators((_b = (_a = _this.getEventHook(nonBuild)) === null || _a === void 0 ? void 0 : _a.nonSelfCalculators) !== null && _b !== void 0 ? _b : [], actionProps, { builder: nonBuild, id: props.id }); });
-        calculatorsInvokes.push(this.invokeCallCalculators(this.calculators || [], actionProps, props));
+        var calculatorsInvokes = nonSelfBuilders.map(function (nonBuild) { var _a, _b; return _this.invokeCallCalculators((_b = (_a = _this.getEventHook(nonBuild)) === null || _a === void 0 ? void 0 : _a.nonSelfCalculators) !== null && _b !== void 0 ? _b : [], actionProps, props, { builder: nonBuild, id: props.id }); });
+        calculatorsInvokes.push(this.invokeCallCalculators(this.calculators || [], actionProps, props, props));
         return forkJoin(calculatorsInvokes.map(function (invokeCalculators) { return invokeCalculators.apply(void 0, __spreadArray([callLink, value], otherEvent, false)); }));
     };
     EventHook.prototype.serializeCalculators = function () {
@@ -105,12 +107,12 @@ var EventHook = /** @class */ (function (_super) {
             }));
         };
     };
-    EventHook.prototype.invokeCallCalculators = function (calculators, _a, props) {
+    EventHook.prototype.invokeCallCalculators = function (calculators, _a, targetProps, props) {
         var type = _a.type;
         var builder = props.builder, id = props.id;
-        var filterCalculators = calculators.filter(function (_a) {
-            var _b = _a.dependent, fieldId = _b.fieldId, cType = _b.type;
-            return fieldId === id && cType === type;
+        var filterCalculators = calculators.filter(function (calculator) {
+            var _a = calculator.dependent, fieldId = _a.fieldId, cType = _a.type, equal = _a.equal;
+            return fieldId === id && cType === type && (!equal || equal(targetProps, calculator));
         });
         return !isEmpty(filterCalculators) ? this.call(filterCalculators, builder) : function (_callLink, value) { return of(value); };
     };

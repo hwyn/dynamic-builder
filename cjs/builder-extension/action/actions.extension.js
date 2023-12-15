@@ -63,8 +63,6 @@ var ActionExtension = /** @class */ (function (_super) {
     };
     ActionExtension.prototype.destroy = function () {
         var _this = this;
-        var _a;
-        (_a = this.cache.eventHook) === null || _a === void 0 ? void 0 : _a.destroy();
         this.fields.forEach(function (field) { return _this.unDefineProperty(field, [CACHE_ACTION, calculator_constant_1.EVENTS, calculator_constant_1.ADD_EVENT_LISTENER]); });
         this.unDefineProperty(this.cache, [VAR_HOOK]);
         _super.prototype.destroy.call(this);

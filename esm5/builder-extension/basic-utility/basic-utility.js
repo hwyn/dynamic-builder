@@ -20,6 +20,20 @@ var BasicUtility = /** @class */ (function () {
     BasicUtility.prototype.serializeAction = function (action) {
         return serializeAction(action);
     };
+    BasicUtility.prototype.factoryBindFn = function (handler) {
+        var cacheMap = [];
+        this.cache.bindFn.push(function () {
+            while (cacheMap.length)
+                handler(cacheMap.shift());
+        });
+        return function (item) { return cacheMap.push(item); };
+    };
+    BasicUtility.prototype.removeAction = function (action) {
+        var before = action.before, after = action.after;
+        before && this.removeAction(before);
+        after && this.removeAction(after);
+        delete action.handler;
+    };
     BasicUtility.prototype.getJsonFieldById = function (fieldId) {
         return this.jsonFields.find(function (_a) {
             var id = _a.id;

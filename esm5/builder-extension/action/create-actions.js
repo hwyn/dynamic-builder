@@ -29,7 +29,6 @@ export function getActionType(type) {
 }
 export var createActions = function (actions, props, options) {
     var events = groupBy(actions, 'type');
-    props.builder.$$cache.bindFn.push(function () { return delete props.builder; });
     return Object.keys(events).reduce(function (obj, type) {
         var _a;
         return (__assign(__assign({}, obj), (_a = {}, _a[getEventType(type)] = mergeHandler(events[type], props, options), _a)));

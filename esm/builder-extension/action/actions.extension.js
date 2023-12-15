@@ -48,8 +48,6 @@ export class ActionExtension extends BasicExtension {
         }
     }
     destroy() {
-        var _a;
-        (_a = this.cache.eventHook) === null || _a === void 0 ? void 0 : _a.destroy();
         this.fields.forEach((field) => this.unDefineProperty(field, [CACHE_ACTION, EVENTS, ADD_EVENT_LISTENER]));
         this.unDefineProperty(this.cache, [VAR_HOOK]);
         super.destroy();

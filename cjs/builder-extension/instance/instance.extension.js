@@ -5,7 +5,6 @@ var tslib_1 = require("tslib");
 var lodash_1 = require("lodash");
 var rxjs_1 = require("rxjs");
 var operators_1 = require("rxjs/operators");
-var builder_model_1 = require("../../builder/builder-model");
 var utility_1 = require("../../utility");
 var basic_extension_1 = require("../basic/basic.extension");
 var calculator_constant_1 = require("../constant/calculator.constant");
@@ -23,9 +22,9 @@ var InstanceExtension = /** @class */ (function (_super) {
         var listenerDetect = new rxjs_1.Subject();
         var instance = {
             current: null,
+            destroy: new rxjs_1.Subject(),
             onMounted: function () { return void (0); },
-            onDestroy: function () { return void (0); },
-            destroy: new rxjs_1.Subject().pipe((0, operators_1.shareReplay)(1))
+            onDestroy: function () { return void (0); }
         };
         return Object.defineProperties(instance, (_a = {},
             _a[LISTENER_DETECT] = (0, utility_1.withValue)(listenerDetect),
@@ -53,7 +52,7 @@ var InstanceExtension = /** @class */ (function (_super) {
         delete events.onDestroy;
     };
     InstanceExtension.prototype.getCurrentProperty = function (_a) {
-        var instance = _a.instance, id = _a.id;
+        var instance = _a.instance;
         var _current;
         var get = function () { return _current; };
         var set = function (current) {
@@ -61,9 +60,6 @@ var InstanceExtension = /** @class */ (function (_super) {
             _current = current;
             if (hasMounted) {
                 instance.onMounted(current);
-            }
-            if (current instanceof builder_model_1.BuilderModel && current.id !== id) {
-                console.info("Builder needs to set the id property: ".concat(id));
             }
         };
         return { get: get, set: set };
@@ -74,19 +70,17 @@ var InstanceExtension = /** @class */ (function (_super) {
         var instance = InstanceExtension.createInstance();
         this.pushAction(jsonField, [destroy, { type: calculator_constant_1.MOUNTED }]);
         this.defineProperty(builderField, calculator_constant_1.INSTANCE, instance);
-        instance.destroy.subscribe();
     };
     InstanceExtension.prototype.instanceDestroy = function (_a) {
         var actionEvent = _a.actionEvent, instance = _a.builderField.instance;
-        var currentIsBuildModel = instance.current instanceof builder_model_1.BuilderModel;
-        instance.current && (instance.current = null);
-        return !currentIsBuildModel && instance.destroy.next(actionEvent);
+        instance.current = null;
+        instance.destroy.next(actionEvent);
     };
     InstanceExtension.prototype.beforeDestroy = function () {
         var _this = this;
         var showFields = this.buildFieldList.filter(function (_a) {
-            var visibility = _a.visibility;
-            return _this.builder.showField(visibility);
+            var visibility = _a.visibility, instance = _a.instance;
+            return _this.builder.showField(visibility) && instance.current;
         });
         if (!(0, lodash_1.isEmpty)(showFields)) {
             var subscriptions_1 = [];

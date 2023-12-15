@@ -16,6 +16,20 @@ export class BasicUtility {
     serializeAction(action) {
         return serializeAction(action);
     }
+    factoryBindFn(handler) {
+        const cacheMap = [];
+        this.cache.bindFn.push(() => {
+            while (cacheMap.length)
+                handler(cacheMap.shift());
+        });
+        return (item) => cacheMap.push(item);
+    }
+    removeAction(action) {
+        const { before, after } = action;
+        before && this.removeAction(before);
+        after && this.removeAction(after);
+        delete action.handler;
+    }
     getJsonFieldById(fieldId) {
         return this.jsonFields.find(({ id }) => fieldId === id);
     }

@@ -79,15 +79,11 @@ var ReadConfigExtension = /** @class */ (function (_super) {
             var id = _a.id;
             return id;
         }) || []);
-        var instance = this.props.instance;
         if (filedIds.includes(jsonId)) {
             throw new Error("The same ID as jsonID exists in the configuration file: ".concat(jsonId));
         }
         if (!(0, lodash_1.isEmpty)(filedIds) && filedIds.length !== fields.length) {
             throw new Error("The same ID exists in the configuration file: ".concat(jsonId));
-        }
-        if (this.builder.parent && !instance) {
-            console.warn("Builder needs to set the instance property: ".concat(this.builder.id));
         }
     };
     ReadConfigExtension.prototype.eligiblePreloaded = function (props) {

@@ -1,8 +1,7 @@
 import { __extends } from "tslib";
 import { isEmpty } from 'lodash';
 import { Observable, Subject } from 'rxjs';
-import { shareReplay, tap } from 'rxjs/operators';
-import { BuilderModel } from '../../builder/builder-model';
+import { tap } from 'rxjs/operators';
 import { createDetectChanges, observableMap, toForkJoin, transformObservable, withValue } from '../../utility';
 import { BasicExtension } from '../basic/basic.extension';
 import { CURRENT, DESTROY, INSTANCE, LOAD_ACTION, MOUNTED } from '../constant/calculator.constant';
@@ -20,9 +19,9 @@ var InstanceExtension = /** @class */ (function (_super) {
         var listenerDetect = new Subject();
         var instance = {
             current: null,
+            destroy: new Subject(),
             onMounted: function () { return void (0); },
-            onDestroy: function () { return void (0); },
-            destroy: new Subject().pipe(shareReplay(1))
+            onDestroy: function () { return void (0); }
         };
         return Object.defineProperties(instance, (_a = {},
             _a[LISTENER_DETECT] = withValue(listenerDetect),
@@ -50,7 +49,7 @@ var InstanceExtension = /** @class */ (function (_super) {
         delete events.onDestroy;
     };
     InstanceExtension.prototype.getCurrentProperty = function (_a) {
-        var instance = _a.instance, id = _a.id;
+        var instance = _a.instance;
         var _current;
         var get = function () { return _current; };
         var set = function (current) {
@@ -58,9 +57,6 @@ var InstanceExtension = /** @class */ (function (_super) {
             _current = current;
             if (hasMounted) {
                 instance.onMounted(current);
-            }
-            if (current instanceof BuilderModel && current.id !== id) {
-                console.info("Builder needs to set the id property: ".concat(id));
             }
         };
         return { get: get, set: set };
@@ -71,19 +67,17 @@ var InstanceExtension = /** @class */ (function (_super) {
         var instance = InstanceExtension.createInstance();
         this.pushAction(jsonField, [destroy, { type: MOUNTED }]);
         this.defineProperty(builderField, INSTANCE, instance);
-        instance.destroy.subscribe();
     };
     InstanceExtension.prototype.instanceDestroy = function (_a) {
         var actionEvent = _a.actionEvent, instance = _a.builderField.instance;
-        var currentIsBuildModel = instance.current instanceof BuilderModel;
-        instance.current && (instance.current = null);
-        return !currentIsBuildModel && instance.destroy.next(actionEvent);
+        instance.current = null;
+        instance.destroy.next(actionEvent);
     };
     InstanceExtension.prototype.beforeDestroy = function () {
         var _this = this;
         var showFields = this.buildFieldList.filter(function (_a) {
-            var visibility = _a.visibility;
-            return _this.builder.showField(visibility);
+            var visibility = _a.visibility, instance = _a.instance;
+            return _this.builder.showField(visibility) && instance.current;
         });
         if (!isEmpty(showFields)) {
             var subscriptions_1 = [];

@@ -66,15 +66,11 @@ export class ReadConfigExtension extends BasicExtension {
     checkFieldRepeat(jsonConfig) {
         const { id: jsonId, fields } = jsonConfig;
         const filedIds = uniq(fields.map(({ id }) => id) || []);
-        const { instance } = this.props;
         if (filedIds.includes(jsonId)) {
             throw new Error(`The same ID as jsonID exists in the configuration file: ${jsonId}`);
         }
         if (!isEmpty(filedIds) && filedIds.length !== fields.length) {
             throw new Error(`The same ID exists in the configuration file: ${jsonId}`);
-        }
-        if (this.builder.parent && !instance) {
-            console.warn(`Builder needs to set the instance property: ${this.builder.id}`);
         }
     }
     eligiblePreloaded(props) {

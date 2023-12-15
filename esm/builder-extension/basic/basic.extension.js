@@ -41,7 +41,10 @@ export class BasicExtension extends BasicUtility {
     bindCalculatorAction(handler, type = CALCULATOR) {
         const action = this.serializeAction(handler);
         action.type = type;
-        action.handler && this.cache.bindFn.push(function () { delete action.handler; });
+        if (!this.cache.bindActionHandler) {
+            this.cache.bindActionHandler = this.factoryBindFn((item) => this.removeAction(item));
+        }
+        action.handler && this.cache.bindActionHandler(action);
         return action;
     }
     pushCalculators(fieldConfig, calculator) {
@@ -82,6 +85,10 @@ export class BasicExtension extends BasicUtility {
         return this.createActions(_actions, props, { injector: this.injector });
     }
     createActions(actions, props, options) {
+        if (!this.cache.bindAction) {
+            this.cache.bindAction = this.factoryBindFn((item) => delete item.builder);
+        }
+        this.cache.bindAction(props);
         return createActions(actions, props, options);
     }
     getBuilderFieldById(fieldId) {

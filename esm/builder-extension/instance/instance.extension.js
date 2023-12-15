@@ -1,7 +1,6 @@
 import { isEmpty } from 'lodash';
 import { Observable, Subject } from 'rxjs';
-import { shareReplay, tap } from 'rxjs/operators';
-import { BuilderModel } from '../../builder/builder-model';
+import { tap } from 'rxjs/operators';
 import { createDetectChanges, observableMap, toForkJoin, transformObservable, withValue } from '../../utility';
 import { BasicExtension } from '../basic/basic.extension';
 import { CURRENT, DESTROY, INSTANCE, LOAD_ACTION, MOUNTED } from '../constant/calculator.constant';
@@ -16,9 +15,9 @@ export class InstanceExtension extends BasicExtension {
         const listenerDetect = new Subject();
         const instance = {
             current: null,
+            destroy: new Subject(),
             onMounted: () => void (0),
-            onDestroy: () => void (0),
-            destroy: new Subject().pipe(shareReplay(1))
+            onDestroy: () => void (0)
         };
         return Object.defineProperties(instance, {
             [LISTENER_DETECT]: withValue(listenerDetect),
@@ -43,7 +42,7 @@ export class InstanceExtension extends BasicExtension {
         delete events.onMounted;
         delete events.onDestroy;
     }
-    getCurrentProperty({ instance, id }) {
+    getCurrentProperty({ instance }) {
         let _current;
         const get = () => _current;
         const set = (current) => {
@@ -51,9 +50,6 @@ export class InstanceExtension extends BasicExtension {
             _current = current;
             if (hasMounted) {
                 instance.onMounted(current);
-            }
-            if (current instanceof BuilderModel && current.id !== id) {
-                console.info(`Builder needs to set the id property: ${id}`);
             }
         };
         return { get, set };
@@ -63,15 +59,13 @@ export class InstanceExtension extends BasicExtension {
         const instance = InstanceExtension.createInstance();
         this.pushAction(jsonField, [destroy, { type: MOUNTED }]);
         this.defineProperty(builderField, INSTANCE, instance);
-        instance.destroy.subscribe();
     }
     instanceDestroy({ actionEvent, builderField: { instance } }) {
-        const currentIsBuildModel = instance.current instanceof BuilderModel;
-        instance.current && (instance.current = null);
-        return !currentIsBuildModel && instance.destroy.next(actionEvent);
+        instance.current = null;
+        instance.destroy.next(actionEvent);
     }
     beforeDestroy() {
-        const showFields = this.buildFieldList.filter(({ visibility }) => this.builder.showField(visibility));
+        const showFields = this.buildFieldList.filter(({ visibility, instance }) => this.builder.showField(visibility) && instance.current);
         if (!isEmpty(showFields)) {
             const subscriptions = [];
             return toForkJoin(showFields.map(({ id, instance }) => new Observable((subscribe) => {

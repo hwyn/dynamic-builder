@@ -17,7 +17,7 @@ export declare class EventHook extends BasicUtility {
     protected linkCalculator(calculator: OriginCalculators, nonSelfCalculator?: boolean): void;
     protected linkOtherCalculator(calculator: OriginCalculators): void;
     protected call(calculators: OriginCalculators[], builder: BuilderModelExtensions): (callLink: CallLinkType[], value: any, ...other: any[]) => import("rxjs").Observable<any[]>;
-    protected invokeCallCalculators(calculators: OriginCalculators[], { type }: ActionLinkProps, props: ActionInterceptProps): ((callLink: CallLinkType[], value: any, ...other: any[]) => import("rxjs").Observable<any[]>) | ((_callLink: CallLinkType[], value: any) => import("rxjs").Observable<any>);
+    protected invokeCallCalculators(calculators: OriginCalculators[], { type }: ActionLinkProps, targetProps: ActionInterceptProps, props: ActionInterceptProps): ((callLink: CallLinkType[], value: any, ...other: any[]) => import("rxjs").Observable<any[]>) | ((_callLink: CallLinkType[], value: any) => import("rxjs").Observable<any>);
     protected getEventHook(builder: BuilderModelExtensions): any;
     protected getNonSelfCalculators(): OriginCalculators[];
     protected pushNonBuilders(): void;
