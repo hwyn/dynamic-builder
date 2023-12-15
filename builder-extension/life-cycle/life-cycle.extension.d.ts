@@ -13,7 +13,7 @@ export declare class LifeCycleExtension extends BasicExtension {
     };
     protected extension(): void;
     protected callParentDestroy(parentBuilder: BuilderModelExtensions): void;
-    protected createLifeChange(): Action[];
+    protected getLifeActions(): Action[];
     protected createLife(): Observable<any>;
     protected onLifeChange(onChange: any, props: BuilderProps): void;
     protected invokeLifeCycle(type: string, event?: any, otherEvent?: any): Observable<any>;

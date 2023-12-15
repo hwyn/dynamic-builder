@@ -28,7 +28,7 @@ export class LifeCycleExtension extends BasicExtension {
             dependents: { type: DESTROY, fieldId: parentBuilder.id, equal, nonSelf: true }
         });
     }
-    createLifeChange() {
+    getLifeActions() {
         const { actions = [] } = this.json;
         const lifeActions = this.lifeEvent.map((type) => actions.find((action) => action.type === type) || { type });
         const loadIndex = lifeActions.findIndex(({ type }) => type === LOAD);
@@ -38,7 +38,7 @@ export class LifeCycleExtension extends BasicExtension {
         return lifeActions;
     }
     createLife() {
-        this.lifeActions = this.createLifeActions(this.createLifeChange());
+        this.lifeActions = this.createLifeActions(this.getLifeActions());
         this.defineProperty(this.builder, this.getEventType(CHANGE), this.onLifeChange.bind(this, this.builder.onChange));
         return this.invokeLifeCycle(this.getEventType(LOAD), this.props);
     }

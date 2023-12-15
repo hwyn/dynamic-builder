@@ -38,7 +38,7 @@ var LifeCycleExtension = /** @class */ (function (_super) {
             dependents: { type: calculator_constant_1.DESTROY, fieldId: parentBuilder.id, equal: equal, nonSelf: true }
         });
     };
-    LifeCycleExtension.prototype.createLifeChange = function () {
+    LifeCycleExtension.prototype.getLifeActions = function () {
         var _a = this.json.actions, actions = _a === void 0 ? [] : _a;
         var lifeActions = this.lifeEvent.map(function (type) { return actions.find(function (action) { return action.type === type; }) || { type: type }; });
         var loadIndex = lifeActions.findIndex(function (_a) {
@@ -51,7 +51,7 @@ var LifeCycleExtension = /** @class */ (function (_super) {
         return lifeActions;
     };
     LifeCycleExtension.prototype.createLife = function () {
-        this.lifeActions = this.createLifeActions(this.createLifeChange());
+        this.lifeActions = this.createLifeActions(this.getLifeActions());
         this.defineProperty(this.builder, this.getEventType(calculator_constant_1.CHANGE), this.onLifeChange.bind(this, this.builder.onChange));
         return this.invokeLifeCycle(this.getEventType(calculator_constant_1.LOAD), this.props);
     };
