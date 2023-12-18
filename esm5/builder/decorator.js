@@ -8,7 +8,8 @@ export var ROOT_MODEL = 'ROOT_MODEL';
 export var DYNAMIC_BUILDER = 'DynamicBuilder';
 var forwardTemplate = function (type) { return type; };
 function typeFn(cls, meta) {
-    setInjectableDef(cls, __assign(__assign({}, meta), { providedIn: 'any' }));
+    var providedIn = !cls[BUILDER_DEF] ? 'any' : Object.create({});
+    setInjectableDef(cls, __assign({ providedIn: providedIn }, meta));
 }
 export function makeBuilderDecorator(name, forward) {
     if (forward === void 0) { forward = forwardTemplate; }

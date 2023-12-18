@@ -7,7 +7,8 @@ export const ROOT_MODEL = 'ROOT_MODEL';
 export const DYNAMIC_BUILDER = 'DynamicBuilder';
 const forwardTemplate = (type) => type;
 function typeFn(cls, meta) {
-    setInjectableDef(cls, Object.assign(Object.assign({}, meta), { providedIn: 'any' }));
+    const providedIn = !cls[BUILDER_DEF] ? 'any' : Object.create({});
+    setInjectableDef(cls, Object.assign({ providedIn }, meta));
 }
 export function makeBuilderDecorator(name, forward = forwardTemplate) {
     const builderDecorator = makeDecorator(name, (props) => props);

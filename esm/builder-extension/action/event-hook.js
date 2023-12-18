@@ -54,7 +54,7 @@ export class EventHook extends BasicUtility {
         const nonCalculator = fieldId !== sourceId || nonSelf;
         if (nonCalculator && !nonSelfCalculator) {
             this.nonSelfCalculators.push(calculator);
-            !this.cache.lifeType.includes(type) && this.linkOtherCalculator(calculator);
+            this.linkOtherCalculator(calculator);
         }
         if (!nonCalculator && sourceField !== this.json && !actions.some((action) => action.type === type)) {
             actions.unshift({ type });
@@ -62,7 +62,9 @@ export class EventHook extends BasicUtility {
     }
     linkOtherCalculator(calculator) {
         const { type, fieldId = '' } = calculator.dependent;
-        const dependentFields = this.builder.root.getAllFieldById(fieldId).filter(({ events = {} }) => !events[this.getEventType(type)]);
+        const dependentFields = this.builder.root.getAllFieldById(fieldId).filter(({ field, events = {} }) => {
+            return this.isBuildField(field) ? !this.cache.lifeType.includes(type) : !events[this.getEventType(type)];
+        });
         if (!isEmpty(dependentFields)) {
             dependentFields.forEach((dependentField) => dependentField.addEventListener && dependentField.addEventListener({ type }));
         }

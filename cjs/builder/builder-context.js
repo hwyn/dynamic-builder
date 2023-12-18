@@ -28,18 +28,21 @@ var BuilderContext = /** @class */ (function () {
             var model;
             var _injector = ((_b = props.builder) === null || _b === void 0 ? void 0 : _b.injector) || injector;
             if (NB[decorator_1.BUILDER_DEF] && !(Object.create(NB.prototype) instanceof builder_model_1.BuilderModel)) {
-                var _providers = [_contextProvs, NB, providers, { provide: token_1.META_TYPE, useExisting: NB }];
-                _injector = di_1.Injector.create([_providers, { provide: token_1.SCOPE_PROPS, useValue: { props: props } }], _injector);
+                var _providers = [{ provide: token_1.META_TYPE, useExisting: NB }, _contextProvs, NB, providers];
+                _injector = di_1.Injector.create([], _injector);
                 context === null || context === void 0 ? void 0 : context.registryInjector(_injector);
+                (0, di_1.deepProviders)(_injector, [{ provide: token_1.SCOPE_PROPS, useValue: { props: props } }, _providers]);
                 model = _injector.get(builder_scope_1.BuilderScope);
             }
             return (model || _injector.get(NB, di_1.InjectFlags.NonCache)).loadForBuild(props);
         };
     };
     BuilderContext.prototype.registryInjector = function (injector) {
-        injector.set(token_1.UI_ELEMENT, { provide: token_1.UI_ELEMENT, multi: true, useValue: this.uiElements });
-        injector.set(builder_engine_service_1.BuilderEngine, { provide: builder_engine_service_1.BuilderEngine, useClass: builder_engine_service_1.BuilderEngine, deps: [token_1.UI_ELEMENT] });
-        injector.set(token_1.FACTORY_BUILDER, { provide: token_1.FACTORY_BUILDER, useFactory: this.factoryBuilder, deps: [di_1.Injector] });
+        (0, di_1.deepProviders)(injector, [
+            { provide: token_1.UI_ELEMENT, multi: true, useValue: this.uiElements },
+            { provide: builder_engine_service_1.BuilderEngine, useClass: builder_engine_service_1.BuilderEngine, deps: [token_1.UI_ELEMENT] },
+            { provide: token_1.FACTORY_BUILDER, useFactory: this.factoryBuilder, deps: [di_1.Injector] }
+        ]);
     };
     return BuilderContext;
 }());

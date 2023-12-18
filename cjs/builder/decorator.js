@@ -11,7 +11,8 @@ exports.ROOT_MODEL = 'ROOT_MODEL';
 exports.DYNAMIC_BUILDER = 'DynamicBuilder';
 var forwardTemplate = function (type) { return type; };
 function typeFn(cls, meta) {
-    (0, di_1.setInjectableDef)(cls, tslib_1.__assign(tslib_1.__assign({}, meta), { providedIn: 'any' }));
+    var providedIn = !cls[exports.BUILDER_DEF] ? 'any' : Object.create({});
+    (0, di_1.setInjectableDef)(cls, tslib_1.__assign({ providedIn: providedIn }, meta));
 }
 function makeBuilderDecorator(name, forward) {
     if (forward === void 0) { forward = forwardTemplate; }

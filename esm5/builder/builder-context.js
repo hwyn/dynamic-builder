@@ -1,5 +1,5 @@
 import { __rest } from "tslib";
-import { InjectFlags, Injector } from '@fm/di';
+import { deepProviders, InjectFlags, Injector } from '@fm/di';
 import { FACTORY_BUILDER, META_PROPS, META_TYPE, SCOPE_MODEL, SCOPE_PROPS, UI_ELEMENT } from '../token';
 import { BuilderEngine } from './builder-engine.service';
 import { BuilderModel } from './builder-model';
@@ -25,18 +25,21 @@ var BuilderContext = /** @class */ (function () {
             var model;
             var _injector = ((_b = props.builder) === null || _b === void 0 ? void 0 : _b.injector) || injector;
             if (NB[BUILDER_DEF] && !(Object.create(NB.prototype) instanceof BuilderModel)) {
-                var _providers = [_contextProvs, NB, providers, { provide: META_TYPE, useExisting: NB }];
-                _injector = Injector.create([_providers, { provide: SCOPE_PROPS, useValue: { props: props } }], _injector);
+                var _providers = [{ provide: META_TYPE, useExisting: NB }, _contextProvs, NB, providers];
+                _injector = Injector.create([], _injector);
                 context === null || context === void 0 ? void 0 : context.registryInjector(_injector);
+                deepProviders(_injector, [{ provide: SCOPE_PROPS, useValue: { props: props } }, _providers]);
                 model = _injector.get(BuilderScope);
             }
             return (model || _injector.get(NB, InjectFlags.NonCache)).loadForBuild(props);
         };
     };
     BuilderContext.prototype.registryInjector = function (injector) {
-        injector.set(UI_ELEMENT, { provide: UI_ELEMENT, multi: true, useValue: this.uiElements });
-        injector.set(BuilderEngine, { provide: BuilderEngine, useClass: BuilderEngine, deps: [UI_ELEMENT] });
-        injector.set(FACTORY_BUILDER, { provide: FACTORY_BUILDER, useFactory: this.factoryBuilder, deps: [Injector] });
+        deepProviders(injector, [
+            { provide: UI_ELEMENT, multi: true, useValue: this.uiElements },
+            { provide: BuilderEngine, useClass: BuilderEngine, deps: [UI_ELEMENT] },
+            { provide: FACTORY_BUILDER, useFactory: this.factoryBuilder, deps: [Injector] }
+        ]);
     };
     return BuilderContext;
 }());
