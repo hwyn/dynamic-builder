@@ -1,9 +1,10 @@
 import { __assign, __extends } from "tslib";
+/* eslint-disable max-len */
 import { isEmpty } from 'lodash';
 import { Visibility } from '../../builder';
 import { CONVERT_INTERCEPT, FORM_CONTROL } from '../../token';
 import { BasicExtension } from '../basic/basic.extension';
-import { CHANGE, CHECK_VISIBILITY, CONTROL, CREATE_CONTROL, LOAD_ACTION, NOTIFY_MODEL_CHANGE } from '../constant/calculator.constant';
+import { CHANGE, CHECK_VISIBILITY, CONTROL, CREATE_CONTROL, DESTROY, LOAD_ACTION, NOTIFY_MODEL_CHANGE } from '../constant/calculator.constant';
 var FormExtension = /** @class */ (function (_super) {
     __extends(FormExtension, _super);
     function FormExtension() {
@@ -35,7 +36,10 @@ var FormExtension = /** @class */ (function (_super) {
             },
             {
                 action: this.bindCalculatorAction(this.createVisibility.bind(this, jsonField)),
-                dependents: { type: CHECK_VISIBILITY, fieldId: jsonField.id }
+                dependents: [
+                    { type: DESTROY, fieldId: jsonField.id },
+                    { type: CHECK_VISIBILITY, fieldId: jsonField.id }
+                ]
             }]);
     };
     FormExtension.prototype.addChangeAction = function (changeType, jsonField, builderField) {
@@ -45,7 +49,7 @@ var FormExtension = /** @class */ (function (_super) {
             var type = _a.type;
             return type === changeType;
         });
-        var newAction = actionIndex === -1 ? { type: changeType } : this.bindCalculatorAction(actions[actionIndex]);
+        var newAction = actionIndex === -1 ? { type: changeType } : this.bindCalculatorAction(actions[actionIndex], changeType);
         var bindingAction = this.bindCalculatorAction(this.createChange.bind(this, jsonField));
         jsonField.actions = actions;
         newAction.after = this.bindCalculatorAction(this.detectChanges.bind(this, builderField));
@@ -75,11 +79,13 @@ var FormExtension = /** @class */ (function (_super) {
         return actionEvent;
     };
     FormExtension.prototype.createVisibility = function (_a, _b) {
+        var _c;
         var binding = _a.binding;
-        var builderField = _b.builderField, actionEvent = _b.actionEvent;
-        var control = builderField.control, _c = builderField.visibility, visibility = _c === void 0 ? Visibility.visible : _c;
-        if (control && visibility !== actionEvent) {
-            this.changeVisibility(builderField, binding, actionEvent);
+        var callLink = _b.callLink, builderField = _b.builderField, actionEvent = _b.actionEvent;
+        var control = builderField.control, _d = builderField.visibility, visibility = _d === void 0 ? Visibility.visible : _d;
+        var _actionEvent = ((_c = callLink[0]) === null || _c === void 0 ? void 0 : _c.type) === DESTROY ? Visibility.none : actionEvent;
+        if (control && visibility !== _actionEvent) {
+            this.changeVisibility(builderField, binding, _actionEvent);
         }
     };
     FormExtension.prototype.changeVisibility = function (builderField, binding, visibility) {

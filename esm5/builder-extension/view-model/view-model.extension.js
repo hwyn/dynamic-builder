@@ -24,7 +24,8 @@ var ViewModelExtension = /** @class */ (function (_super) {
         var handler = function (_a) {
             var _b;
             var actionEvent = _a.actionEvent;
-            _this.createViewModel(hasLoadAction ? actionEvent : ((_b = _this.builder.parent) === null || _b === void 0 ? void 0 : _b.$$cache.viewModel) || {});
+            var viewModel = _this.props.viewModel;
+            _this.createViewModel(hasLoadAction ? actionEvent : viewModel || ((_b = _this.builder.parent) === null || _b === void 0 ? void 0 : _b.$$cache.viewModel) || {});
             return actionEvent;
         };
         return this.bindCalculatorAction(handler, LOAD_VIEW_MODEL);
@@ -49,9 +50,11 @@ var ViewModelExtension = /** @class */ (function (_super) {
         return actionEvent;
     };
     ViewModelExtension.prototype.refreshHandler = function (_a) {
-        var _b;
+        var _b, _c;
         var actionEvent = _a.actionEvent, builder = _a.builder;
-        (_b = builder.$$cache) === null || _b === void 0 ? void 0 : _b.viewModel.refreshData(actionEvent);
+        if (actionEvent !== ((_b = builder.$$cache) === null || _b === void 0 ? void 0 : _b.viewModel)) {
+            (_c = builder.$$cache) === null || _c === void 0 ? void 0 : _c.viewModel.refreshData(actionEvent);
+        }
     };
     ViewModelExtension.prototype.destroy = function () {
         this.unDefineProperty(this.cache, [VIEW_MODEL]);

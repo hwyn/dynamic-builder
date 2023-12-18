@@ -14,7 +14,8 @@ export class ViewModelExtension extends BasicExtension {
         const hasLoadAction = actions.some(({ type = `` }) => type === LOAD);
         const handler = ({ actionEvent }) => {
             var _a;
-            this.createViewModel(hasLoadAction ? actionEvent : ((_a = this.builder.parent) === null || _a === void 0 ? void 0 : _a.$$cache.viewModel) || {});
+            const { viewModel } = this.props;
+            this.createViewModel(hasLoadAction ? actionEvent : viewModel || ((_a = this.builder.parent) === null || _a === void 0 ? void 0 : _a.$$cache.viewModel) || {});
             return actionEvent;
         };
         return this.bindCalculatorAction(handler, LOAD_VIEW_MODEL);
@@ -37,8 +38,10 @@ export class ViewModelExtension extends BasicExtension {
         return actionEvent;
     }
     refreshHandler({ actionEvent, builder }) {
-        var _a;
-        (_a = builder.$$cache) === null || _a === void 0 ? void 0 : _a.viewModel.refreshData(actionEvent);
+        var _a, _b;
+        if (actionEvent !== ((_a = builder.$$cache) === null || _a === void 0 ? void 0 : _a.viewModel)) {
+            (_b = builder.$$cache) === null || _b === void 0 ? void 0 : _b.viewModel.refreshData(actionEvent);
+        }
     }
     destroy() {
         this.unDefineProperty(this.cache, [VIEW_MODEL]);

@@ -1,8 +1,9 @@
+/* eslint-disable max-len */
 import { isEmpty } from 'lodash';
 import { Visibility } from '../../builder';
 import { CONVERT_INTERCEPT, FORM_CONTROL } from '../../token';
 import { BasicExtension } from '../basic/basic.extension';
-import { CHANGE, CHECK_VISIBILITY, CONTROL, CREATE_CONTROL, LOAD_ACTION, NOTIFY_MODEL_CHANGE } from '../constant/calculator.constant';
+import { CHANGE, CHECK_VISIBILITY, CONTROL, CREATE_CONTROL, DESTROY, LOAD_ACTION, NOTIFY_MODEL_CHANGE } from '../constant/calculator.constant';
 export class FormExtension extends BasicExtension {
     constructor() {
         super(...arguments);
@@ -28,14 +29,17 @@ export class FormExtension extends BasicExtension {
             },
             {
                 action: this.bindCalculatorAction(this.createVisibility.bind(this, jsonField)),
-                dependents: { type: CHECK_VISIBILITY, fieldId: jsonField.id }
+                dependents: [
+                    { type: DESTROY, fieldId: jsonField.id },
+                    { type: CHECK_VISIBILITY, fieldId: jsonField.id }
+                ]
             }]);
     }
     addChangeAction(changeType, jsonField, builderField) {
         const { actions = [], binding } = jsonField;
         const { convert, intercept = '' } = binding;
         const actionIndex = actions.findIndex(({ type }) => type === changeType);
-        const newAction = actionIndex === -1 ? { type: changeType } : this.bindCalculatorAction(actions[actionIndex]);
+        const newAction = actionIndex === -1 ? { type: changeType } : this.bindCalculatorAction(actions[actionIndex], changeType);
         const bindingAction = this.bindCalculatorAction(this.createChange.bind(this, jsonField));
         jsonField.actions = actions;
         newAction.after = this.bindCalculatorAction(this.detectChanges.bind(this, builderField));
@@ -62,10 +66,12 @@ export class FormExtension extends BasicExtension {
         (_a = builderField.control) === null || _a === void 0 ? void 0 : _a.patchValue(value);
         return actionEvent;
     }
-    createVisibility({ binding }, { builderField, actionEvent }) {
+    createVisibility({ binding }, { callLink, builderField, actionEvent }) {
+        var _a;
         const { control, visibility = Visibility.visible } = builderField;
-        if (control && visibility !== actionEvent) {
-            this.changeVisibility(builderField, binding, actionEvent);
+        const _actionEvent = ((_a = callLink[0]) === null || _a === void 0 ? void 0 : _a.type) === DESTROY ? Visibility.none : actionEvent;
+        if (control && visibility !== _actionEvent) {
+            this.changeVisibility(builderField, binding, _actionEvent);
         }
     }
     changeVisibility(builderField, binding, visibility = Visibility.visible) {

@@ -60,7 +60,7 @@ var ReadConfigExtension = /** @class */ (function (_super) {
         return configOb.pipe(map(function (_config) {
             if (_config === void 0) { _config = []; }
             var config = Object.assign({ fields: [] }, Array.isArray(_config) ? { fields: _config } : _config, id ? { id: id } : {});
-            config.fields.forEach(function (field) { return !field.id && (field.id = generateUUID(5)); });
+            config.fields.forEach(function (field) { return !field.id && (field.id = generateUUID(8)); });
             return config;
         }));
     };
@@ -76,6 +76,9 @@ var ReadConfigExtension = /** @class */ (function (_super) {
             var id = _a.id;
             return id;
         }) || []);
+        if (!this.builder.id) {
+            console.info("The configured jsonID does not exist:", jsonConfig, this.props);
+        }
         if (filedIds.includes(jsonId)) {
             throw new Error("The same ID as jsonID exists in the configuration file: ".concat(jsonId));
         }

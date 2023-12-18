@@ -23,8 +23,7 @@ var LifeCycleExtension = /** @class */ (function (_super) {
             action: this.bindCalculatorAction(this.createLife.bind(this)),
             dependents: { type: calculator_constant_1.LOAD_CALCULATOR, fieldId: this.builder.id }
         });
-        if (this.builder.parent)
-            this.callParentDestroy(this.builder.parent);
+        // if (this.builder.parent) this.callParentDestroy(this.builder.parent);
     };
     LifeCycleExtension.prototype.callParentDestroy = function (parentBuilder) {
         var _this = this;

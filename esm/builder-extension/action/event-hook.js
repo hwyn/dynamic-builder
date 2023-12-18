@@ -46,25 +46,23 @@ export class EventHook extends BasicUtility {
         });
         return originCalculators;
     }
-    // eslint-disable-next-line complexity
     linkCalculator(calculator, nonSelfCalculator) {
         const { type, fieldId, nonSelf } = calculator.dependent;
         const sourceField = this.getJsonFieldById(fieldId) || this.json;
         sourceField.actions = this.toArray(sourceField.actions || []);
         const { actions = [], id: sourceId } = sourceField;
-        const isBuildCalculator = this.isBuildField(sourceField) && this.cache.lifeType.includes(type);
-        const nonCalculator = nonSelf || isBuildCalculator || fieldId !== sourceId;
+        const nonCalculator = fieldId !== sourceId || nonSelf;
         if (nonCalculator && !nonSelfCalculator) {
             this.nonSelfCalculators.push(calculator);
-            !isBuildCalculator && this.linkOtherCalculator(calculator);
+            !this.cache.lifeType.includes(type) && this.linkOtherCalculator(calculator);
         }
-        if (!nonCalculator && !actions.some((action) => action.type === type)) {
+        if (!nonCalculator && sourceField !== this.json && !actions.some((action) => action.type === type)) {
             actions.unshift({ type });
         }
     }
     linkOtherCalculator(calculator) {
         const { type, fieldId = '' } = calculator.dependent;
-        const dependentFields = this.builder.root.getAllFieldById(fieldId).filter(({ events }) => !events[this.getEventType(type)]);
+        const dependentFields = this.builder.root.getAllFieldById(fieldId).filter(({ events = {} }) => !events[this.getEventType(type)]);
         if (!isEmpty(dependentFields)) {
             dependentFields.forEach((dependentField) => dependentField.addEventListener && dependentField.addEventListener({ type }));
         }

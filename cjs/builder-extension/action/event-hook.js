@@ -67,19 +67,17 @@ var EventHook = /** @class */ (function (_super) {
         });
         return originCalculators;
     };
-    // eslint-disable-next-line complexity
     EventHook.prototype.linkCalculator = function (calculator, nonSelfCalculator) {
         var _a = calculator.dependent, type = _a.type, fieldId = _a.fieldId, nonSelf = _a.nonSelf;
         var sourceField = this.getJsonFieldById(fieldId) || this.json;
         sourceField.actions = this.toArray(sourceField.actions || []);
         var _b = sourceField.actions, actions = _b === void 0 ? [] : _b, sourceId = sourceField.id;
-        var isBuildCalculator = this.isBuildField(sourceField) && this.cache.lifeType.includes(type);
-        var nonCalculator = nonSelf || isBuildCalculator || fieldId !== sourceId;
+        var nonCalculator = fieldId !== sourceId || nonSelf;
         if (nonCalculator && !nonSelfCalculator) {
             this.nonSelfCalculators.push(calculator);
-            !isBuildCalculator && this.linkOtherCalculator(calculator);
+            !this.cache.lifeType.includes(type) && this.linkOtherCalculator(calculator);
         }
-        if (!nonCalculator && !actions.some(function (action) { return action.type === type; })) {
+        if (!nonCalculator && sourceField !== this.json && !actions.some(function (action) { return action.type === type; })) {
             actions.unshift({ type: type });
         }
     };
@@ -87,7 +85,7 @@ var EventHook = /** @class */ (function (_super) {
         var _this = this;
         var _a = calculator.dependent, type = _a.type, _b = _a.fieldId, fieldId = _b === void 0 ? '' : _b;
         var dependentFields = this.builder.root.getAllFieldById(fieldId).filter(function (_a) {
-            var events = _a.events;
+            var _b = _a.events, events = _b === void 0 ? {} : _b;
             return !events[_this.getEventType(type)];
         });
         if (!(0, lodash_1.isEmpty)(dependentFields)) {

@@ -8,6 +8,7 @@ var rxjs_1 = require("rxjs");
 var operators_1 = require("rxjs/operators");
 var token_1 = require("../../token");
 var utility_1 = require("../../utility");
+var calculator_constant_1 = require("../constant/calculator.constant");
 var base_action_1 = require("./base.action");
 var event_zip_1 = require("./event-zip");
 var Action = /** @class */ (function () {
@@ -72,10 +73,14 @@ var Action = /** @class */ (function () {
             return before && _this.invoke.apply(_this, tslib_1.__spreadArray([before, props, event], otherEvent, false));
         })).pipe((0, utility_1.observableMap)(function () { return (0, rxjs_1.forkJoin)(_actions.map(function (action) {
             return _this.execute.apply(_this, tslib_1.__spreadArray([action, props, event], otherEvent, false));
-        })); }), (0, utility_1.observableTap)(function (result) { return !props ? (0, rxjs_1.of)(void (0)) : (0, utility_1.toForkJoin)(_actions.map(function (action, index) {
-            var _a, _b;
-            var callLink = _this.createCallLinkType(action, props, event, result[index]);
-            return action.type && ((_b = (_a = props.builder) === null || _a === void 0 ? void 0 : _a.$$cache.eventHook) === null || _b === void 0 ? void 0 : _b.invokeCalculators.apply(_b, tslib_1.__spreadArray([action, props, callLink, result[index]], otherEvent, false)));
+        })); }), (0, utility_1.observableTap)(function (result) { return !(props === null || props === void 0 ? void 0 : props.builder) ? (0, rxjs_1.of)(void (0)) : (0, utility_1.toForkJoin)(_actions.map(function (action, index) {
+            var _a;
+            var _b;
+            var type = action.type;
+            if (type && type !== calculator_constant_1.CALCULATOR && ((_b = props.builder.$$cache.eventHook) === null || _b === void 0 ? void 0 : _b.invokeCalculators)) {
+                var callLink = _this.createCallLinkType(action, props, event, result[index]);
+                return (_a = props.builder.$$cache.eventHook).invokeCalculators.apply(_a, tslib_1.__spreadArray([action, props, callLink, result[index]], otherEvent, false));
+            }
         })); }), (0, utility_1.observableTap)(function (result) { return (0, utility_1.toForkJoin)(_actions.map(function (_a, index) {
             var after = _a.after;
             return after && _this.invoke.apply(_this, tslib_1.__spreadArray([after, props, result[index]], otherEvent, false));
@@ -90,14 +95,14 @@ var Action = /** @class */ (function () {
     };
     Action.prototype.executeAction = function (actionProps, actionContext, _a) {
         var _b = _a === void 0 ? this.createEvent(void (0)) : _a, actionEvent = _b[0], otherEvent = _b.slice(1);
-        var _c = (0, utility_1.serializeAction)(actionProps), _d = _c.name, name = _d === void 0 ? "" : _d, handler = _c.handler;
+        var _c = (0, utility_1.serializeAction)(actionProps), _d = _c.name, name = _d === void 0 ? "" : _d, handler = _c.handler, params = _c.params;
         var _e = name.match(/([^.]+)/ig) || [name], actionName = _e[0], _f = _e[1], execute = _f === void 0 ? 'execute' : _f;
         var ActionType = null;
         var executeHandler = handler;
         var action = new base_action_1.BaseAction().invoke(tslib_1.__assign(tslib_1.__assign({}, actionContext), { actionProps: actionProps, actionEvent: actionEvent }));
         var builder = action.builder;
         action.injector = (builder === null || builder === void 0 ? void 0 : builder.injector) || this.injector;
-        if (!executeHandler && builder) {
+        if (!executeHandler && builder && !(params === null || params === void 0 ? void 0 : params.ignoreBuilder)) {
             executeHandler = builder.getExecuteHandler(name, false);
         }
         if (!executeHandler && (ActionType = this.getType(token_1.ACTIONS_CONFIG, actionName))) {

@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CheckVisibilityExtension = void 0;
 var tslib_1 = require("tslib");
 var lodash_1 = require("lodash");
+var builder_model_1 = require("../../builder/builder-model");
 var basic_extension_1 = require("../basic/basic.extension");
 var calculator_constant_1 = require("../constant/calculator.constant");
 var CheckVisibilityExtension = /** @class */ (function (_super) {
@@ -39,8 +40,12 @@ var CheckVisibilityExtension = /** @class */ (function (_super) {
     CheckVisibilityExtension.prototype.checkVisibilityAfter = function (defaultVisibility) {
         return function (_a) {
             var _b = _a.actionEvent, actionEvent = _b === void 0 ? defaultVisibility : _b, builderField = _a.builderField, builder = _a.builder;
+            var instance = builderField.instance;
             if (builderField.visibility !== actionEvent) {
                 builderField.visibility = actionEvent;
+                if (instance.current instanceof builder_model_1.BuilderModel) {
+                    instance.current.refreshVisibility();
+                }
                 builder.ready && builder.detectChanges();
             }
         };
@@ -67,12 +72,10 @@ var CheckVisibilityExtension = /** @class */ (function (_super) {
             this.getBuilderFieldById(jsonField.id).visibility = parentField === null || parentField === void 0 ? void 0 : parentField.visibility;
         }
         if (parentField === null || parentField === void 0 ? void 0 : parentField.checkVisibility) {
-            jsonField.checkVisibility = {
-                action: function (_a) {
-                    var actionEvent = _a.actionEvent;
-                    return actionEvent;
-                },
-                dependents: { fieldId: parentField.id, type: calculator_constant_1.CHECK_VISIBILITY, nonSelf: true }
+            jsonField.checkVisibility = function (_a) {
+                var _b, _c;
+                var builder = _a.builder;
+                return (_c = (_b = builder.parent) === null || _b === void 0 ? void 0 : _b.getFieldById(builder.id)) === null || _c === void 0 ? void 0 : _c.visibility;
             };
         }
         return jsonField.checkVisibility;

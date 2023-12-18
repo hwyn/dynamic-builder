@@ -5,6 +5,7 @@ import { forkJoin, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ACTIONS_CONFIG, GET_TYPE } from '../../token';
 import { funcToObservable, observableMap, observableTap, serializeAction, toForkJoin, transformObservable } from '../../utility';
+import { CALCULATOR } from '../constant/calculator.constant';
 import { BaseAction } from './base.action';
 import { EventZip } from './event-zip';
 let Action = class Action {
@@ -48,10 +49,13 @@ let Action = class Action {
         const _actions = (Array.isArray(actions) ? actions : [actions]).map(serializeAction);
         return toForkJoin(_actions.map(({ before }) => before && this.invoke(before, props, event, ...otherEvent))).pipe(observableMap(() => forkJoin(_actions.map((action) => {
             return this.execute(action, props, event, ...otherEvent);
-        }))), observableTap((result) => !props ? of(void (0)) : toForkJoin(_actions.map((action, index) => {
-            var _a, _b;
-            const callLink = this.createCallLinkType(action, props, event, result[index]);
-            return action.type && ((_b = (_a = props.builder) === null || _a === void 0 ? void 0 : _a.$$cache.eventHook) === null || _b === void 0 ? void 0 : _b.invokeCalculators(action, props, callLink, result[index], ...otherEvent));
+        }))), observableTap((result) => !(props === null || props === void 0 ? void 0 : props.builder) ? of(void (0)) : toForkJoin(_actions.map((action, index) => {
+            var _a;
+            const { type } = action;
+            if (type && type !== CALCULATOR && ((_a = props.builder.$$cache.eventHook) === null || _a === void 0 ? void 0 : _a.invokeCalculators)) {
+                const callLink = this.createCallLinkType(action, props, event, result[index]);
+                return props.builder.$$cache.eventHook.invokeCalculators(action, props, callLink, result[index], ...otherEvent);
+            }
         }))), observableTap((result) => toForkJoin(_actions.map(({ after }, index) => {
             return after && this.invoke(after, props, result[index], ...otherEvent);
         }))), map((result) => result.pop()));
@@ -60,14 +64,14 @@ let Action = class Action {
         return this.invoke(serializeAction(actionName), context, ...events);
     }
     executeAction(actionProps, actionContext, [actionEvent, ...otherEvent] = this.createEvent(void (0))) {
-        const { name = ``, handler } = serializeAction(actionProps);
+        const { name = ``, handler, params } = serializeAction(actionProps);
         const [actionName, execute = 'execute'] = name.match(/([^.]+)/ig) || [name];
         let ActionType = null;
         let executeHandler = handler;
         let action = new BaseAction().invoke(Object.assign(Object.assign({}, actionContext), { actionProps, actionEvent }));
         const builder = action.builder;
         action.injector = (builder === null || builder === void 0 ? void 0 : builder.injector) || this.injector;
-        if (!executeHandler && builder) {
+        if (!executeHandler && builder && !(params === null || params === void 0 ? void 0 : params.ignoreBuilder)) {
             executeHandler = builder.getExecuteHandler(name, false);
         }
         if (!executeHandler && (ActionType = this.getType(ACTIONS_CONFIG, actionName))) {

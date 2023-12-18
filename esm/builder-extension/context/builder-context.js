@@ -4,7 +4,6 @@ import { ACTION_INTERCEPT, ACTIONS_CONFIG, BUILDER_EXTENSION, CONVERT_CONFIG, CO
 import { EventHook } from '../action';
 import { Action } from '../action/actions';
 import { ActionExtension } from '../action/actions.extension';
-import { AttributeExtension } from '../attribute/attribute.extension';
 import { DataSourceExtension } from '../datasource/datasource.extension';
 import { Convert } from '../form/convert';
 import { FormExtension } from '../form/form.extension';
@@ -25,8 +24,7 @@ const defaultExtensions = [
     FormExtension,
     ViewModelExtension,
     ActionExtension,
-    LifeCycleExtension,
-    AttributeExtension
+    LifeCycleExtension
 ];
 export { BaseType } from './base-type';
 export class BuilderContext extends BasicBuilderContext {

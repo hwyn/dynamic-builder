@@ -8,7 +8,6 @@ var token_1 = require("../../token");
 var action_1 = require("../action");
 var actions_1 = require("../action/actions");
 var actions_extension_1 = require("../action/actions.extension");
-var attribute_extension_1 = require("../attribute/attribute.extension");
 var datasource_extension_1 = require("../datasource/datasource.extension");
 var convert_1 = require("../form/convert");
 var form_extension_1 = require("../form/form.extension");
@@ -29,8 +28,7 @@ var defaultExtensions = [
     form_extension_1.FormExtension,
     view_model_extension_1.ViewModelExtension,
     actions_extension_1.ActionExtension,
-    life_cycle_extension_1.LifeCycleExtension,
-    attribute_extension_1.AttributeExtension
+    life_cycle_extension_1.LifeCycleExtension
 ];
 var base_type_1 = require("./base-type");
 Object.defineProperty(exports, "BaseType", { enumerable: true, get: function () { return base_type_1.BaseType; } });

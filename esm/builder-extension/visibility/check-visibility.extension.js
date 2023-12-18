@@ -1,4 +1,5 @@
 import { isEmpty } from 'lodash';
+import { BuilderModel } from '../../builder/builder-model';
 import { BasicExtension } from '../basic/basic.extension';
 import { CHECK_VISIBILITY, LOAD, LOAD_ACTION, REFRESH_VISIBILITY } from '../constant/calculator.constant';
 export class CheckVisibilityExtension extends BasicExtension {
@@ -28,8 +29,12 @@ export class CheckVisibilityExtension extends BasicExtension {
     }
     checkVisibilityAfter(defaultVisibility) {
         return ({ actionEvent = defaultVisibility, builderField, builder }) => {
+            const { instance } = builderField;
             if (builderField.visibility !== actionEvent) {
                 builderField.visibility = actionEvent;
+                if (instance.current instanceof BuilderModel) {
+                    instance.current.refreshVisibility();
+                }
                 builder.ready && builder.detectChanges();
             }
         };
@@ -48,10 +53,7 @@ export class CheckVisibilityExtension extends BasicExtension {
             this.getBuilderFieldById(jsonField.id).visibility = parentField === null || parentField === void 0 ? void 0 : parentField.visibility;
         }
         if (parentField === null || parentField === void 0 ? void 0 : parentField.checkVisibility) {
-            jsonField.checkVisibility = {
-                action: ({ actionEvent }) => actionEvent,
-                dependents: { fieldId: parentField.id, type: CHECK_VISIBILITY, nonSelf: true }
-            };
+            jsonField.checkVisibility = ({ builder }) => { var _a, _b; return (_b = (_a = builder.parent) === null || _a === void 0 ? void 0 : _a.getFieldById(builder.id)) === null || _b === void 0 ? void 0 : _b.visibility; };
         }
         return jsonField.checkVisibility;
     }

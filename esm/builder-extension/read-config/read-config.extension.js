@@ -53,7 +53,7 @@ export class ReadConfigExtension extends BasicExtension {
         }
         return configOb.pipe(map((_config = []) => {
             const config = Object.assign({ fields: [] }, Array.isArray(_config) ? { fields: _config } : _config, id ? { id } : {});
-            config.fields.forEach((field) => !field.id && (field.id = generateUUID(5)));
+            config.fields.forEach((field) => !field.id && (field.id = generateUUID(8)));
             return config;
         }));
     }
@@ -66,6 +66,9 @@ export class ReadConfigExtension extends BasicExtension {
     checkFieldRepeat(jsonConfig) {
         const { id: jsonId, fields } = jsonConfig;
         const filedIds = uniq(fields.map(({ id }) => id) || []);
+        if (!this.builder.id) {
+            console.info(`The configured jsonID does not exist:`, jsonConfig, this.props);
+        }
         if (filedIds.includes(jsonId)) {
             throw new Error(`The same ID as jsonID exists in the configuration file: ${jsonId}`);
         }

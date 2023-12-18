@@ -4,7 +4,6 @@ exports.BuilderModel = exports.Grid = exports.BaseConvert = exports.useBuilderCo
 var tslib_1 = require("tslib");
 tslib_1.__exportStar(require("./action"), exports);
 tslib_1.__exportStar(require("./action/create-actions"), exports);
-tslib_1.__exportStar(require("./attribute/attribute.extension"), exports);
 tslib_1.__exportStar(require("./basic/basic.extension"), exports);
 tslib_1.__exportStar(require("./constant/calculator.constant"), exports);
 var builder_context_1 = require("./context/builder-context");
