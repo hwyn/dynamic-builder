@@ -14,7 +14,6 @@ export declare class FormExtension extends BasicExtension {
     private changeVisibility;
     private executeChangeEvent;
     private createNotifyChange;
-    private detectChanges;
     private getChangeType;
     private getValueToModel;
     private setValueToModel;

@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FormExtension = void 0;
 var tslib_1 = require("tslib");
-/* eslint-disable max-len */
 var lodash_1 = require("lodash");
 var builder_1 = require("../../builder");
 var token_1 = require("../../token");
@@ -39,10 +38,7 @@ var FormExtension = /** @class */ (function (_super) {
             },
             {
                 action: this.bindCalculatorAction(this.createVisibility.bind(this, jsonField)),
-                dependents: [
-                    { type: calculator_constant_1.DESTROY, fieldId: jsonField.id },
-                    { type: calculator_constant_1.CHECK_VISIBILITY, fieldId: jsonField.id }
-                ]
+                dependents: { type: calculator_constant_1.CHECK_VISIBILITY, fieldId: jsonField.id }
             }]);
     };
     FormExtension.prototype.addChangeAction = function (changeType, jsonField, builderField) {
@@ -55,7 +51,6 @@ var FormExtension = /** @class */ (function (_super) {
         var newAction = actionIndex === -1 ? { type: changeType } : this.bindCalculatorAction(actions[actionIndex], changeType);
         var bindingAction = this.bindCalculatorAction(this.createChange.bind(this, jsonField));
         jsonField.actions = actions;
-        newAction.after = this.bindCalculatorAction(this.detectChanges.bind(this, builderField));
         newAction.before = intercept ? tslib_1.__assign(tslib_1.__assign({}, this.bindCalculatorAction(intercept)), { after: bindingAction }) : bindingAction;
         actionIndex === -1 ? actions.push(newAction) : actions[actionIndex] = newAction;
         if (convert) {
@@ -82,13 +77,11 @@ var FormExtension = /** @class */ (function (_super) {
         return actionEvent;
     };
     FormExtension.prototype.createVisibility = function (_a, _b) {
-        var _c;
         var binding = _a.binding;
-        var callLink = _b.callLink, builderField = _b.builderField, actionEvent = _b.actionEvent;
-        var control = builderField.control, _d = builderField.visibility, visibility = _d === void 0 ? builder_1.Visibility.visible : _d;
-        var _actionEvent = ((_c = callLink[0]) === null || _c === void 0 ? void 0 : _c.type) === calculator_constant_1.DESTROY ? builder_1.Visibility.none : actionEvent;
-        if (control && visibility !== _actionEvent) {
-            this.changeVisibility(builderField, binding, _actionEvent);
+        var builderField = _b.builderField, actionEvent = _b.actionEvent;
+        var control = builderField.control, _c = builderField.visibility, visibility = _c === void 0 ? builder_1.Visibility.visible : _c;
+        if (control && visibility !== actionEvent) {
+            this.changeVisibility(builderField, binding, actionEvent);
         }
     };
     FormExtension.prototype.changeVisibility = function (builderField, binding, visibility) {
@@ -103,17 +96,16 @@ var FormExtension = /** @class */ (function (_super) {
         return events[this.getEventType(this.getChangeType(jsonField))](value);
     };
     FormExtension.prototype.createNotifyChange = function (jsonField, _a) {
+        var _b;
         var actionEvent = _a.actionEvent, builderField = _a.builderField;
         var control = builderField.control;
         if ((!actionEvent || actionEvent === builderField) && control) {
             var value = this.getValueToModel(jsonField.binding);
-            if (control.value !== value)
+            if (control.value !== value) {
                 this.executeChangeEvent(jsonField, value);
+                (_b = builderField.instance) === null || _b === void 0 ? void 0 : _b.detectChanges();
+            }
         }
-    };
-    FormExtension.prototype.detectChanges = function (_a) {
-        var instance = _a.instance;
-        instance === null || instance === void 0 ? void 0 : instance.detectChanges();
     };
     FormExtension.prototype.getChangeType = function (jsonField) {
         var _a = jsonField.binding.changeType, changeType = _a === void 0 ? this.defaultChangeType : _a;

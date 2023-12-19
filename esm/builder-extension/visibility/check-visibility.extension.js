@@ -32,9 +32,8 @@ export class CheckVisibilityExtension extends BasicExtension {
             const { instance } = builderField;
             if (builderField.visibility !== actionEvent) {
                 builderField.visibility = actionEvent;
-                if (instance.current instanceof BuilderModel) {
+                if (instance.current instanceof BuilderModel)
                     instance.current.refreshVisibility();
-                }
                 builder.ready && builder.detectChanges();
             }
         };

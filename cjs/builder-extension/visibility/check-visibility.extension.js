@@ -43,9 +43,8 @@ var CheckVisibilityExtension = /** @class */ (function (_super) {
             var instance = builderField.instance;
             if (builderField.visibility !== actionEvent) {
                 builderField.visibility = actionEvent;
-                if (instance.current instanceof builder_model_1.BuilderModel) {
+                if (instance.current instanceof builder_model_1.BuilderModel)
                     instance.current.refreshVisibility();
-                }
                 builder.ready && builder.detectChanges();
             }
         };
