@@ -1,5 +1,4 @@
 import { isEmpty } from 'lodash';
-import { BuilderModel } from '../../builder/builder-model';
 import { BasicExtension } from '../basic/basic.extension';
 import { CHECK_VISIBILITY, LOAD, LOAD_ACTION, REFRESH_VISIBILITY } from '../constant/calculator.constant';
 export class CheckVisibilityExtension extends BasicExtension {
@@ -29,31 +28,32 @@ export class CheckVisibilityExtension extends BasicExtension {
     }
     checkVisibilityAfter(defaultVisibility) {
         return ({ actionEvent = defaultVisibility, builderField, builder }) => {
-            const { instance } = builderField;
+            // const { instance } = builderField;
             if (builderField.visibility !== actionEvent) {
                 builderField.visibility = actionEvent;
-                if (instance.current instanceof BuilderModel)
-                    instance.current.refreshVisibility();
+                // if (instance.current instanceof BuilderModel) {
+                //   (instance.current as BuilderModelExtensions).refreshVisibility();
+                // }
                 builder.ready && builder.detectChanges();
             }
         };
     }
-    removeOnEvent({ builder }) {
-        builder.$$cache.fields.forEach(({ events }) => delete events.onCheckVisibility);
+    removeOnEvent({ builder: { $$cache: { fields = [] } } }) {
+        fields.forEach(({ events }) => delete events.onCheckVisibility);
     }
     checkNeedOrDefaultVisibility(jsonField) {
-        const { parent } = this.builder;
-        const { visibility, checkVisibility } = jsonField;
-        if (checkVisibility || visibility || !parent) {
-            return checkVisibility;
-        }
-        const parentField = parent.$$cache.fieldsConfig.find(({ id }) => id === this.builder.id);
-        if (parentField === null || parentField === void 0 ? void 0 : parentField.visibility) {
-            this.getBuilderFieldById(jsonField.id).visibility = parentField === null || parentField === void 0 ? void 0 : parentField.visibility;
-        }
-        if (parentField === null || parentField === void 0 ? void 0 : parentField.checkVisibility) {
-            jsonField.checkVisibility = ({ builder }) => { var _a, _b; return (_b = (_a = builder.parent) === null || _a === void 0 ? void 0 : _a.getFieldById(builder.id)) === null || _b === void 0 ? void 0 : _b.visibility; };
-        }
+        // const { parent } = this.builder;
+        // const { visibility, checkVisibility } = jsonField;
+        // if (checkVisibility || visibility || !parent) {
+        //   return checkVisibility;
+        // }
+        // const parentField = parent.$$cache.fieldsConfig.find(({ id }: any) => id === this.builder.id);
+        // if (parentField?.visibility) {
+        //   this.getBuilderFieldById(jsonField.id).visibility = parentField?.visibility;
+        // }
+        // if (parentField?.checkVisibility) {
+        //   jsonField.checkVisibility = ({ builder }: BaseAction) => builder.parent?.getFieldById(builder.id)?.visibility
+        // }
         return jsonField.checkVisibility;
     }
     destroy() {

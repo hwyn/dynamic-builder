@@ -1,6 +1,5 @@
 import { __extends } from "tslib";
 import { isEmpty } from 'lodash';
-import { BuilderModel } from '../../builder/builder-model';
 import { BasicExtension } from '../basic/basic.extension';
 import { CHECK_VISIBILITY, LOAD, LOAD_ACTION, REFRESH_VISIBILITY } from '../constant/calculator.constant';
 var CheckVisibilityExtension = /** @class */ (function (_super) {
@@ -37,43 +36,36 @@ var CheckVisibilityExtension = /** @class */ (function (_super) {
     CheckVisibilityExtension.prototype.checkVisibilityAfter = function (defaultVisibility) {
         return function (_a) {
             var _b = _a.actionEvent, actionEvent = _b === void 0 ? defaultVisibility : _b, builderField = _a.builderField, builder = _a.builder;
-            var instance = builderField.instance;
+            // const { instance } = builderField;
             if (builderField.visibility !== actionEvent) {
                 builderField.visibility = actionEvent;
-                if (instance.current instanceof BuilderModel)
-                    instance.current.refreshVisibility();
+                // if (instance.current instanceof BuilderModel) {
+                //   (instance.current as BuilderModelExtensions).refreshVisibility();
+                // }
                 builder.ready && builder.detectChanges();
             }
         };
     };
     CheckVisibilityExtension.prototype.removeOnEvent = function (_a) {
-        var builder = _a.builder;
-        builder.$$cache.fields.forEach(function (_a) {
+        var _b = _a.builder.$$cache.fields, fields = _b === void 0 ? [] : _b;
+        fields.forEach(function (_a) {
             var events = _a.events;
             return delete events.onCheckVisibility;
         });
     };
     CheckVisibilityExtension.prototype.checkNeedOrDefaultVisibility = function (jsonField) {
-        var _this = this;
-        var parent = this.builder.parent;
-        var visibility = jsonField.visibility, checkVisibility = jsonField.checkVisibility;
-        if (checkVisibility || visibility || !parent) {
-            return checkVisibility;
-        }
-        var parentField = parent.$$cache.fieldsConfig.find(function (_a) {
-            var id = _a.id;
-            return id === _this.builder.id;
-        });
-        if (parentField === null || parentField === void 0 ? void 0 : parentField.visibility) {
-            this.getBuilderFieldById(jsonField.id).visibility = parentField === null || parentField === void 0 ? void 0 : parentField.visibility;
-        }
-        if (parentField === null || parentField === void 0 ? void 0 : parentField.checkVisibility) {
-            jsonField.checkVisibility = function (_a) {
-                var _b, _c;
-                var builder = _a.builder;
-                return (_c = (_b = builder.parent) === null || _b === void 0 ? void 0 : _b.getFieldById(builder.id)) === null || _c === void 0 ? void 0 : _c.visibility;
-            };
-        }
+        // const { parent } = this.builder;
+        // const { visibility, checkVisibility } = jsonField;
+        // if (checkVisibility || visibility || !parent) {
+        //   return checkVisibility;
+        // }
+        // const parentField = parent.$$cache.fieldsConfig.find(({ id }: any) => id === this.builder.id);
+        // if (parentField?.visibility) {
+        //   this.getBuilderFieldById(jsonField.id).visibility = parentField?.visibility;
+        // }
+        // if (parentField?.checkVisibility) {
+        //   jsonField.checkVisibility = ({ builder }: BaseAction) => builder.parent?.getFieldById(builder.id)?.visibility
+        // }
         return jsonField.checkVisibility;
     };
     CheckVisibilityExtension.prototype.destroy = function () {
