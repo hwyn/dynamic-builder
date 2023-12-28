@@ -4,16 +4,14 @@ exports.BuilderModel = void 0;
 var tslib_1 = require("tslib");
 var di_1 = require("@fm/di");
 var lodash_1 = require("lodash");
-var builder_utils_1 = require("./builder-utils");
 var consts_1 = require("./consts");
 var decorator_1 = require("./decorator");
 var transform = function (_meta, value, type, prop) { var _a; return (_a = type[prop]) !== null && _a !== void 0 ? _a : value; };
 var BuilderModel = /** @class */ (function () {
     function BuilderModel() {
-        this.parent = null;
         this.children = [];
+        this.parent = null;
         this.$$cache = {};
-        builder_utils_1.init.call(this);
     }
     BuilderModel.prototype.getFieldByTypes = function (type) {
         var _a = this.$$cache.fields, fields = _a === void 0 ? [] : _a;
@@ -40,6 +38,9 @@ var BuilderModel = /** @class */ (function () {
         var fields = (0, lodash_1.flatMap)(this.children.map(function (child) { return child.getAllFieldById(id); }));
         fields.push(this.getFieldById(id));
         return (0, lodash_1.uniq)(fields.filter(function (field) { return !(0, lodash_1.isEmpty)(field); }));
+    };
+    BuilderModel.prototype.showField = function (visibility) {
+        return visibility === undefined || visibility !== consts_1.Visibility.none;
     };
     BuilderModel.prototype.detectChanges = function () {
         if (!this.$$cache.destroyed && this.ready) {
@@ -79,16 +80,12 @@ var BuilderModel = /** @class */ (function () {
         enumerable: false,
         configurable: true
     });
-    BuilderModel.prototype.showField = function (visibility) {
-        return visibility === undefined || visibility !== consts_1.Visibility.none;
-    };
     tslib_1.__decorate([
         (0, di_1.Inject)(di_1.Injector, { transform: transform }),
         tslib_1.__metadata("design:type", di_1.Injector)
     ], BuilderModel.prototype, "injector", void 0);
     BuilderModel = tslib_1.__decorate([
-        (0, decorator_1.DynamicModel)(),
-        tslib_1.__metadata("design:paramtypes", [])
+        (0, decorator_1.DynamicModel)()
     ], BuilderModel);
     return BuilderModel;
 }());

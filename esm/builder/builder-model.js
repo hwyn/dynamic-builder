@@ -1,16 +1,14 @@
 import { __decorate, __metadata } from "tslib";
 import { Inject, Injector } from '@fm/di';
 import { flatMap, isEmpty, uniq } from 'lodash';
-import { init } from './builder-utils';
 import { Visibility } from './consts';
 import { DynamicModel } from './decorator';
 const transform = (_meta, value, type, prop) => { var _a; return (_a = type[prop]) !== null && _a !== void 0 ? _a : value; };
 let BuilderModel = class BuilderModel {
     constructor() {
-        this.parent = null;
         this.children = [];
+        this.parent = null;
         this.$$cache = {};
-        init.call(this);
     }
     getFieldByTypes(type) {
         const { fields = [] } = this.$$cache;
@@ -32,6 +30,9 @@ let BuilderModel = class BuilderModel {
         fields.push(this.getFieldById(id));
         return uniq(fields.filter((field) => !isEmpty(field)));
     }
+    showField(visibility) {
+        return visibility === undefined || visibility !== Visibility.none;
+    }
     detectChanges() {
         if (!this.$$cache.destroyed && this.ready) {
             this.$$cache.detectChanges(this);
@@ -50,16 +51,12 @@ let BuilderModel = class BuilderModel {
         const { fields = [] } = this.$$cache;
         return fields.filter(({ visibility }) => this.showField(visibility));
     }
-    showField(visibility) {
-        return visibility === undefined || visibility !== Visibility.none;
-    }
 };
 __decorate([
     Inject(Injector, { transform }),
     __metadata("design:type", Injector)
 ], BuilderModel.prototype, "injector", void 0);
 BuilderModel = __decorate([
-    DynamicModel(),
-    __metadata("design:paramtypes", [])
+    DynamicModel()
 ], BuilderModel);
 export { BuilderModel };

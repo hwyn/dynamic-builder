@@ -1,4 +1,5 @@
 import { Injector } from '@fm/di';
+import { BuilderUtils } from './builder-utils';
 import { BuilderProps } from './type-api';
 export type UiElement = {
     name: string;
@@ -7,6 +8,6 @@ export type UiElement = {
 export declare class BuilderContext {
     protected uiElements: UiElement[];
     forwardUiElement(name: string, Element: any): any;
-    factoryBuilder(injector: Injector): ({ BuilderModel: NB, providers, context, ...props }: BuilderProps) => any;
+    factoryBuilder(builderUtils: BuilderUtils): (props: BuilderProps) => import("./type-api").BuilderModelImplements;
     registryInjector(injector: Injector): void;
 }

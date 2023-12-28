@@ -126,14 +126,14 @@ var BuilderContext = /** @class */ (function (_super) {
     };
     BuilderContext.prototype.registryInjector = function (injector) {
         (0, di_1.deepProviders)(injector, [
-            { provide: token_1.LOAD_BUILDER_CONFIG, useValue: read_config_extension_1.ReadConfigExtension },
-            { provide: token_1.BUILDER_EXTENSION, multi: true, useValue: defaultExtensions },
             { provide: BuilderContext, useValue: this },
-            { provide: token_1.GET_TYPE, useValue: this.getType.bind(this) },
-            { provide: token_1.EVENT_HOOK, useFactory: this.useFactory(action_1.EventHook.create) },
             { provide: token_1.ACTION_INTERCEPT, useClass: actions_1.Action },
             { provide: token_1.CONVERT_INTERCEPT, useClass: convert_1.Convert },
-            { provide: token_1.GRID_PARSE, useFactory: this.useFactory(grid_1.Grid.create) }
+            { provide: token_1.GET_TYPE, useValue: this.getType.bind(this) },
+            { provide: token_1.GRID_PARSE, useFactory: this.useFactory(grid_1.Grid.create) },
+            { provide: token_1.EVENT_HOOK, useFactory: this.useFactory(action_1.EventHook.create) },
+            { provide: token_1.LOAD_BUILDER_CONFIG, useValue: read_config_extension_1.ReadConfigExtension },
+            { provide: token_1.BUILDER_EXTENSION, multi: true, useValue: defaultExtensions }
         ]);
         this.canExtends(injector);
     };

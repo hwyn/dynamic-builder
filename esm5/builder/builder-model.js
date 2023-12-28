@@ -1,16 +1,14 @@
 import { __decorate, __metadata } from "tslib";
 import { Inject, Injector } from '@fm/di';
 import { flatMap, isEmpty, uniq } from 'lodash';
-import { init } from './builder-utils';
 import { Visibility } from './consts';
 import { DynamicModel } from './decorator';
 var transform = function (_meta, value, type, prop) { var _a; return (_a = type[prop]) !== null && _a !== void 0 ? _a : value; };
 var BuilderModel = /** @class */ (function () {
     function BuilderModel() {
-        this.parent = null;
         this.children = [];
+        this.parent = null;
         this.$$cache = {};
-        init.call(this);
     }
     BuilderModel.prototype.getFieldByTypes = function (type) {
         var _a = this.$$cache.fields, fields = _a === void 0 ? [] : _a;
@@ -37,6 +35,9 @@ var BuilderModel = /** @class */ (function () {
         var fields = flatMap(this.children.map(function (child) { return child.getAllFieldById(id); }));
         fields.push(this.getFieldById(id));
         return uniq(fields.filter(function (field) { return !isEmpty(field); }));
+    };
+    BuilderModel.prototype.showField = function (visibility) {
+        return visibility === undefined || visibility !== Visibility.none;
     };
     BuilderModel.prototype.detectChanges = function () {
         if (!this.$$cache.destroyed && this.ready) {
@@ -76,16 +77,12 @@ var BuilderModel = /** @class */ (function () {
         enumerable: false,
         configurable: true
     });
-    BuilderModel.prototype.showField = function (visibility) {
-        return visibility === undefined || visibility !== Visibility.none;
-    };
     __decorate([
         Inject(Injector, { transform: transform }),
         __metadata("design:type", Injector)
     ], BuilderModel.prototype, "injector", void 0);
     BuilderModel = __decorate([
-        DynamicModel(),
-        __metadata("design:paramtypes", [])
+        DynamicModel()
     ], BuilderModel);
     return BuilderModel;
 }());

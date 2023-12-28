@@ -1,10 +1,14 @@
-import { __rest } from "tslib";
+import { __decorate, __metadata, __param, __rest } from "tslib";
+import { deepProviders, Inject, InjectFlags, Injector } from '@fm/di';
 import { flatMap, isEmpty } from 'lodash';
 import { Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { BUILDER_EXTENSION, LOAD_BUILDER_CONFIG } from '../token';
+import { BUILDER_EXTENSION, LOAD_BUILDER_CONFIG, META_PROPS, META_TYPE, SCOPE_MODEL, SCOPE_PROPS } from '../token';
 import { cloneDeepPlain, createDetectChanges, observableMap, toForkJoin, transformObservable, withValue } from '../utility';
 import { BuilderEngine } from './builder-engine.service';
+import { BuilderModel } from './builder-model';
+import { BuilderScope } from './builder-scope';
+import { BUILDER_DEF } from './decorator';
 const CACHE = `$$cache`;
 function createField(field) {
     const _a = cloneDeepPlain(field), { id, type, visibility } = _a, other = __rest(_a, ["id", "type", "visibility"]);
@@ -91,17 +95,44 @@ function loadForBuild(props) {
         this.$$cache.destroyed && destroy.apply(this);
     }));
 }
-export function init() {
-    Object.defineProperty(this, CACHE, withValue(getCacheObj.call(this, {})));
-    Object.defineProperties(this, {
-        onChange: withValue(this.onChange || (() => void (0))),
-        onDestroy: withValue(() => { var _a; return (_a = this.$$cache) === null || _a === void 0 ? void 0 : _a.destroy(); }),
-        loadForBuild: withValue((props) => {
-            delete this.loadForBuild;
-            Object.defineProperty(this, 'extension', withValue(parseExtension(props.extension || [])));
-            props.builder && addChild.call(props.builder, this);
-            loadForBuild.call(this, props).subscribe(() => this.detectChanges());
-            return this;
-        })
-    });
-}
+const _contextProvs = [
+    BuilderScope,
+    { provide: SCOPE_MODEL, useExisting: BuilderScope },
+    { provide: META_PROPS, deps: [BuilderScope], useFactory: (builder) => builder.resetMetaTypeProps() }
+];
+let BuilderUtils = class BuilderUtils {
+    constructor(injector) {
+        this.injector = injector;
+    }
+    factory(props) {
+        var _a, _b;
+        let model;
+        let _injector = (_b = (_a = props.builder) === null || _a === void 0 ? void 0 : _a.injector) !== null && _b !== void 0 ? _b : this.injector;
+        const { BuilderModel: NB = BuilderModel, providers = [], context } = props, _props = __rest(props, ["BuilderModel", "providers", "context"]);
+        if (NB[BUILDER_DEF] && !(Object.create(NB.prototype) instanceof BuilderModel)) {
+            const _providers = [NB, { provide: META_TYPE, useExisting: NB }, _contextProvs, providers];
+            _injector = Injector.create([{ provide: SCOPE_PROPS, useValue: { props: _props } }], _injector);
+            context === null || context === void 0 ? void 0 : context.registryInjector(_injector);
+            deepProviders(_injector, _providers);
+            model = _injector.get(BuilderScope);
+        }
+        return model !== null && model !== void 0 ? model : _injector.get(NB, InjectFlags.NonCache);
+    }
+    builder(props) {
+        const builder = this.factory(props);
+        Object.defineProperties(builder, {
+            [CACHE]: withValue(getCacheObj.call(builder, {})),
+            onChange: withValue(builder.onChange || (() => void (0))),
+            onDestroy: withValue(() => { var _a; return (_a = builder.$$cache) === null || _a === void 0 ? void 0 : _a.destroy(); }),
+            extension: withValue(parseExtension(props.extension || []))
+        });
+        props.builder && addChild.call(props.builder, builder);
+        loadForBuild.call(builder, props).subscribe(() => builder.detectChanges());
+        return builder;
+    }
+};
+BuilderUtils = __decorate([
+    __param(0, Inject(Injector)),
+    __metadata("design:paramtypes", [Injector])
+], BuilderUtils);
+export { BuilderUtils };

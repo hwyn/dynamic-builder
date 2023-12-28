@@ -1,13 +1,17 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.init = void 0;
+exports.BuilderUtils = void 0;
 var tslib_1 = require("tslib");
+var di_1 = require("@fm/di");
 var lodash_1 = require("lodash");
 var rxjs_1 = require("rxjs");
 var operators_1 = require("rxjs/operators");
 var token_1 = require("../token");
 var utility_1 = require("../utility");
 var builder_engine_service_1 = require("./builder-engine.service");
+var builder_model_1 = require("./builder-model");
+var builder_scope_1 = require("./builder-scope");
+var decorator_1 = require("./decorator");
 var CACHE = "$$cache";
 function createField(field) {
     var _a = (0, utility_1.cloneDeepPlain)(field), id = _a.id, type = _a.type, visibility = _a.visibility, other = tslib_1.__rest(_a, ["id", "type", "visibility"]);
@@ -102,19 +106,46 @@ function loadForBuild(props) {
         _this.$$cache.destroyed && destroy.apply(_this);
     }));
 }
-function init() {
-    var _this = this;
-    Object.defineProperty(this, CACHE, (0, utility_1.withValue)(getCacheObj.call(this, {})));
-    Object.defineProperties(this, {
-        onChange: (0, utility_1.withValue)(this.onChange || (function () { return void (0); })),
-        onDestroy: (0, utility_1.withValue)(function () { var _a; return (_a = _this.$$cache) === null || _a === void 0 ? void 0 : _a.destroy(); }),
-        loadForBuild: (0, utility_1.withValue)(function (props) {
-            delete _this.loadForBuild;
-            Object.defineProperty(_this, 'extension', (0, utility_1.withValue)(parseExtension(props.extension || [])));
-            props.builder && addChild.call(props.builder, _this);
-            loadForBuild.call(_this, props).subscribe(function () { return _this.detectChanges(); });
-            return _this;
-        })
-    });
-}
-exports.init = init;
+var _contextProvs = [
+    builder_scope_1.BuilderScope,
+    { provide: token_1.SCOPE_MODEL, useExisting: builder_scope_1.BuilderScope },
+    { provide: token_1.META_PROPS, deps: [builder_scope_1.BuilderScope], useFactory: function (builder) { return builder.resetMetaTypeProps(); } }
+];
+var BuilderUtils = /** @class */ (function () {
+    function BuilderUtils(injector) {
+        this.injector = injector;
+    }
+    BuilderUtils.prototype.factory = function (props) {
+        var _a, _b;
+        var model;
+        var _injector = (_b = (_a = props.builder) === null || _a === void 0 ? void 0 : _a.injector) !== null && _b !== void 0 ? _b : this.injector;
+        var _c = props.BuilderModel, NB = _c === void 0 ? builder_model_1.BuilderModel : _c, _d = props.providers, providers = _d === void 0 ? [] : _d, context = props.context, _props = tslib_1.__rest(props, ["BuilderModel", "providers", "context"]);
+        if (NB[decorator_1.BUILDER_DEF] && !(Object.create(NB.prototype) instanceof builder_model_1.BuilderModel)) {
+            var _providers = [NB, { provide: token_1.META_TYPE, useExisting: NB }, _contextProvs, providers];
+            _injector = di_1.Injector.create([{ provide: token_1.SCOPE_PROPS, useValue: { props: _props } }], _injector);
+            context === null || context === void 0 ? void 0 : context.registryInjector(_injector);
+            (0, di_1.deepProviders)(_injector, _providers);
+            model = _injector.get(builder_scope_1.BuilderScope);
+        }
+        return model !== null && model !== void 0 ? model : _injector.get(NB, di_1.InjectFlags.NonCache);
+    };
+    BuilderUtils.prototype.builder = function (props) {
+        var _a;
+        var builder = this.factory(props);
+        Object.defineProperties(builder, (_a = {},
+            _a[CACHE] = (0, utility_1.withValue)(getCacheObj.call(builder, {})),
+            _a.onChange = (0, utility_1.withValue)(builder.onChange || (function () { return void (0); })),
+            _a.onDestroy = (0, utility_1.withValue)(function () { var _a; return (_a = builder.$$cache) === null || _a === void 0 ? void 0 : _a.destroy(); }),
+            _a.extension = (0, utility_1.withValue)(parseExtension(props.extension || [])),
+            _a));
+        props.builder && addChild.call(props.builder, builder);
+        loadForBuild.call(builder, props).subscribe(function () { return builder.detectChanges(); });
+        return builder;
+    };
+    BuilderUtils = tslib_1.__decorate([
+        tslib_1.__param(0, (0, di_1.Inject)(di_1.Injector)),
+        tslib_1.__metadata("design:paramtypes", [di_1.Injector])
+    ], BuilderUtils);
+    return BuilderUtils;
+}());
+exports.BuilderUtils = BuilderUtils;

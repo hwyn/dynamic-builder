@@ -1,10 +1,14 @@
-import { __rest, __spreadArray } from "tslib";
+import { __decorate, __metadata, __param, __rest, __spreadArray } from "tslib";
+import { deepProviders, Inject, InjectFlags, Injector } from '@fm/di';
 import { flatMap, isEmpty } from 'lodash';
 import { Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { BUILDER_EXTENSION, LOAD_BUILDER_CONFIG } from '../token';
+import { BUILDER_EXTENSION, LOAD_BUILDER_CONFIG, META_PROPS, META_TYPE, SCOPE_MODEL, SCOPE_PROPS } from '../token';
 import { cloneDeepPlain, createDetectChanges, observableMap, toForkJoin, transformObservable, withValue } from '../utility';
 import { BuilderEngine } from './builder-engine.service';
+import { BuilderModel } from './builder-model';
+import { BuilderScope } from './builder-scope';
+import { BUILDER_DEF } from './decorator';
 var CACHE = "$$cache";
 function createField(field) {
     var _a = cloneDeepPlain(field), id = _a.id, type = _a.type, visibility = _a.visibility, other = __rest(_a, ["id", "type", "visibility"]);
@@ -99,18 +103,46 @@ function loadForBuild(props) {
         _this.$$cache.destroyed && destroy.apply(_this);
     }));
 }
-export function init() {
-    var _this = this;
-    Object.defineProperty(this, CACHE, withValue(getCacheObj.call(this, {})));
-    Object.defineProperties(this, {
-        onChange: withValue(this.onChange || (function () { return void (0); })),
-        onDestroy: withValue(function () { var _a; return (_a = _this.$$cache) === null || _a === void 0 ? void 0 : _a.destroy(); }),
-        loadForBuild: withValue(function (props) {
-            delete _this.loadForBuild;
-            Object.defineProperty(_this, 'extension', withValue(parseExtension(props.extension || [])));
-            props.builder && addChild.call(props.builder, _this);
-            loadForBuild.call(_this, props).subscribe(function () { return _this.detectChanges(); });
-            return _this;
-        })
-    });
-}
+var _contextProvs = [
+    BuilderScope,
+    { provide: SCOPE_MODEL, useExisting: BuilderScope },
+    { provide: META_PROPS, deps: [BuilderScope], useFactory: function (builder) { return builder.resetMetaTypeProps(); } }
+];
+var BuilderUtils = /** @class */ (function () {
+    function BuilderUtils(injector) {
+        this.injector = injector;
+    }
+    BuilderUtils.prototype.factory = function (props) {
+        var _a, _b;
+        var model;
+        var _injector = (_b = (_a = props.builder) === null || _a === void 0 ? void 0 : _a.injector) !== null && _b !== void 0 ? _b : this.injector;
+        var _c = props.BuilderModel, NB = _c === void 0 ? BuilderModel : _c, _d = props.providers, providers = _d === void 0 ? [] : _d, context = props.context, _props = __rest(props, ["BuilderModel", "providers", "context"]);
+        if (NB[BUILDER_DEF] && !(Object.create(NB.prototype) instanceof BuilderModel)) {
+            var _providers = [NB, { provide: META_TYPE, useExisting: NB }, _contextProvs, providers];
+            _injector = Injector.create([{ provide: SCOPE_PROPS, useValue: { props: _props } }], _injector);
+            context === null || context === void 0 ? void 0 : context.registryInjector(_injector);
+            deepProviders(_injector, _providers);
+            model = _injector.get(BuilderScope);
+        }
+        return model !== null && model !== void 0 ? model : _injector.get(NB, InjectFlags.NonCache);
+    };
+    BuilderUtils.prototype.builder = function (props) {
+        var _a;
+        var builder = this.factory(props);
+        Object.defineProperties(builder, (_a = {},
+            _a[CACHE] = withValue(getCacheObj.call(builder, {})),
+            _a.onChange = withValue(builder.onChange || (function () { return void (0); })),
+            _a.onDestroy = withValue(function () { var _a; return (_a = builder.$$cache) === null || _a === void 0 ? void 0 : _a.destroy(); }),
+            _a.extension = withValue(parseExtension(props.extension || [])),
+            _a));
+        props.builder && addChild.call(props.builder, builder);
+        loadForBuild.call(builder, props).subscribe(function () { return builder.detectChanges(); });
+        return builder;
+    };
+    BuilderUtils = __decorate([
+        __param(0, Inject(Injector)),
+        __metadata("design:paramtypes", [Injector])
+    ], BuilderUtils);
+    return BuilderUtils;
+}());
+export { BuilderUtils };
