@@ -4,7 +4,7 @@ import { of } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { GET_JSON_CONFIG, META_TYPE } from '../../token';
 import { funcToObservable, generateUUID, observableMap, observableTap, toForkJoin } from '../../utility';
-import { BasicExtension } from "../basic/basic.extension";
+import { BasicExtension } from '../basic/basic.extension';
 import { LOAD_CONFIG_ACTION } from '../constant/calculator.constant';
 export class ReadConfigExtension extends BasicExtension {
     constructor() {
