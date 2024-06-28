@@ -1,10 +1,11 @@
 import { Type } from '@fm/di';
+import { BuilderProps } from './type-api';
 export declare const BUILDER_DEF = "__builder_def__";
 export declare const INPUT_PROPS = "InputProps";
 export declare const ROOT_MODEL = "ROOT_MODEL";
 export declare const DYNAMIC_BUILDER = "DynamicBuilder";
-export declare function makeBuilderDecorator(name: string, forward?: ((type: Type<any>, props: any) => any)): (props?: any) => (cls: Type<any>) => any;
+export declare function makeBuilderDecorator(name: string, forward?: ((type: Type<any>, props: any) => any)): (props?: BuilderProps) => ClassDecorator;
 export declare const makeCustomInputProps: (transform: (meta: any, props: any, type: any, prop: string) => any) => (key?: string) => PropertyDecorator;
-export declare const DynamicModel: (props?: any) => (cls: Type<any>) => any;
-export declare const RootModel: (...args: any[]) => PropertyDecorator;
+export declare const DynamicModel: (props?: BuilderProps) => ClassDecorator;
+export declare const RootModel: () => PropertyDecorator;
 export declare const InputProps: (key?: string) => PropertyDecorator;

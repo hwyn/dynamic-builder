@@ -1,10 +1,10 @@
 export declare const FieldRef: (key?: string) => ParameterDecorator;
-export declare const BuilderRef: (obj?: {}) => ParameterDecorator;
-export declare const InterceptRef: (obj?: {}) => ParameterDecorator;
-export declare const InstanceRef: (obj?: {}) => ParameterDecorator;
+export declare const BuilderRef: () => ParameterDecorator;
+export declare const InterceptRef: () => ParameterDecorator;
+export declare const InstanceRef: () => ParameterDecorator;
 export declare const ViewModelRef: (key?: string) => ParameterDecorator;
 export declare const Output: (key?: string) => PropertyDecorator;
 export declare const Event: (key?: string) => ParameterDecorator;
-export declare const CallLink: (obj?: {}) => ParameterDecorator;
-export declare const OtherEvent: (obj?: {}) => ParameterDecorator;
+export declare const CallLink: () => ParameterDecorator;
+export declare const OtherEvent: () => ParameterDecorator;
 export declare const ActionProps: (key?: string) => ParameterDecorator;
