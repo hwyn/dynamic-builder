@@ -1,4 +1,4 @@
-import { Injector, InjectorToken, Type } from '@fm/di';
+import { Injector, InjectorToken, Type, TypeClass } from '@fm/di';
 import { Observable } from 'rxjs';
 import { BuilderContext as BasicBuilderContext } from '../../builder/builder-context';
 import { BaseAction } from '../action';
@@ -22,7 +22,7 @@ export declare class BuilderContext extends BasicBuilderContext {
     getFactory<T>(token: InjectorToken): T;
     forwardClass<T = any>(token: InjectorToken, cls: Type<T>): void;
     forwardFactory<T = any>(token: InjectorToken, factory: T): void;
-    forwardType<T = any>(token: InjectorToken, name: string, target: Type<T>, typeName?: string): void;
+    forwardType<T = any>(token: InjectorToken, name: string, target: TypeClass<T>, typeName?: string): void;
     forwardGetJsonConfig(getJsonConfig: (configName: string, injector: Injector) => Observable<object>): void;
     forwardFormControl(factoryFormControl: (value: any, options: FormOptions, injector: Injector) => any): void;
     forwardBuilderLayout(createElement: (grid: Grid, builder: BuilderModelExtensions, injector: Injector) => any): void;
