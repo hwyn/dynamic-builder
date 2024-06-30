@@ -1,4 +1,4 @@
-import { getInjectableDef, Inject, Injector, makeDecorator, makePropDecorator, setInjectableDef } from '@fm/di';
+import { getInjectableDef, Inject, Injector, makeDecorator, setInjectableDef } from '@fm/di';
 import { get } from 'lodash';
 import { SCOPE_MODEL, SCOPE_PROPS } from '../token';
 export const BUILDER_DEF = '__builder_def__';
@@ -22,16 +22,10 @@ export function makeBuilderDecorator(name, forward = forwardTemplate) {
         return result;
     };
 }
-const methodToProp = (typeDecorator) => (ctor, method, index) => {
-    const isParams = typeof index === 'number';
-    const meta = ctor[isParams ? '__parameters__' : '__prop__metadata__'];
-    typeDecorator(meta.shift().annotationInstance)(isParams ? ctor : ctor.prototype, method, index);
-};
 export const makeCustomInputProps = (transform) => {
     const inputTransform = (meta, _, type, prop) => { var _a; return transform(meta, (_a = _.get(SCOPE_PROPS)) === null || _a === void 0 ? void 0 : _a.props, type, prop); };
-    const inputProps = (annotation) => Inject(Injector, Object.assign(Object.assign({}, annotation), { metadataName: INPUT_PROPS, transform: inputTransform }));
-    return makePropDecorator(INPUT_PROPS, (key) => ({ key }), methodToProp(inputProps));
+    return (key) => Inject(Injector, { metadataName: INPUT_PROPS, key, transform: inputTransform });
 };
 export const DynamicModel = makeBuilderDecorator(DYNAMIC_BUILDER);
-export const RootModel = makePropDecorator(ROOT_MODEL, undefined, methodToProp(() => Inject(SCOPE_MODEL, { metadataName: ROOT_MODEL })));
+export const RootModel = () => Inject(SCOPE_MODEL, { metadataName: ROOT_MODEL });
 export const InputProps = makeCustomInputProps((meta, p, type, prop) => { var _a; return get(p, (_a = meta.key) !== null && _a !== void 0 ? _a : prop, type[prop]); });

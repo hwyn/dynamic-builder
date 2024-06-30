@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.toForkJoin = void 0;
+exports.toForkJoin = toForkJoin;
 var rxjs_1 = require("rxjs");
 var operators_1 = require("rxjs/operators");
 var utility_1 = require("../utility");
@@ -16,4 +16,3 @@ function toForkJoin(resultList) {
         return resultList;
     }));
 }
-exports.toForkJoin = toForkJoin;

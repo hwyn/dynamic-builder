@@ -1,6 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createActions = exports.getActionType = exports.getEventType = void 0;
+exports.createActions = void 0;
+exports.getEventType = getEventType;
+exports.getActionType = getActionType;
 var tslib_1 = require("tslib");
 var lodash_1 = require("lodash");
 var token_1 = require("../../token");
@@ -27,11 +29,9 @@ function mergeHandler(actions, props, options) {
 function getEventType(type) {
     return "on".concat(type[0].toUpperCase()).concat(type.slice(1));
 }
-exports.getEventType = getEventType;
 function getActionType(type) {
     return type[2].toLowerCase() + type.slice(3);
 }
-exports.getActionType = getActionType;
 var createActions = function (actions, props, options) {
     var events = (0, lodash_1.groupBy)(actions, 'type');
     return Object.keys(events).reduce(function (obj, type) {
