@@ -1,5 +1,5 @@
 import { __decorate, __metadata, __param, __rest, __spreadArray } from "tslib";
-import { deepProviders, Inject, InjectFlags, Injector } from '@fm/di';
+import { deepProviders, Inject, InjectFlags, Injector } from '@hwy-fm/di';
 import { flatMap, isEmpty } from 'lodash';
 import { Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';

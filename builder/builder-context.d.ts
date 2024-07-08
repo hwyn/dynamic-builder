@@ -1,4 +1,4 @@
-import { Injector } from '@fm/di';
+import { Injector } from '@hwy-fm/di';
 import { BuilderUtils } from './builder-utils';
 import { BuilderProps } from './type-api';
 export type UiElement = {

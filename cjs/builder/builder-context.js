@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BuilderContext = void 0;
-var di_1 = require("@fm/di");
+var di_1 = require("@hwy-fm/di");
 var token_1 = require("../token");
 var builder_engine_service_1 = require("./builder-engine.service");
 var builder_utils_1 = require("./builder-utils");

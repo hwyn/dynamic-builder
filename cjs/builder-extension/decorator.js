@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ActionProps = exports.OtherEvent = exports.CallLink = exports.Event = exports.Output = exports.ViewModelRef = exports.InstanceRef = exports.InterceptRef = exports.BuilderRef = exports.FieldRef = void 0;
 var tslib_1 = require("tslib");
-var di_1 = require("@fm/di");
+var di_1 = require("@hwy-fm/di");
 var lodash_1 = require("lodash");
 var operators_1 = require("rxjs/operators");
 var decorator_1 = require("../builder/decorator");

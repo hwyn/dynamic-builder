@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Convert = void 0;
 var tslib_1 = require("tslib");
-var di_1 = require("@fm/di");
+var di_1 = require("@hwy-fm/di");
 var rxjs_1 = require("rxjs");
 var token_1 = require("../../token");
 var utility_1 = require("../../utility/utility");

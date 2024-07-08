@@ -1,8 +1,6 @@
-import { __spreadArray } from "tslib";
 import { isFunction, isPlainObject, isString } from 'lodash';
-import { from, Observable, of } from 'rxjs';
+import { from, of } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { observableMap } from './operators/exec-observable';
 import { generateUUID } from './uuid';
 export function type(obj) {
     return Object.prototype.toString.call(obj).replace(/\[object (.*)\]/, '$1');
@@ -36,13 +34,7 @@ export function funcToObservable(func) {
         for (var _i = 0; _i < arguments.length; _i++) {
             args[_i] = arguments[_i];
         }
-        return new Observable(function (observer) {
-            var handler = function (result) {
-                observer.next(result);
-                observer.complete();
-            };
-            func.apply(void 0, __spreadArray([handler], args, false));
-        }).pipe(observableMap(transformObservable));
+        return transformObservable(func.apply(void 0, args));
     };
 }
 export var serializeAction = function (action) {

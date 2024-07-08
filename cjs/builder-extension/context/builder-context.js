@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useBuilderContext = exports.BuilderContext = exports.BaseType = void 0;
 var tslib_1 = require("tslib");
-var di_1 = require("@fm/di");
+var di_1 = require("@hwy-fm/di");
 var builder_context_1 = require("../../builder/builder-context");
 var token_1 = require("../../token");
 var action_1 = require("../action");

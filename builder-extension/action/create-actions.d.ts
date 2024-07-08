@@ -1,4 +1,4 @@
-import { Injector } from '@fm/di';
+import { Injector } from '@hwy-fm/di';
 import { Action, ActionInterceptProps } from './type-api';
 export interface CreateOptions {
     injector: Injector;

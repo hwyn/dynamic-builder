@@ -1,4 +1,4 @@
-import { Injector } from '@fm/di';
+import { Injector } from '@hwy-fm/di';
 export declare class BaseView<T = any> {
     private injector;
     private _store;

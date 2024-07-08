@@ -1,4 +1,4 @@
-import { deepProviders } from '@fm/di';
+import { deepProviders } from '@hwy-fm/di';
 import { FACTORY_BUILDER, UI_ELEMENT } from '../token';
 import { BuilderEngine } from './builder-engine.service';
 import { BuilderUtils } from './builder-utils';

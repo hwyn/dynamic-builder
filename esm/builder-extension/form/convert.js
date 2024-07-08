@@ -1,5 +1,5 @@
 import { __decorate, __metadata, __param } from "tslib";
-import { Inject, Injector } from '@fm/di';
+import { Inject, Injector } from '@hwy-fm/di';
 import { isObservable, of } from 'rxjs';
 import { CONVERT_CONFIG, GET_TYPE } from '../../token';
 import { serializeAction } from '../../utility/utility';

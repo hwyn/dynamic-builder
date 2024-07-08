@@ -1,4 +1,4 @@
-import { Type, TypeClass } from '@fm/di';
+import { Type, TypeClass } from '@hwy-fm/di';
 import { BuilderProps } from './type-api';
 export declare const BUILDER_DEF = "__builder_def__";
 export declare const INPUT_PROPS = "InputProps";

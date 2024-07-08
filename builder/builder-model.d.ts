@@ -1,4 +1,4 @@
-import { Injector } from '@fm/di';
+import { Injector } from '@hwy-fm/di';
 import { Visibility } from './consts';
 import { BuilderField, BuilderModelImplements, CacheObj } from './type-api';
 export declare class BuilderModel<S extends BuilderModelImplements = BuilderModelImplements, M extends BuilderField = BuilderField> implements BuilderModelImplements {

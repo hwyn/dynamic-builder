@@ -1,5 +1,5 @@
 import { __assign } from "tslib";
-import { getInjectableDef, Inject, Injector, makeDecorator, setInjectableDef } from '@fm/di';
+import { getInjectableDef, Inject, Injector, makeDecorator, setInjectableDef } from '@hwy-fm/di';
 import { get } from 'lodash';
 import { SCOPE_MODEL, SCOPE_PROPS } from '../token';
 export var BUILDER_DEF = '__builder_def__';

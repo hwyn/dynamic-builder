@@ -1,4 +1,4 @@
-import { Injector, InjectorToken, Type, TypeClass } from '@fm/di';
+import { Injector, InjectorToken, Type, TypeClass } from '@hwy-fm/di';
 import { Observable } from 'rxjs';
 import { BuilderContext as BasicBuilderContext } from '../../builder/builder-context';
 import { BaseAction } from '../action';

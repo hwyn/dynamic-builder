@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Action = void 0;
 var tslib_1 = require("tslib");
-var di_1 = require("@fm/di");
+var di_1 = require("@hwy-fm/di");
 var lodash_1 = require("lodash");
 var rxjs_1 = require("rxjs");
 var operators_1 = require("rxjs/operators");
@@ -107,7 +107,7 @@ var Action = /** @class */ (function () {
         }
         if (!executeHandler && (ActionType = this.getType(token_1.ACTIONS_CONFIG, actionName))) {
             action = this.getCacheAction(ActionType, action);
-            executeHandler = (0, utility_1.funcToObservable)(this.mp.proxyMethodAsync(action, execute));
+            executeHandler = (0, utility_1.funcToObservable)(this.mp.proxyMethod(action, execute));
         }
         if (!executeHandler) {
             throw new Error("".concat(name, " not defined!"));

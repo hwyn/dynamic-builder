@@ -1,5 +1,5 @@
 import { __assign, __extends } from "tslib";
-import { MethodProxy } from '@fm/di';
+import { MethodProxy } from '@hwy-fm/di';
 import { isEmpty, isFunction, uniq } from 'lodash';
 import { of } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
@@ -103,13 +103,13 @@ var ReadConfigExtension = /** @class */ (function (_super) {
             var executeHandler;
             metaType = metaType !== empty ? metaType : _this.injector.get(META_TYPE);
             if (metaType && (executeHandler = metaType[actionName])) {
-                return funcToObservable(mp.proxyMethodAsync(metaType, actionName));
+                return funcToObservable(mp.proxyMethod(metaType, actionName));
             }
             if (isFunction(getExecuteHandler) && (executeHandler = getExecuteHandler.call(_this.builder, actionName))) {
                 return executeHandler;
             }
             if (isFunction(executeHandler = builder[actionName])) {
-                return funcToObservable(mp.proxyMethodAsync(builder, actionName));
+                return funcToObservable(mp.proxyMethod(builder, actionName));
             }
             if (!isSelf && (executeHandler = (_a = builder.parent) === null || _a === void 0 ? void 0 : _a.getExecuteHandler(actionName, isSelf))) {
                 return executeHandler;

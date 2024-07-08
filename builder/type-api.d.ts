@@ -1,4 +1,4 @@
-import { Injector, Provider, Type } from '@fm/di';
+import { Injector, Provider, Type } from '@hwy-fm/di';
 import { Observable, Subject } from 'rxjs';
 import { GridType } from '../builder-extension';
 import { Action, ExecuteHandler } from '../builder-extension/action';

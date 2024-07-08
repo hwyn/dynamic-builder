@@ -1,7 +1,6 @@
 import { isFunction, isPlainObject, isString } from 'lodash';
-import { from, Observable, of } from 'rxjs';
+import { from, of } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { observableMap } from './operators/exec-observable';
 import { generateUUID } from './uuid';
 export function type(obj) {
     return Object.prototype.toString.call(obj).replace(/\[object (.*)\]/, '$1');
@@ -30,13 +29,7 @@ export function createDetectChanges(subject) {
     };
 }
 export function funcToObservable(func) {
-    return (...args) => new Observable(observer => {
-        const handler = (result) => {
-            observer.next(result);
-            observer.complete();
-        };
-        func(handler, ...args);
-    }).pipe(observableMap(transformObservable));
+    return (...args) => transformObservable(func(...args));
 }
 export const serializeAction = (action) => {
     const sAction = (isString(action) ? { name: action } : isFunction(action) ? { handler: action } : action);

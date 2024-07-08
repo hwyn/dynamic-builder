@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.InputProps = exports.RootModel = exports.DynamicModel = exports.makeCustomInputProps = exports.DYNAMIC_BUILDER = exports.ROOT_MODEL = exports.INPUT_PROPS = exports.BUILDER_DEF = void 0;
 exports.makeBuilderDecorator = makeBuilderDecorator;
 var tslib_1 = require("tslib");
-var di_1 = require("@fm/di");
+var di_1 = require("@hwy-fm/di");
 var lodash_1 = require("lodash");
 var token_1 = require("../token");
 exports.BUILDER_DEF = '__builder_def__';

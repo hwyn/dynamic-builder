@@ -1,5 +1,5 @@
 import { __assign, __spreadArray } from "tslib";
-import { makeParamDecorator } from '@fm/di';
+import { makeParamDecorator } from '@hwy-fm/di';
 import { get } from 'lodash';
 import { tap } from 'rxjs/operators';
 import { makeCustomInputProps } from '../builder/decorator';

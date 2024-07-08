@@ -1,5 +1,5 @@
 import { __assign, __decorate, __metadata, __param, __spreadArray } from "tslib";
-import { Inject, Injector, MethodProxy } from '@fm/di';
+import { Inject, Injector, MethodProxy } from '@hwy-fm/di';
 import { isEmpty } from 'lodash';
 import { forkJoin, of } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -104,7 +104,7 @@ var Action = /** @class */ (function () {
         }
         if (!executeHandler && (ActionType = this.getType(ACTIONS_CONFIG, actionName))) {
             action = this.getCacheAction(ActionType, action);
-            executeHandler = funcToObservable(this.mp.proxyMethodAsync(action, execute));
+            executeHandler = funcToObservable(this.mp.proxyMethod(action, execute));
         }
         if (!executeHandler) {
             throw new Error("".concat(name, " not defined!"));

@@ -1,4 +1,4 @@
-import { Injector } from '@fm/di';
+import { Injector } from '@hwy-fm/di';
 import { BuilderJsonField, BuilderProps, CacheObj } from '../../builder';
 import { Action } from '../action/type-api';
 import { BuilderModelExtensions } from '../type-api';

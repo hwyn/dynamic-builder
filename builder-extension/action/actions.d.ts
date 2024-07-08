@@ -1,4 +1,4 @@
-import { Injector, MethodProxy } from '@fm/di';
+import { Injector, MethodProxy } from '@hwy-fm/di';
 import { Observable } from 'rxjs';
 import { Action as ActionProps, ActionContext, ActionIntercept, ActionInterceptProps, CallLinkType, InvokeAction } from './type-api';
 type ActionLinkProps = ActionProps & {

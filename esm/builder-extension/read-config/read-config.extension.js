@@ -1,4 +1,4 @@
-import { MethodProxy } from '@fm/di';
+import { MethodProxy } from '@hwy-fm/di';
 import { isEmpty, isFunction, uniq } from 'lodash';
 import { of } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
@@ -91,13 +91,13 @@ export class ReadConfigExtension extends BasicExtension {
             let executeHandler;
             metaType = metaType !== empty ? metaType : this.injector.get(META_TYPE);
             if (metaType && (executeHandler = metaType[actionName])) {
-                return funcToObservable(mp.proxyMethodAsync(metaType, actionName));
+                return funcToObservable(mp.proxyMethod(metaType, actionName));
             }
             if (isFunction(getExecuteHandler) && (executeHandler = getExecuteHandler.call(this.builder, actionName))) {
                 return executeHandler;
             }
             if (isFunction(executeHandler = builder[actionName])) {
-                return funcToObservable(mp.proxyMethodAsync(builder, actionName));
+                return funcToObservable(mp.proxyMethod(builder, actionName));
             }
             if (!isSelf && (executeHandler = (_a = builder.parent) === null || _a === void 0 ? void 0 : _a.getExecuteHandler(actionName, isSelf))) {
                 return executeHandler;

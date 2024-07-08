@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BuilderScope = void 0;
 var tslib_1 = require("tslib");
-var di_1 = require("@fm/di");
+var di_1 = require("@hwy-fm/di");
 var lodash_1 = require("lodash");
 var token_1 = require("../token");
 var builder_model_1 = require("./builder-model");

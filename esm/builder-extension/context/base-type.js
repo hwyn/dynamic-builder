@@ -1,5 +1,5 @@
 import { __decorate, __metadata } from "tslib";
-import { Inject, Injector } from '@fm/di';
+import { Inject, Injector } from '@hwy-fm/di';
 export class BaseType {
     invoke(context = {}) {
         return Object.assign(this, context);

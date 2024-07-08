@@ -11,11 +11,9 @@ exports.funcToObservable = funcToObservable;
 exports.withValue = withValue;
 exports.withGetOrSet = withGetOrSet;
 exports.cloneDeepPlain = cloneDeepPlain;
-var tslib_1 = require("tslib");
 var lodash_1 = require("lodash");
 var rxjs_1 = require("rxjs");
 var operators_1 = require("rxjs/operators");
-var exec_observable_1 = require("./operators/exec-observable");
 var uuid_1 = require("./uuid");
 function type(obj) {
     return Object.prototype.toString.call(obj).replace(/\[object (.*)\]/, '$1');
@@ -49,13 +47,7 @@ function funcToObservable(func) {
         for (var _i = 0; _i < arguments.length; _i++) {
             args[_i] = arguments[_i];
         }
-        return new rxjs_1.Observable(function (observer) {
-            var handler = function (result) {
-                observer.next(result);
-                observer.complete();
-            };
-            func.apply(void 0, tslib_1.__spreadArray([handler], args, false));
-        }).pipe((0, exec_observable_1.observableMap)(transformObservable));
+        return transformObservable(func.apply(void 0, args));
     };
 }
 var serializeAction = function (action) {

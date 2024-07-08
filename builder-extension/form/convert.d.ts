@@ -1,4 +1,4 @@
-import { Injector } from '@fm/di';
+import { Injector } from '@hwy-fm/di';
 import { BuilderFieldExtensions, BuilderModelExtensions } from '../type-api';
 import { BaseConvertImpl } from './type-api';
 export declare class Convert {

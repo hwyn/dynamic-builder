@@ -1,4 +1,4 @@
-import { Injector } from '@fm/di';
+import { Injector } from '@hwy-fm/di';
 import { BuilderModelImplements, BuilderProps } from './type-api';
 export declare class BuilderUtils {
     protected injector: Injector;

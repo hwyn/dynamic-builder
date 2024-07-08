@@ -1,4 +1,4 @@
-import { InjectorToken } from '@fm/di';
+import { InjectorToken } from '@hwy-fm/di';
 export declare const UI_ELEMENT: InjectorToken;
 export declare const GET_TYPE: InjectorToken;
 export declare const ACTIONS_CONFIG: InjectorToken;

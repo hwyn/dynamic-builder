@@ -1,5 +1,5 @@
 import { __decorate, __metadata } from "tslib";
-import { Inject, Injector } from '@fm/di';
+import { Inject, Injector } from '@hwy-fm/di';
 import { flatMap, isEmpty, uniq } from 'lodash';
 import { Visibility } from './consts';
 import { DynamicModel } from './decorator';

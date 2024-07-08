@@ -1,4 +1,4 @@
-import { InjectorToken } from '@fm/di';
+import { InjectorToken } from '@hwy-fm/di';
 export var UI_ELEMENT = InjectorToken.get('UI_ELEMENT');
 export var GET_TYPE = InjectorToken.get('GET_TYPE');
 export var ACTIONS_CONFIG = InjectorToken.get('ACTION_CONFIG');

@@ -1,5 +1,5 @@
 import { __decorate, __extends, __metadata } from "tslib";
-import { Inject, InjectFlags, propArgs, reflectCapabilities } from '@fm/di';
+import { Inject, InjectFlags, propArgs, reflectCapabilities } from '@hwy-fm/di';
 import { get } from 'lodash';
 import { META_PROPS, META_TYPE, SCOPE_PROPS } from '../token';
 import { BuilderModel } from './builder-model';

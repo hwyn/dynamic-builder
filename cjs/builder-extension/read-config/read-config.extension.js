@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ReadConfigExtension = void 0;
 var tslib_1 = require("tslib");
-var di_1 = require("@fm/di");
+var di_1 = require("@hwy-fm/di");
 var lodash_1 = require("lodash");
 var rxjs_1 = require("rxjs");
 var operators_1 = require("rxjs/operators");
@@ -106,13 +106,13 @@ var ReadConfigExtension = /** @class */ (function (_super) {
             var executeHandler;
             metaType = metaType !== empty ? metaType : _this.injector.get(token_1.META_TYPE);
             if (metaType && (executeHandler = metaType[actionName])) {
-                return (0, utility_1.funcToObservable)(mp.proxyMethodAsync(metaType, actionName));
+                return (0, utility_1.funcToObservable)(mp.proxyMethod(metaType, actionName));
             }
             if ((0, lodash_1.isFunction)(getExecuteHandler) && (executeHandler = getExecuteHandler.call(_this.builder, actionName))) {
                 return executeHandler;
             }
             if ((0, lodash_1.isFunction)(executeHandler = builder[actionName])) {
-                return (0, utility_1.funcToObservable)(mp.proxyMethodAsync(builder, actionName));
+                return (0, utility_1.funcToObservable)(mp.proxyMethod(builder, actionName));
             }
             if (!isSelf && (executeHandler = (_a = builder.parent) === null || _a === void 0 ? void 0 : _a.getExecuteHandler(actionName, isSelf))) {
                 return executeHandler;
