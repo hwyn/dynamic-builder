@@ -1,6 +1,6 @@
 {
 	"name": "@hwy-fm/builder",
-	"version": "0.0.1.bate.1",
+	"version": "0.0.1.beta.1",
 	"private": false,
 	"description": "",
 	"main": "./cjs/index.js",
